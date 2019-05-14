@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PipeManager : MonoBehaviour {
+public class PipeManager : MonoBehaviour
+{
 
     public GameObject PipePrefab;
     public int PipeCount;
 
-	// Use this for initialization
-	void Start () {
-	}
+    // Use this for initialization
+    void Start()
+    {
+    }
 
     public void DrawLevel()
     {
@@ -29,7 +31,7 @@ public class PipeManager : MonoBehaviour {
     public void ClearPipe()
     {
         List<Transform> childs = new List<Transform>();
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             childs.Add(child);
         }
