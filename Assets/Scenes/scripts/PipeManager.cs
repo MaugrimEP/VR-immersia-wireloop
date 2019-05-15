@@ -6,6 +6,7 @@ public class PipeManager : MonoBehaviour
 {
 
     public GameObject PipePrefab;
+    public Vector3 InitialPipePosition;
     public int PipeCount;
 
     // Use this for initialization
@@ -19,7 +20,7 @@ public class PipeManager : MonoBehaviour
 
         Vector3[] directions = { Vector3.left, Vector3.up, Vector3.forward };
 
-        Vector3 currentPosition = Vector3.zero;
+        Vector3 currentPosition = InitialPipePosition;
         for (int i = 0; i < PipeCount; ++i)
         {
             Vector3 direction = directions[Random.Range(0, directions.Length)];
@@ -46,7 +47,7 @@ public class PipeManager : MonoBehaviour
         Vector3 spawnPos = Vector3.Lerp(v1, v2, 0.5f);
         float distance = Vector3.Distance(v1, v2);
         GameObject instantiated = Instantiate(PipePrefab, spawnPos, Quaternion.identity);
-        instantiated.transform.localScale = new Vector3(0.5f, 0.5f, distance);
+        instantiated.transform.localScale += Vector3.forward * distance;//new Vector3(0.5f, 0.5f, distance);
         instantiated.transform.LookAt(v2);
         instantiated.transform.parent = this.transform;
     }

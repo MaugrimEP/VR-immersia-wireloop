@@ -5,36 +5,30 @@ using UnityEngine;
 public class PipeCollider : MonoBehaviour
 {
 
-    public Interaction interaction;
+    RaquetteController raquette;
 
-    // Start is called before the first frame update
     void Start()
     {
-        interaction = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<Interaction>();
+        raquette = GameObject.FindGameObjectsWithTag(RaquetteController.tagname)[0].GetComponent<RaquetteController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Pipe collision enter");
-        //if (ReferenceEquals(other.gameObject,interaction.FixedJoint.connectedBody))
-        if (other.gameObject.CompareTag("Interaction"))
+
+        if (other.gameObject.CompareTag(RaquetteController.tagname))
         {
-            if (interaction.IsGrabbing())
-            {
-                interaction.FixedJoint.connectedBody.gameObject.GetComponent<Renderer>().material.color = Color.red;
-            }
+            raquette.TouchPipe(other);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         Debug.Log("Pipe collision exit");
-        if (other.gameObject.CompareTag("Interaction"))
+
+        if (other.gameObject.CompareTag(RaquetteController.tagname))
         {
-            if (interaction.IsGrabbing())
-            {
-                interaction.FixedJoint.connectedBody.gameObject.GetComponent<Renderer>().material.color = Color.yellow;
-            }
+            raquette.LeavePipe(other);
         }
     }
 

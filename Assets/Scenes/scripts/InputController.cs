@@ -4,20 +4,26 @@ using UnityEngine;
 
 public class InputController : MonoBehaviour {
 
-    private Interaction _interactionController = null;
 
-	// Use this for initialization
-	void Start () {
-        _interactionController = GetComponent<Interaction>();
+    VirtuoseArm arm;
+    VirtuoseAPIHelper helper;
+
+    // Use this for initialization
+    void Start () {
+        /*
+        arm = new VirtuoseArm();
+        helper = new VirtuoseAPIHelper(arm);
+        helper.Open("127.0.0.1");
+        */
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.A))
-            _interactionController.Grab();
+        /*
+        (Vector3 position, Quaternion rotation) pose = helper.Pose;
+        transform.position = pose.position;
 
-        if (Input.GetKeyDown(KeyCode.Z))
-            _interactionController.Drop();
-
+        */
     }
 }
