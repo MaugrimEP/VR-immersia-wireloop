@@ -10,6 +10,8 @@ public class InputController : MonoBehaviour {
 
     public bool virtuose;
 
+    public Transform Camera;
+
     void Start () {
         if(virtuose)
         {
@@ -31,7 +33,24 @@ public class InputController : MonoBehaviour {
 
     private void HandleVirtuoseInput(Vector3 position, Quaternion rotation)
     {
-        transform.position = position;
-        transform.rotation = rotation;
+        Vector3 transformedPosition = new Vector3(-position.x, position.y, position.z);
+        Quaternion transformedQuaternion = new Quaternion(rotation.y, rotation.z, rotation.x, rotation.w);
+
+        Transform objectToMove = getTransformToMove();
+        objectToMove.transform.position = transformedPosition;
+        objectToMove.rotation = transformedQuaternion;
+    }
+
+    private Transform getTransformToMove()
+    {
+        if (helper.Button(1))//if the button 0 is pressed, we will move the camera
+        {
+            return Camera;
+        }
+        else                //else we will move the raquette
+        {
+            return transform;
+        }
+
     }
 }
