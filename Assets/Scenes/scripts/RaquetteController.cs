@@ -7,8 +7,11 @@ public class RaquetteController : MonoBehaviour
 {
     public static string tagname = "Raquette";
     public Transform ApplicationForcePoint;
-
     private VectorManager vectorManager;
+
+    private float raquetteMass;
+    private Vector3 vitesse;
+    private Vector3 lastPosition;
 
     private void Awake()
     {
@@ -18,6 +21,17 @@ public class RaquetteController : MonoBehaviour
         }
 
         vectorManager = GameObject.Find("VectorCreator").GetComponent<VectorManager>();
+
+        foreach(Transform child in transform)
+        {
+            raquetteMass += child.gameObject.GetComponent<Rigidbody>().mass;
+        }
+    }
+
+    private void Update()
+    {
+        vitesse = (transform.position - lastPosition) / VRTools.GetDeltaTime();
+        lastPosition = transform.position;
     }
 
     public void UpdateChildOnTouch()
@@ -53,11 +67,19 @@ public class RaquetteController : MonoBehaviour
         UpdateChildOnTouch();
 
         //show the vector for the collision
-        Debug.Log("collison.contactCount " + collision.contactCount);
         for (int i = 0; i < collision.contactCount; ++i)
         {
             ContactPoint contactPoint = collision.GetContact(i);
-            vectorManager.DrawVector(contactPoint.point, contactPoint.normal, Color.black, "contactPoint / contactNormal");
+
+            float distanceToHandle = Vector3.Distance(ApplicationForcePoint.position, contactPoint.point);
+
+            //(0.5 * m * v^2) ÷ d
+            Vector3 forces = 0.5f * raquetteMass * Utils.Pow(vitesse, 2.0f) / distanceToHandle; //collision.relativeVelocity
+            forces = Utils.Mul(forces, contactPoint.normal);
+            Vector3 torques = forces * distanceToHandle;
+
+            vectorManager.DrawVector(contactPoint.point, forces, Color.blue, "forces");
+            vectorManager.DrawVector(contactPoint.point, torques, Color.magenta, "torques");
         }
     }
 

@@ -19,7 +19,7 @@ public class VectorManager : MonoBehaviour
 
 
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = Vector3.one * vectorRadius * 2;
+        cube.transform.localScale = Vector3.one * vectorRadius;
         cube.transform.position = endPoint;
 
         cylinder.GetComponent<Renderer>().material.color = cube.GetComponent<Renderer>().material.color = color;
