@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ public class PipeCollider : MonoBehaviour
             raquette.LeavePipe(collision);
         }
     }
-
+    /*
     public void OnTriggerEnter(Collider other)
     {
         Debug.Log("Pipe OnTriggerEnter");
@@ -57,12 +58,17 @@ public class PipeCollider : MonoBehaviour
             raquette.LeavePipe(other);
         }
     }
+    */
 
     private bool IsColladingWithTag(string tag)
     {
         foreach (GameObject item in CollidingList)
-            if (item.CompareTag(tag))
+        {
+            if (item!=null && item.CompareTag(tag))
+            {
                 return true;
+            }
+        }
         return false;
     }
 

@@ -4,28 +4,50 @@ using UnityEngine;
 
 public class VectorManager : MonoBehaviour
 {
-
-    public Material vectorMat;
     public float vectorRadius;
 
-    public void DrawVector(Vector3 position,Vector3 val)
+    public void DrawVector(Vector3 position, Vector3 val, Color color, string name="not assigned")
     {
-        GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        cylinder.GetComponent<Renderer>().material = vectorMat;
+        Vector3 endPoint = position + val;
+        float distance = Vector3.Distance(position, endPoint);
 
-        cylinder.transform.LookAt(val + position);
+        GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        cylinder.transform.position = Vector3.Lerp(position, endPoint, 0.5f);
+        cylinder.transform.localScale = new Vector3(vectorRadius, distance/2.0f, vectorRadius);
+        cylinder.transform.LookAt(endPoint);
         cylinder.transform.Rotate(Vector3.right, 90.0f);
 
-        cylinder.transform.localScale = new Vector3(vectorRadius, 1,vectorRadius);
-        cylinder.transform.position = Vector3.Lerp(position, position + val, 0.5f);
 
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.position = position + val;
-        cube.GetComponent<Renderer>().material = vectorMat;
         cube.transform.localScale = Vector3.one * vectorRadius * 2;
+        cube.transform.position = endPoint;
 
+        cylinder.GetComponent<Renderer>().material.color = cube.GetComponent<Renderer>().material.color = color;
 
+        //add the vector under the VectorCreator
         cylinder.transform.parent = transform;
         cube.transform.parent = transform;
+
+        //just to be able to see the data in the inspector
+        {
+            VectorData cubeData = cube.AddComponent<VectorData>();
+            VectorData cylinderData = cylinder.AddComponent<VectorData>();
+
+            cubeData.origin = cylinderData.origin = position;
+            cubeData.value = cylinderData.value = val;
+            cubeData.endPoint = cylinderData.endPoint = endPoint;
+            cubeData.magnitude = cylinderData.magnitude = distance;
+            cubeData.nameReference = cylinderData.nameReference = name;
+        }
+    }
+
+
+    public void ClearVector()
+    {
+        List<GameObject> vectors = new List<GameObject>();
+        foreach (Transform vector in transform)
+            vectors.Add(vector.gameObject);
+        foreach (GameObject vector in vectors)
+            Destroy(vector);
     }
 }

@@ -47,7 +47,7 @@ public class PipeManager : MonoBehaviour
         Vector3 spawnPos = Vector3.Lerp(v1, v2, 0.5f);
         float distance = Vector3.Distance(v1, v2);
         GameObject instantiated = Instantiate(PipePrefab, spawnPos, Quaternion.identity);
-        instantiated.transform.localScale += Vector3.forward * distance;//new Vector3(0.5f, 0.5f, distance);
+        instantiated.transform.localScale += Vector3.forward * distance;
         instantiated.transform.LookAt(v2);
         instantiated.transform.parent = this.transform;
     }

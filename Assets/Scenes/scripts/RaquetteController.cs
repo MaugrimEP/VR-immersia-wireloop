@@ -36,6 +36,7 @@ public class RaquetteController : MonoBehaviour
         }
     }
 
+    /*
     public void TouchPipe(Collider collisionCollider)
     {
         UpdateChildOnTouch();
@@ -45,14 +46,24 @@ public class RaquetteController : MonoBehaviour
     {
         UpdateChildOnLeave();
     }
-
-    internal void LeavePipe(Collision collision)
-    {
-        UpdateChildOnLeave();
-    }
+    */
 
     internal void TouchPipe(Collision collision)
     {
         UpdateChildOnTouch();
+
+        //show the vector for the collision
+        Debug.Log("collison.contactCount " + collision.contactCount);
+        for (int i = 0; i < collision.contactCount; ++i)
+        {
+            ContactPoint contactPoint = collision.GetContact(i);
+            vectorManager.DrawVector(contactPoint.point, contactPoint.normal, Color.black, "contactPoint / contactNormal");
+        }
+    }
+
+    internal void LeavePipe(Collision collision)
+    {
+        UpdateChildOnLeave();
+        vectorManager.ClearVector();
     }
 }
