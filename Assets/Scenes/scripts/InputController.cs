@@ -20,21 +20,29 @@ public class InputController : MonoBehaviour {
             helper.Open("127.0.0.1");
         }
     }
-	
-	void Update () {
+
+    void OnApplicationQuit()
+    {
+        if (virtuose)
+        {
+            helper.Close();
+        }
+    }
+
+
+    void Update () {
 
         if (virtuose && !helper.IsInShiftPosition) //if we arent in offset mode
         {
             (Vector3 position, Quaternion rotation) pose = helper.Pose;
             HandleVirtuoseInput(pose.position, pose.rotation);
         }
-
     }
 
     private void HandleVirtuoseInput(Vector3 position, Quaternion rotation)
     {
-        Vector3 transformedPosition = new Vector3(-position.x, position.y, position.z);
-        Quaternion transformedQuaternion = new Quaternion(rotation.y, rotation.z, rotation.x, rotation.w);
+        Vector3 transformedPosition = new Vector3(position.x, position.y, position.z);
+        Quaternion transformedQuaternion = new Quaternion(- rotation.y,-  rotation.z, rotation.x,rotation.w); //new Quaternion(rotation.y, rotation.z, rotation.x, rotation.w);
 
         Transform objectToMove = getTransformToMove();
         objectToMove.transform.position = transformedPosition;
@@ -43,7 +51,7 @@ public class InputController : MonoBehaviour {
 
     private Transform getTransformToMove()
     {
-        if (helper.Button(1))//if the button 0 is pressed, we will move the camera
+        if (false && helper.Button(1))//if the button 0 is pressed, we will move the camera
         {
             return Camera;
         }

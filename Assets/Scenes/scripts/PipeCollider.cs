@@ -34,6 +34,14 @@ public class PipeCollider : MonoBehaviour
             raquette.LeavePipe(collision);
         }
     }
+
+    public void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.gameObject.CompareTag(RaquetteController.tagname))
+        {
+            raquette.HandleCollision(collision);
+        }
+    }
     /*
     public void OnTriggerEnter(Collider other)
     {

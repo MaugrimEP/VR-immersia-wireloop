@@ -6,12 +6,14 @@ using UnityEngine;
 public class RaquetteController : MonoBehaviour
 {
     public static string tagname = "Raquette";
-    public Transform ApplicationForcePoint;
+    public Transform ApplicationForcePoint; // where we will apply the force with the virtuose aka the handle
     private VectorManager vectorManager;
 
     private float raquetteMass;
     private Vector3 vitesse;
     private Vector3 lastPosition;
+
+    public float K;//stiffness coeff
 
     private void Awake()
     {
@@ -65,6 +67,13 @@ public class RaquetteController : MonoBehaviour
     internal void TouchPipe(Collision collision)
     {
         UpdateChildOnTouch();
+        HandleCollision(collision);
+    }
+
+    public void HandleCollision(Collision collision)
+    {
+        Vector3 forceTotal = Vector3.zero;
+        Vector3 torqueTotal = Vector3.zero;
 
         //show the vector for the collision
         for (int i = 0; i < collision.contactCount; ++i)
@@ -72,15 +81,28 @@ public class RaquetteController : MonoBehaviour
             ContactPoint contactPoint = collision.GetContact(i);
 
             float distanceToHandle = Vector3.Distance(ApplicationForcePoint.position, contactPoint.point);
+            float force = Mathf.Abs(contactPoint.separation) * K; //force = K * penetration distance
+            Vector3 forceVector = force * contactPoint.normal;//vitesse.normalized;//
+            float angle = Vector3.Angle(ApplicationForcePoint.position, forceVector);
+            Vector3 torques = forceVector * distanceToHandle * Mathf.Sin(angle); // torque = force * distance from axis * sin(angle between axis and force)
 
-            //(0.5 * m * v^2) ÷ d
-            Vector3 forces = 0.5f * raquetteMass * Utils.Pow(vitesse, 2.0f) / distanceToHandle; //collision.relativeVelocity
-            forces = Utils.Mul(forces, contactPoint.normal);
-            Vector3 torques = forces * distanceToHandle;
+            forceVector *= -1;
 
-            vectorManager.DrawVector(contactPoint.point, forces, Color.blue, "forces");
-            vectorManager.DrawVector(contactPoint.point, torques, Color.magenta, "torques");
+            forceTotal += forceVector;
+            torqueTotal += torques;
         }
+        forceTotal /= collision.contactCount;
+        torqueTotal /= collision.contactCount;
+
+        vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.magenta, "forceTotal");
+        vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
+    }
+
+    
+    public (Vector3 targetedPosition, Quaternion targetedRotation) GetTargetedVirtuosePosition(Vector3 force, Vector3 torque)
+    {
+
+        throw new NotImplementedException();
     }
 
     internal void LeavePipe(Collision collision)
