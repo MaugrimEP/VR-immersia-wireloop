@@ -92,6 +92,17 @@ public class VRTools : UnitySingleton<VRTools>
         GetInstance().StartCoroutine(modeInstance.InitRoutine(callback));
     }
 
+    /// <summary>
+    /// Returns true when VRTools is ready to use
+    /// </summary>
+    bool Ready 
+    { 
+        get 
+        {
+            return modeInstance != null && modeInstance.Ready;
+        } 
+    }
+
     #region Button
     /////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////
@@ -411,7 +422,6 @@ public class VRTools : UnitySingleton<VRTools>
     #endregion
 
     #region Log
-
     /// <summary>
     /// Log the given text.
     /// </summary>
@@ -438,7 +448,6 @@ public class VRTools : UnitySingleton<VRTools>
     {
         modeInstance.LogError(textToLog);
     }
-
     #endregion
 
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class VectorManager : MonoBehaviour
 {
     public float vectorRadius;
+    public float lifeTime;
 
     public void DrawVector(Vector3 position, Vector3 val, Color color, string name="not assigned")
     {
@@ -39,6 +40,9 @@ public class VectorManager : MonoBehaviour
             cubeData.magnitude = cylinderData.magnitude = distance;
             cubeData.nameReference = cylinderData.nameReference = name;
         }
+
+        Destroy(cylinder, lifeTime);
+        Destroy(cube, lifeTime);
     }
 
 
@@ -50,4 +54,14 @@ public class VectorManager : MonoBehaviour
         foreach (GameObject vector in vectors)
             Destroy(vector);
     }
+}
+
+
+public class VectorData : MonoBehaviour
+{
+    public Vector3 origin;
+    public Vector3 value;
+    public Vector3 endPoint;
+    public float magnitude;
+    public string nameReference;
 }

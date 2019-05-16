@@ -63,21 +63,12 @@ public class VirtuoseDebugger : MonoBehaviour
 
         CreateObjects();
 
-        StartCoroutine(WaitConnexion());
+        StartCoroutine(vm.WaitVirtuoseConnexion(Init));
     }
 
-    IEnumerator WaitConnexion()
+    private void Init()
     {
-        bool init = false; 
-        while(!init)
-        {
-            yield return null;
-            if (vm.Arm.IsConnected)
-            {
-                referenceArticulars = vm.Virtuose.Articulars;
-                init = true;
-            }
-        }
+        referenceArticulars = vm.Virtuose.Articulars;
     }
 
     void CreateObjects()
@@ -170,8 +161,10 @@ public class VirtuoseDebugger : MonoBehaviour
         GameObject gameObject = GameObject.CreatePrimitive(primitiveType);
         gameObject.transform.parent = transform;
         gameObject.transform.localScale = Vector3.one * 0.05f;
+#if MIDDLEVR
         if(VRTools.Mode == VRToolsMode.MIDDLEVR)
             gameObject.AddComponent<VRClusterObject>();
+#endif
         Collider collider = gameObject.GetComponent<Collider>();
         Destroy(collider);
         Renderer renderer = gameObject.GetComponent<Renderer>();
@@ -183,35 +176,36 @@ public class VirtuoseDebugger : MonoBehaviour
     {
         if (VRTools.IsMaster() && vm.Initialized)
         {
-            if(canvas.enabled)         
-                UpdateDebugInfo();
-
             UpdateObjects();
 
-            if (toggleDebugInfo.IsTriggered)
+            if (canvas.enabled)         
+                UpdateDebugInfo();
+
+            if (toggleDebugInfo != null && toggleDebugInfo.IsToggled())
                 canvas.enabled = !canvas.enabled;
 
             if (vm.Virtuose.IsButtonToggled())
                 referenceArticulars = vm.Virtuose.Articulars;
-
-
         }
     }
 
     void UpdateObjects()
     {
-        UpdateObjectPose(articularObject, (VirtuoseAPIHelper.VirtuoseToUnityPosition(vm.Virtuose.Articulars), Quaternion.identity));
         UpdateObjectPose(postionObject, vm.Virtuose.Pose);
         UpdateObjectPose(avatarObject, vm.Virtuose.AvatarPose);
         UpdateObjectPose(physicalObject, vm.Virtuose.PhysicalPose);
         UpdateObjectPose(physicalOffsetObject, vm.Virtuose.ComputePhysicalPose(offset));
         UpdateObjectPose(baseFrameObject, vm.Virtuose.BaseFrame);
         UpdateObjectPose(observationFrameObject, vm.Virtuose.ObservationFrame);
-        UpdateObjectPose(baseObject, vm.Virtuose.ComputeBasePose(offset));
-        var bubblePose = (vm.Virtuose.ComputeBubblePosition(offset), Quaternion.identity);
-        UpdateObjectPose(bubbleInsideObject, bubblePose);
-        UpdateObjectPose(bubbleOutsideObject, bubblePose);
 
+        if (vm.IsScaleOne())
+        {
+            UpdateObjectPose(articularObject, (VirtuoseAPIHelper.VirtuoseToUnityPosition(vm.Virtuose.Articulars), Quaternion.identity));
+            UpdateObjectPose(baseObject, vm.Virtuose.ComputeBasePose(offset));
+            var bubblePose = (vm.Virtuose.ComputeBubblePosition(offset), Quaternion.identity);
+            UpdateObjectPose(bubbleInsideObject, bubblePose);
+            UpdateObjectPose(bubbleOutsideObject, bubblePose);
+        }
     }
 
     void UpdateObjectPose(GameObject go, ValueTuple<Vector3, Quaternion> pose)
@@ -227,7 +221,7 @@ public class VirtuoseDebugger : MonoBehaviour
             debugInfo.Clear();
             debugInfo.Append(vm.Arm.ToString());
             debugInfo.Append("Scale1? ").Append(vm.IsScaleOne()).AppendLine();
-            if(referenceArticulars != null)
+            if(referenceArticulars != null && vm.IsScaleOne())
                 debugInfo.Append("Joystick ").Append(vm.Virtuose.Joystick(referenceArticulars).ToString("F3")).AppendLine();
 
             debugInfo.Append("virtGetDeviceType ").Append(vm.Virtuose.DeviceID).Append(" Serial ").Append(vm.Virtuose.SerialNumber).AppendLine();

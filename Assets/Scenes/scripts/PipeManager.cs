@@ -18,7 +18,7 @@ public class PipeManager : MonoBehaviour
     {
         ClearPipe();
 
-        Vector3[] directions = { Vector3.left, Vector3.up, Vector3.forward };
+        Vector3[] directions = { Vector3.left, Vector3.up};
 
         Vector3 currentPosition = InitialPipePosition;
         for (int i = 0; i < PipeCount; ++i)

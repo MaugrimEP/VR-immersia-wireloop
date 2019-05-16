@@ -10,7 +10,7 @@ public class ToggleGameObject : MonoBehaviour
 
     void Update()
     {
-        if (input.IsTriggered)
+        if (input.IsToggled())
             gameObjectToToggle.SetActive(!gameObjectToToggle.activeSelf);
     }
 }
