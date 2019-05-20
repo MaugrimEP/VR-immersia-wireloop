@@ -6,39 +6,35 @@ using UnityEngine;
 public class RaquetteController : MonoBehaviour
 {
     public static string tagname = "Raquette";
-    public Transform ApplicationForcePoint; // where we will apply the force with the virtuose aka the handle
+    public Transform ApplicationForcePoint; // where we will apply the force with the virtuose
+    public Transform Handle;
     private VectorManager vectorManager;
-
-    private float raquetteMass;
-    private Vector3 vitesse;
-    private Vector3 lastPosition;
 
     public float K;//stiffness coeff
 
+    private InputController avatarInputController;
+
+    public List<Transform> raquettesChild;//child that compose the raquette
+
+    private List<Transform> getChilds()
+    {
+        return raquettesChild;
+    }
+
     private void Awake()
     {
-        foreach(Transform child in transform)
+        foreach(Transform child in getChilds()) //apply the tagname on child to filter the collisions
         {
-            child.tag = RaquetteController.tagname;
+            child.tag = tagname;
         }
 
         vectorManager = GameObject.Find("VectorCreator").GetComponent<VectorManager>();
-
-        foreach(Transform child in transform)
-        {
-            raquetteMass += child.gameObject.GetComponent<Rigidbody>().mass;
-        }
-    }
-
-    private void Update()
-    {
-        vitesse = (transform.position - lastPosition) / VRTools.GetDeltaTime();
-        lastPosition = transform.position;
+        avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
     }
 
     public void UpdateChildOnTouch()
     {
-        foreach (Transform child in transform)
+        foreach (Transform child in getChilds())
         {
             child.GetComponent<Renderer>().material.color = Color.red;
         }
@@ -46,25 +42,13 @@ public class RaquetteController : MonoBehaviour
 
     public void UpdateChildOnLeave()
     {
-        foreach (Transform child in transform)
+        foreach (Transform child in getChilds())
         {
             child.GetComponent<Renderer>().material.color = Color.green;
         }
     }
 
-    /*
-    public void TouchPipe(Collider collisionCollider)
-    {
-        UpdateChildOnTouch();
-    }
-
-    public void LeavePipe(Collider collisonCollider)
-    {
-        UpdateChildOnLeave();
-    }
-    */
-
-    internal void TouchPipe(Collision collision)
+    public void TouchPipe(Collision collision)
     {
         UpdateChildOnTouch();
         HandleCollision(collision);
@@ -82,11 +66,8 @@ public class RaquetteController : MonoBehaviour
             ContactPoint contactPoint = collision.GetContact(i);
 
             float distanceToHandle = Vector3.Distance(ApplicationForcePoint.position, contactPoint.point);
-            float force = Mathf.Abs(contactPoint.separation) * K; //force = K * penetration distance
-            Vector3 forceVector = force * contactPoint.normal;//vitesse.normalized;//
-
-            //Vector3 torques1 = Vector3.Cross(ApplicationForcePoint.position - contactPoint.point,forceVector);
-            //vectorManager.DrawVector(ApplicationForcePoint.position, torques1, Color.black, "torqueCrossProduct");
+            float force = Mathf.Abs(contactPoint.separation) * K;
+            Vector3 forceVector = force * contactPoint.normal;
 
             float angle = Vector3.Angle(ApplicationForcePoint.position, forceVector);
             Vector3 torques = forceVector * distanceToHandle * Mathf.Sin(angle); // torque = force * distance from axis * sin(angle between axis and force)
@@ -112,7 +93,6 @@ public class RaquetteController : MonoBehaviour
         }
 
         {//update value to output for the virtuose
-            InputController avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
 
             //used for impedance mode
             avatarInputController.Force = forceTotal;
@@ -120,28 +100,25 @@ public class RaquetteController : MonoBehaviour
 
             //used for admitance mode
             avatarInputController.Position = ApplicationForcePoint.position + forceTotal;
-            avatarInputController.Rotation = ApplicationForcePoint.rotation;
+            avatarInputController.Rotation = ApplicationForcePoint.rotation * Quaternion.Euler(torqueTotal);
+
+            /* //physic simulation
+            (Vector3 returnedPosition, Quaternion returnedRotation) = Handle.GetComponent<SimulatePhysic>().simulateCollisonEffect(forceTotal, torqueTotal, 10);
+            
+            Debug.Log($"Computed offset : {returnedPosition}, {returnedRotation}");
+
+            avatarInputController.Position = returnedPosition;
+            avatarInputController.Rotation = returnedRotation;
+            */
         }
-    }
+    } 
 
-    
-    public (Vector3 targetedPosition, Quaternion targetedRotation) GetTargetedVirtuosePosition(Vector3 force, Vector3 torque)
-    {
-
-        throw new NotImplementedException();
-    }
-
-    internal void LeavePipe(Collision collision)
+    public void LeavePipe(Collision collision)
     {
         UpdateChildOnLeave();
         vectorManager.ClearVector();
 
-
-
-
-        InputController avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
         avatarInputController.Force = Vector3.zero;
         avatarInputController.Torque = Vector3.zero;
-
     }
 }

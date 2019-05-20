@@ -12,7 +12,7 @@ public class PipeCollider : MonoBehaviour
 
     void Start()
     {
-        raquette = GameObject.FindGameObjectsWithTag(RaquetteController.tagname)[0].GetComponent<RaquetteController>();
+        raquette = GameObject.Find("Avatar").GetComponent<RaquetteController>();
         CollidingList = new List<GameObject>();
     }
 
@@ -42,26 +42,6 @@ public class PipeCollider : MonoBehaviour
             raquette.HandleCollision(collision);
         }
     }
-    /*
-    public void OnTriggerEnter(Collider other)
-    {
-        CollidingList.Add(other.gameObject);
-
-        if (other.gameObject.CompareTag(RaquetteController.tagname))
-        {
-            raquette.TouchPipe(other);
-        }
-    }
-
-    public void OnTriggerExit(Collider other)
-    {
-        CollidingList.Remove(other.gameObject);
-        if (other.gameObject.CompareTag(RaquetteController.tagname) && !IsColladingWithTag(RaquetteController.tagname))  //check if we are still colliding with the tag
-        {
-            raquette.LeavePipe(other);
-        }
-    }
-    */
 
     private bool IsColladingWithTag(string tag)
     {
