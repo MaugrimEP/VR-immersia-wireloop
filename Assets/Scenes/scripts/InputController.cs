@@ -68,6 +68,7 @@ public class InputController : MonoBehaviour {
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH) 
         {
             (Vector3 position, Quaternion rotation) pose = helper.Pose;
+            helper.Pose = pose;
         }
     }
 
