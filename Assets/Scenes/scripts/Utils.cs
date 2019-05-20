@@ -26,4 +26,15 @@ public class Utils
     {
         return new Vector3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
     }
+
+    public static List<Transform> getAllChilds(Transform me)
+    {
+        List<Transform> childs = new List<Transform>();
+        foreach(Transform child in me)
+        {
+            childs.AddRange(getAllChilds(child));
+        }
+
+        return childs;
+    }
 }

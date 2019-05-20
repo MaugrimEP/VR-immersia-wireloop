@@ -12,7 +12,7 @@ public class PipeCollider : MonoBehaviour
 
     void Start()
     {
-        raquette = GameObject.FindGameObjectsWithTag(RaquetteController.tagname)[0].GetComponent<RaquetteController>();
+        raquette = GameObject.Find("Avatar").GetComponent<RaquetteController>();
         CollidingList = new List<GameObject>();
     }
 
