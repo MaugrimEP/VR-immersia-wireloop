@@ -32,6 +32,36 @@ public class VirtuoseAPIHelper
 
     VirtuoseArm arm;
 
+
+    /// <summary>
+    /// Vector3(x, y, z) + Quaternion(x, y, z, w)
+    /// </summary>
+    public const int POSITIONS_COMPONENTS = 7;
+
+    /// <summary>
+    /// In newton.
+    /// </summary>
+    public const float MAX_FORCE = 5;
+
+    /// <summary>
+    /// In kg.
+    /// </summary>
+    public const float MIN_MASS = 0.001f;
+    public const float MAX_MASS = 1;
+
+    /// <summary>
+    /// In Kg / m
+    /// </summary>
+    public const float MIN_INERTIE = 0;
+    public const float MAX_INERTIE = 1;
+
+    /// <summary>
+    /// In meters.
+    /// </summary>
+    public const float MAX_DISTANCE_PER_FRAME = 0.3f;
+
+    public const float MAX_DOT_DIFFERENCE = 0.05f;
+
     /// <summary>
     /// Y       
     /// |   Z   
@@ -410,6 +440,21 @@ public class VirtuoseAPIHelper
     }
 
     /// <summary>
+    /// Modify the current control speed.
+    /// Function modifies the current value of the control speed. If an object is attached to the VIRTUOSE(virtAttachVO called before),
+    /// then the control point is the center of the object, otherwise it is the center of the virtuose endeffector.
+    /// Parameter corresponds to the speed with respect to the control point expressed in the coordinates of the environment reference frame.
+    /// </summary>
+    public float[] Speed
+    {
+        set
+        {
+            ExecLogOnError(
+                VirtuoseAPI.virtSetSpeed, value);
+        }
+    }
+
+    /// <summary>
     /// Simulation timestep.
     /// Virtuose controller of the simulation timestep. This value is used in order to guarantee the stability of the system.
     /// The function must be called before the selection of the type of control mode.
@@ -598,7 +643,16 @@ public class VirtuoseAPIHelper
         }
         set
         {
-            Assert.AreNotEqual(value.Length, 6);
+            Assert.AreEqual(value.Length, 6);
+
+            for (int f = 0; f < value.Length; f++)
+            {
+                if (Mathf.Abs(value[f]) > MAX_FORCE)
+                    VRTools.LogError("[Error][VirtuoseAPIHelper] Force clamped because outside of limit |" + value[f] + "| > " + MAX_FORCE);
+
+                value[f] = Mathf.Clamp(value[f], -MAX_FORCE, MAX_FORCE);
+            }
+
             ExecLogOnError(
                 VirtuoseAPI.virtSetForce, value);
         }
@@ -610,7 +664,7 @@ public class VirtuoseAPIHelper
     /// then the control point is the center of the object,
     /// otherwise it is the center of the Virtuose end-effector.
     /// </summary>
-    public (Vector3, Quaternion) Pose
+    public (Vector3 position, Quaternion rotation) Pose
     {
         get
         {
@@ -620,7 +674,7 @@ public class VirtuoseAPIHelper
         }
         set
         {
-            pose = ConvertUnityToVirtuose(value.Item1, value.Item2);
+            pose = ConvertUnityToVirtuose(value.position, value.rotation);
             ExecLogOnError(
                 VirtuoseAPI.virtSetPosition, pose);
         }
@@ -629,7 +683,7 @@ public class VirtuoseAPIHelper
     /// <summary>
     /// Indexed position of the end-effector.
     /// </summary>
-    public (Vector3, Quaternion) AvatarPose
+    public (Vector3 position, Quaternion rotation) AvatarPose
     {
         get
         {
@@ -642,7 +696,7 @@ public class VirtuoseAPIHelper
     /// <summary>
     /// Physical position of the Virtuose with respect to its base.
     /// </summary>
-    public (Vector3, Quaternion) PhysicalPose
+    public (Vector3 position, Quaternion rotation) PhysicalPose
     {
         get
         {
@@ -677,7 +731,7 @@ public class VirtuoseAPIHelper
     /// </summary>
     /// <param name="offset">Offset to match absolute tracking position.</param>
     /// <returns></returns>
-    public (Vector3, Quaternion) ComputeBasePose(Vector3 offset = new Vector3())
+    public (Vector3 position, Quaternion rotation) ComputeBasePose(Vector3 offset = new Vector3())
     {
         float[] articulars = Articulars;
         Vector3 position = VirtuoseAPIHelper.VirtuoseToUnityPosition(articulars);
@@ -694,7 +748,7 @@ public class VirtuoseAPIHelper
     /// </summary>
     /// <param name="offset">Offset to match absolute tracking position.</param>
     /// <returns></returns>
-    public (Vector3, Quaternion) ComputePhysicalPose(Vector3 offset = new Vector3())
+    public (Vector3 position, Quaternion rotation) ComputePhysicalPose(Vector3 offset = new Vector3())
     {
         (Vector3 position, Quaternion rotation) = PhysicalPose;
         position.x = -position.x;
@@ -719,7 +773,7 @@ public class VirtuoseAPIHelper
     /// <summary>
     /// Current position and orientation of the base reference frame.
     /// </summary>
-    public (Vector3, Quaternion) BaseFrame
+    public (Vector3 position, Quaternion rotation) BaseFrame
     {
         get
         {
@@ -738,7 +792,7 @@ public class VirtuoseAPIHelper
     /// <summary>
     /// Observation frame with respect to the reference of environment.
     /// </summary>
-    public (Vector3, Quaternion) ObservationFrame
+    public (Vector3 position, Quaternion rotation) ObservationFrame
     {
         get
         {
@@ -758,7 +812,7 @@ public class VirtuoseAPIHelper
     /// Speed of the observation reference frame. 
     /// Speed of motion of the observation reference frame with respect to the environment reference frame. 
     /// </summary>
-    public (Vector3, Quaternion) ObservationFrameSpeed
+    public (Vector3 position, Quaternion rotation) ObservationFrameSpeed
     {
         set
         {
@@ -766,6 +820,41 @@ public class VirtuoseAPIHelper
             ExecLogOnError(
                VirtuoseAPI.virtSetObservationFrameSpeed, pose);
         }
+    }
+
+    public void AttachVO(float mass, float inertie)
+    {
+        Pose = (Vector3.zero, Quaternion.identity);
+
+        Speed = new float[] {0, 0, 0, 0, 0, 0 };
+
+        if (mass > MAX_MASS)
+            VRTools.LogWarning("[Warning][VirtuoseManager] Mass is aboved authorized threshold (" + mass + ">" + MAX_MASS + ")");
+        else if (mass < 0)
+            VRTools.LogWarning("[Warning][VirtuoseManager] Mass must be > 0.");
+
+        mass = Mathf.Clamp(mass, MIN_MASS, MAX_MASS); //Use 1g as minimum, completely arbitrary.
+
+        if (inertie > MAX_INERTIE)
+            VRTools.LogWarning("[Warning][VirtuoseManager] Inertie is above authorized threshold (" + inertie + ">" + MAX_INERTIE + ")");
+        else if (inertie < 0)
+            VRTools.LogWarning("[Warning][VirtuoseManager] Inertie must be >= 0.");
+
+        inertie = Mathf.Clamp(inertie, MIN_INERTIE, MAX_INERTIE);
+
+        float[] inerties = {
+                inertie, 0, 0,
+                0, inertie, 0,
+                0, 0, inertie }; // Haption CObject.SetInertie();
+
+        ExecLogOnError(
+            VirtuoseAPI.virtAttachVO, mass, inerties);
+    }
+
+    public void DetachVO()
+    {
+        ExecLogOnError(
+            VirtuoseAPI.virtDetachVO);
     }
 
     public void UpdateArm()
@@ -814,34 +903,25 @@ public class VirtuoseAPIHelper
         return new Vector2(x, y);
     }
 
+ 
+
+
     /// <summary>
-    /// Reference articulars for Scale1.
+    /// Unity
+    /// Y       
+    /// |   Z   
+    /// | /
+    /// |/___X
+    /// 
+    /// Virtuose
+    /// Z       
+    /// |   Y   
+    /// | /
+    /// |/___X
     /// </summary>
-    public float[] ReferenceArticularsScale1
-    {
-        get
-        {
-            return new float[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, -33 };
-        }
-    }
-
-
-/// <summary>
-/// Unity
-/// Y       
-/// |   Z   
-/// | /
-/// |/___X
-/// 
-/// Virtuose
-/// Z       
-/// |   Y   
-/// | /
-/// |/___X
-/// </summary>
-/// <param name="positions"></param>
-/// <returns></returns>
-public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
+    /// <param name="positions"></param>
+    /// <returns></returns>
+    public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
     {
         //Need to check the size of the array.
         if (positions.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
@@ -852,7 +932,7 @@ public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
                    -positions[axe * POSE_COMPONENTS_NUMBER + 0]
                 );
 
-        VRTools.LogError("[Error][VirtuoseManager] Wrong array length for the pose.");
+        VRTools.LogError("[Error][VirtuoseManager] Wrong array length for the pose: " + positions.Length + ".");
         return Vector3.zero;
     }
 
@@ -865,7 +945,7 @@ public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
                 pose[axe * POSE_COMPONENTS_NUMBER + 5],
                 pose[axe * POSE_COMPONENTS_NUMBER + 6]);
 
-        VRTools.LogError("[Error][VirtuoseManager] Wrong pose length .");
+        VRTools.LogError("[Error][VirtuoseManager] Wrong pose length: " + pose.Length + ".");
         return Quaternion.identity;
     }
 
@@ -927,6 +1007,12 @@ public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
     public void ExecLogOnError(virtDelegate virtMethod, IntPtr context)
     {
         int errorCode = virtMethod(context);
+        LogError(errorCode, virtMethod.Method.Name);
+    }
+
+    public void ExecLogOnError(virtDelegate virtMethod)
+    {
+        int errorCode = virtMethod(arm.Context);
         LogError(errorCode, virtMethod.Method.Name);
     }
 
@@ -1044,5 +1130,17 @@ static class Extension
         if (!component)
             VRTools.LogError("[Error] Couldn't find component " + typeof(T) + " in " + behaviour.name + " parent gameObject.");
         return component;
+    }
+
+    public static void SetPose(this Transform transform, (Vector3 position, Quaternion rotation) pose)
+    {
+        transform.position = pose.position;
+        transform.rotation = pose.rotation;
+    }
+
+    public static void LocalPose(this Transform transform, (Vector3 position, Quaternion rotation) pose)
+    {
+        transform.localPosition = pose.position;
+        transform.localRotation = pose.rotation;
     }
 }

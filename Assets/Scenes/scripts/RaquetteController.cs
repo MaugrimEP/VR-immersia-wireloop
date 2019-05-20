@@ -74,6 +74,7 @@ public class RaquetteController : MonoBehaviour
     {
         Vector3 forceTotal = Vector3.zero;
         Vector3 torqueTotal = Vector3.zero;
+        Vector3 normalTotal = Vector3.zero;
 
         //show the vector for the collision
         for (int i = 0; i < collision.contactCount; ++i)
@@ -83,19 +84,44 @@ public class RaquetteController : MonoBehaviour
             float distanceToHandle = Vector3.Distance(ApplicationForcePoint.position, contactPoint.point);
             float force = Mathf.Abs(contactPoint.separation) * K; //force = K * penetration distance
             Vector3 forceVector = force * contactPoint.normal;//vitesse.normalized;//
+
+            //Vector3 torques1 = Vector3.Cross(ApplicationForcePoint.position - contactPoint.point,forceVector);
+            //vectorManager.DrawVector(ApplicationForcePoint.position, torques1, Color.black, "torqueCrossProduct");
+
             float angle = Vector3.Angle(ApplicationForcePoint.position, forceVector);
             Vector3 torques = forceVector * distanceToHandle * Mathf.Sin(angle); // torque = force * distance from axis * sin(angle between axis and force)
 
             forceVector *= -1;
+            //torques *= -1;
 
-            forceTotal += forceVector;
-            torqueTotal += torques;
+            {//update of the function value 
+                forceTotal += forceVector;
+                torqueTotal += torques;
+                normalTotal += contactPoint.normal;
+            }
         }
-        forceTotal /= collision.contactCount;
-        torqueTotal /= collision.contactCount;
+        {//compute average of the function value
+            forceTotal /= collision.contactCount;
+            torqueTotal /= collision.contactCount;
+            normalTotal /= - collision.contactCount;
+        }
+        {//draw vector
+            vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.magenta, "forceTotal");
+            vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
+            vectorManager.DrawVector(ApplicationForcePoint.position, normalTotal, Color.black, "normalTotal");
+        }
 
-        vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.magenta, "forceTotal");
-        vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
+        {//update value to output for the virtuose
+            InputController avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
+
+            //used for impedance mode
+            avatarInputController.Force = forceTotal;
+            avatarInputController.Torque = torqueTotal;
+
+            //used for admitance mode
+            avatarInputController.Position = ApplicationForcePoint.position + forceTotal;
+            avatarInputController.Rotation = ApplicationForcePoint.rotation;
+        }
     }
 
     
@@ -109,5 +135,13 @@ public class RaquetteController : MonoBehaviour
     {
         UpdateChildOnLeave();
         vectorManager.ClearVector();
+
+
+
+
+        InputController avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
+        avatarInputController.Force = Vector3.zero;
+        avatarInputController.Torque = Vector3.zero;
+
     }
 }

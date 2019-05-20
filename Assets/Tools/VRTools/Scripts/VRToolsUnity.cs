@@ -22,6 +22,17 @@ public class VRToolsUnity : UnitySingleton<VRToolsUnity>, IVRTools
         yield return null;
     }
 
+    /// <summary>
+    /// Returns true, always
+    /// </summary>
+    public bool Ready 
+    { 
+        get 
+        {
+            return true;
+        } 
+    }
+
     #region Button
     /////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////

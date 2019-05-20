@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -62,6 +62,9 @@ public interface IVRTools
     /// <param name="resultCallback"></param>
     /// <returns></returns>
     IEnumerator InitRoutine(Action<IVRTools> resultCallback);
+
+    /// <see cref="VRTools.Ready">
+    bool Ready { get; }
 
     /// <see cref="VRTools.IsClient">
     bool IsClient();

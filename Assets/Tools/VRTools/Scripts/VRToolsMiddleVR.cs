@@ -126,6 +126,17 @@ public class VRToolsMiddleVR : UnitySingleton<VRToolsMiddleVR>, IVRTools
         }
     }
 
+    /// <summary>
+    /// Returns true when the initialization is done
+    /// </summary>
+    public bool Ready 
+    { 
+        get 
+        {
+            return _init;
+        } 
+    }
+
 
     private static void CheckIfUsingOpenVR()
     {
@@ -222,7 +233,7 @@ public class VRToolsMiddleVR : UnitySingleton<VRToolsMiddleVR>, IVRTools
                 controllerDaemonClient = UnityTcpClientManager.Instance.CreateClient(controllerDaemonHostName, controllerDaemonPort, handleIncomingData);
 
             if (initialisationIncomplete)
-                Debug.LogWarning("VRTool initialization incomplete. Maybe you tried to call a method too soon. Change script execution order or use GetInstance(Action callback)");
+                Debug.LogWarning("VRTools initialization incomplete. Maybe you tried to call a method too soon. Change script execution order or use GetInstance(Action callback) or use the Ready property before calling VRTools");
             else
                 _init = true;
         }
@@ -574,9 +585,9 @@ public class VRToolsMiddleVR : UnitySingleton<VRToolsMiddleVR>, IVRTools
             return Quaternion.identity;
         return MVRTools.ToUnity(node.GetOrientationVRSystemWorld());
     }
-    #endregion
+#endregion
 
-    #region
+#region Log
     /// <inheritdoc/>
     public void Log(string textToLog)
     {
@@ -594,7 +605,7 @@ public class VRToolsMiddleVR : UnitySingleton<VRToolsMiddleVR>, IVRTools
     {
         MiddleVR_Unity3D.MVRTools.Log(0, textToLog);
     }
-    #endregion
+#endregion
 
     /// <summary>
     /// Translates Unity key code to the MiddleVR KeyCode with respect to azerty keyboard
