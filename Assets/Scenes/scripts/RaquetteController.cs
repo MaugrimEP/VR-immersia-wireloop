@@ -102,16 +102,16 @@ public class RaquetteController : MonoBehaviour
             avatarInputController.Position = ApplicationForcePoint.position + forceTotal;
             avatarInputController.Rotation = ApplicationForcePoint.rotation * Quaternion.Euler(torqueTotal);
 
-            /*
+            /* //physic simulation
             (Vector3 returnedPosition, Quaternion returnedRotation) = Handle.GetComponent<SimulatePhysic>().simulateCollisonEffect(forceTotal, torqueTotal, 10);
-
+            
             Debug.Log($"Computed offset : {returnedPosition}, {returnedRotation}");
 
             avatarInputController.Position = returnedPosition;
             avatarInputController.Rotation = returnedRotation;
             */
         }
-    }
+    } 
 
     public void LeavePipe(Collision collision)
     {

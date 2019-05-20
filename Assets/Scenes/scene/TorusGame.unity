@@ -1072,6 +1072,8 @@ GameObject:
   - component: {fileID: 532843633}
   - component: {fileID: 532843632}
   - component: {fileID: 532843631}
+  - component: {fileID: 532843634}
+  - component: {fileID: 532843635}
   m_Layer: 0
   m_Name: Manette
   m_TagString: Untagged
@@ -1155,6 +1157,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 532843629}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &532843634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532843629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e2f5d6fe52594e4cbed1bd225669e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &532843635
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532843629}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0.00000011920929}
 --- !u!1 &570681463
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,15 +1381,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d608bf4245001a14daa5a4ff2037d593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  virtuose: 0
+  virtuose: 1
   Camera: {fileID: 282840814}
-  modeVirtuose: 5
+  modeVirtuose: 3
   Force: {x: 0, y: 0, z: 0}
   Torque: {x: 0, y: 0, z: 0}
   Position: {x: 0, y: 0, z: 0}
   Rotation: {x: 0, y: 0, z: 0, w: 0}
   virtuose_Position: {x: 0, y: 0, z: 0}
   virtuose_Rotation: {x: 0, y: 0, z: 0, w: 0}
+  virtuose_Force: {x: 0, y: 0, z: 0}
+  virtuose_Torque: {x: 0, y: 0, z: 0}
 --- !u!114 &917385934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1377,7 +1406,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ApplicationForcePoint: {fileID: 405779734}
   Handle: {fileID: 532843630}
-  K: 1
+  K: 1000
   raquettesChild:
   - {fileID: 2121838674}
   - {fileID: 1126974075}
@@ -1971,7 +2000,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1214667531}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.72}
+  m_LocalPosition: {x: 0, y: -0.24, z: -0.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1162954472}

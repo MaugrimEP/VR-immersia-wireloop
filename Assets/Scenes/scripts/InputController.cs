@@ -33,6 +33,10 @@ public class InputController : MonoBehaviour {
     public Vector3 virtuose_Torque;
 
     void Start () {
+
+        Position = Vector3.zero;
+        Rotation = Quaternion.identity;
+
         if (VRTools.IsClient())
             enabled = false;
 
@@ -63,12 +67,16 @@ public class InputController : MonoBehaviour {
     {
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE)
         {
-            helper.Force = new float[6] { Force.x, Force.y, Force.z, Torque.x, Torque.y, Torque.z };
+            float[] forces = new float[6] { Force.x, Force.y, Force.z, Torque.x, Torque.y, Torque.z };
+            for (int i = 0; i < forces.Length; ++i)
+                forces[i] = Mathf.Clamp(forces[i], -VirtuoseAPIHelper.MAX_FORCE, VirtuoseAPIHelper.MAX_FORCE);
+            helper.Force = forces;
+            Debug.Log($"Forces : {Force}, Torques : {Torque}");
         }
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH) 
         {
-            (Vector3 position, Quaternion rotation) pose = helper.Pose;
-            helper.Pose = pose;
+            Debug.Log($"Offset position : {Position}, offset rotation {Rotation}");
+            helper.Pose = (virtuose_Position + Position, virtuose_Rotation * Rotation);
         }
     }
 
