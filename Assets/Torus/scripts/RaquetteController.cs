@@ -104,7 +104,7 @@ public class RaquetteController : MonoBehaviour
         {//draw vector
             //vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.magenta, "forceTotal");
             //vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
-            vectorManager.DrawVector(ApplicationForcePoint.position, normalTotal, Color.black, "normalTotal");
+            vectorManager.DrawVector(ApplicationForcePoint.position, normalTotal, Color.magenta, "normalTotal");
         }
 
         {//update value to output for the virtuose

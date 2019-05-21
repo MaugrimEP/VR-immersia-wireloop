@@ -11,8 +11,6 @@ public class InputController : MonoBehaviour {
 
     public ArmSelection armSelection;
 
-    public Transform Camera;
-
     public VirtuoseAPI.VirtCommandType modeVirtuose;
     //value (to add if position and rotation or raw for the force and torque) to the virtuose input for update
     [HideInInspector]
