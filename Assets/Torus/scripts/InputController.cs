@@ -7,7 +7,9 @@ public class InputController : MonoBehaviour {
 
     VirtuoseArm arm;
     VirtuoseAPIHelper helper;
-    public bool virtuose;
+    private bool virtuose;
+
+    public ArmSelection armSelection;
 
     public Transform Camera;
 
@@ -32,7 +34,24 @@ public class InputController : MonoBehaviour {
     [HideInInspector]
     public Vector3 virtuose_Torque;
 
+    private string GetIP()
+    {
+        switch (armSelection)
+        {
+            case ArmSelection.Unity:
+                return "";
+            case ArmSelection.Simulator:
+                return "127.0.0.1";
+            case ArmSelection.SingleArm:
+                return "131.254.18.52#5126";
+            default:
+                return "";
+        }
+    }
+
     void Start () {
+
+        virtuose = armSelection != ArmSelection.Unity;
 
         Position = Vector3.zero;
         Rotation = Quaternion.identity;
@@ -45,9 +64,8 @@ public class InputController : MonoBehaviour {
             {
                 arm = new VirtuoseArm();
                 helper = new VirtuoseAPIHelper(arm);
-                helper.Open("127.0.0.1");
+                helper.Open(GetIP());
 
-                //helper.Open("131.254.18.52#5126");
                 helper.InitDefault();
                 helper.CommandType = modeVirtuose;
                 
@@ -153,5 +171,10 @@ public class InputController : MonoBehaviour {
         float[] virtuoseForce = new float[6] {force.x,force.y,force.z,torque.x,torque.y,torque.z};
 
         return virtuoseForce;
+    }
+
+    public enum ArmSelection
+    {
+        Unity, Simulator, SingleArm
     }
 }
