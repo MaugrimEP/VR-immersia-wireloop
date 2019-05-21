@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DelimiterDrawer : MonoBehaviour
+public class MaterialProperty : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

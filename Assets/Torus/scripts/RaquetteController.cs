@@ -16,6 +16,10 @@ public class RaquetteController : MonoBehaviour
 
     public List<Transform> raquettesChild;//child that compose the raquette
 
+
+    private Vector3 velocity;
+    private Vector3 lastPosition;
+
     private List<Transform> getChilds()
     {
         return raquettesChild;
@@ -30,6 +34,14 @@ public class RaquetteController : MonoBehaviour
 
         vectorManager = GameObject.Find("VectorCreator").GetComponent<VectorManager>();
         avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
+        velocity = Vector3.zero;
+        lastPosition = transform.position;
+    }
+
+    private void Update()
+    {
+        velocity = transform.position - lastPosition;
+        lastPosition = transform.position;
     }
 
     public void UpdateChildOnTouch()
