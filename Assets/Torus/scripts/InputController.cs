@@ -67,16 +67,17 @@ public class InputController : MonoBehaviour {
     {
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE)
         {
-            float[] forces = new float[6] { Force.x, Force.y, Force.z, Torque.x, Torque.y, Torque.z };
+            float[] forces = UnityToVirtuoseForce(Force, Torque);
             for (int i = 0; i < forces.Length; ++i)
                 forces[i] = Mathf.Clamp(forces[i], -VirtuoseAPIHelper.MAX_FORCE, VirtuoseAPIHelper.MAX_FORCE);
+               
             helper.Force = forces;
             Debug.Log($"Forces : {Force}, Torques : {Torque}");
         }
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH) 
         {
             Debug.Log($"Offset position : {Position}, offset rotation {Rotation}");
-            helper.Pose = (virtuose_Position + Position, virtuose_Rotation * Rotation);
+            helper.Pose = (UnityToVirtuosePos(virtuose_Position + Position), UnityToVirtuoseRot(virtuose_Rotation * Rotation));
         }
     }
 
@@ -85,8 +86,8 @@ public class InputController : MonoBehaviour {
         if (virtuose)
         {
             (Vector3 position, Quaternion rotation) pose = helper.Pose;
-            virtuose_Position = pose.position;
-            virtuose_Rotation = pose.rotation;
+            virtuose_Position = VirtuoseToUnityPos(pose.position);
+            virtuose_Rotation = VirtuoseToUnityRot(pose.rotation);
 
             if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH)
             {
@@ -101,8 +102,8 @@ public class InputController : MonoBehaviour {
 
     private void HandleVirtuoseInput()
     {
-        Vector3 transformedPosition = VirtuoseToUnityPos(virtuose_Position);
-        Quaternion transformedQuaternion = VirtuoseToUnityRot(virtuose_Rotation);
+        Vector3 transformedPosition = virtuose_Position;
+        Quaternion transformedQuaternion = virtuose_Rotation;
 
         Transform objectToMove = GetTransformToMove();
         objectToMove.transform.position = transformedPosition;
@@ -132,5 +133,25 @@ public class InputController : MonoBehaviour {
     private Quaternion UnityToVirtuoseRot(Quaternion rotUnity)
     {
         return new Quaternion(-rotUnity.y, -rotUnity.z, rotUnity.x, rotUnity.w);
+    }
+
+    private Vector3 UnityToVirtuoseForce(Vector3 vec3)
+    {
+        return new Vector3(-vec3.z, vec3.x, vec3.y);
+    }
+
+    private Vector3 UnityToVirtuoseTorque(Vector3 vec3)
+    {
+        return new Vector3(vec3.z, vec3.x, vec3.y);
+    }
+
+    private float[] UnityToVirtuoseForce(Vector3 force, Vector3 torque)
+    {
+        force = UnityToVirtuoseForce(force);
+        torque = UnityToVirtuoseTorque(torque);
+
+        float[] virtuoseForce = new float[6] {force.x,force.y,force.z,torque.x,torque.y,torque.z};
+
+        return virtuoseForce;
     }
 }
