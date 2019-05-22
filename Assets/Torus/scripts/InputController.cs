@@ -66,6 +66,10 @@ public class InputController : MonoBehaviour {
 
                 helper.InitDefault();
                 helper.CommandType = modeVirtuose;
+                helper.Power = true;
+
+                if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH)
+                    helper.AttachVO(0.2f, 0f);
                 
             }
         }
@@ -83,7 +87,7 @@ public class InputController : MonoBehaviour {
     {
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE)
         {
-            float[] forces = UnityToVirtuoseForce(Force, Torque);
+            float[] forces = U2VForceAndTorque(Force, Torque);
             for (int i = 0; i < forces.Length; ++i)
                 forces[i] = Mathf.Clamp(forces[i], -VirtuoseAPIHelper.MAX_FORCE, VirtuoseAPIHelper.MAX_FORCE);
                
@@ -92,8 +96,8 @@ public class InputController : MonoBehaviour {
         }
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH) 
         {
-            Debug.Log($"Offset position : {Position}, offset rotation {Rotation}");
-            helper.Pose = (UnityToVirtuosePos(virtuose_Position + Position), UnityToVirtuoseRot(virtuose_Rotation * Rotation));
+            Debug.Log($"Offset position : {Position.ToString("F3")}, offset rotation {Rotation}");
+            helper.Pose = (U2VPos(virtuose_Position + Position), U2VRot(virtuose_Rotation * Rotation));
         }
     }
 
@@ -102,8 +106,8 @@ public class InputController : MonoBehaviour {
         if (virtuose)
         {
             (Vector3 position, Quaternion rotation) pose = helper.Pose;
-            virtuose_Position = VirtuoseToUnityPos(pose.position);
-            virtuose_Rotation = VirtuoseToUnityRot(pose.rotation);
+            virtuose_Position = V2UPosB(pose.position);
+            virtuose_Rotation = V2URotB(pose.rotation);
 
             if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH)
             {
@@ -131,40 +135,40 @@ public class InputController : MonoBehaviour {
         return transform;
     }
 
-    private Vector3 VirtuoseToUnityPos(Vector3 posVirtu)
+    private Vector3 V2UPosB(Vector3 posVirtu)
     {
-        return new Vector3(posVirtu.x, posVirtu.y, posVirtu.z);
+        return new Vector3(posVirtu.x, posVirtu.y, - posVirtu.z);
     }
 
-    private Quaternion VirtuoseToUnityRot(Quaternion rotVirtu)
+    private Quaternion V2URotB(Quaternion rotVirtu)
     {
-        return new Quaternion(-rotVirtu.y, -rotVirtu.z, rotVirtu.x, rotVirtu.w);
+        return new Quaternion(rotVirtu.y, - rotVirtu.z, - rotVirtu.x, rotVirtu.w);
     }
 
-    private Vector3 UnityToVirtuosePos(Vector3 posUnity)
+    private Vector3 U2VPos(Vector3 posUnity)
     {
         return posUnity;
     }
 
-    private Quaternion UnityToVirtuoseRot(Quaternion rotUnity)
+    private Quaternion U2VRot(Quaternion rotUnity)
     {
         return new Quaternion(-rotUnity.y, -rotUnity.z, rotUnity.x, rotUnity.w);
     }
 
-    private Vector3 UnityToVirtuoseForce(Vector3 vec3)
+    private Vector3 U2VForce(Vector3 vec3)
     {
         return new Vector3(-vec3.z, vec3.x, vec3.y);
     }
 
-    private Vector3 UnityToVirtuoseTorque(Vector3 vec3)
+    private Vector3 U2VTorque(Vector3 vec3)
     {
         return new Vector3(vec3.z, vec3.x, vec3.y);
     }
 
-    private float[] UnityToVirtuoseForce(Vector3 force, Vector3 torque)
+    private float[] U2VForceAndTorque(Vector3 force, Vector3 torque)
     {
-        force = UnityToVirtuoseForce(force);
-        torque = UnityToVirtuoseTorque(torque);
+        force = U2VForce(force);
+        torque = U2VTorque(torque);
 
         float[] virtuoseForce = new float[6] {force.x,force.y,force.z,torque.x,torque.y,torque.z};
 

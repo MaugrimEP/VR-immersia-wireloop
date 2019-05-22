@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PipeCollider : MonoBehaviour
+public class PipeColliderTest : MonoBehaviour
 {
 
-    RaquetteController raquette;
+    TestController raquette;
 
     private List<GameObject> CollidingList;
 
     void Start()
     {
-        raquette = GameObject.Find("Avatar").GetComponent<RaquetteController>();
+        raquette = GameObject.Find("Avatar").GetComponent<TestController>();
         CollidingList = new List<GameObject>();
     }
 
@@ -40,6 +40,7 @@ public class PipeCollider : MonoBehaviour
         if (collision.collider.gameObject.CompareTag(RaquetteController.tagname))
         {
             raquette.StayPipe(collision);
+            raquette.HandleCollision(collision);
         }
     }
 

@@ -5,21 +5,21 @@ using UnityEngine;
 
 public class RaquetteController : MonoBehaviour
 {
+    public static int ShowMode = 0;
     public static string tagname = "Raquette";
-    public Transform ApplicationForcePoint; // where we will apply the force with the virtuose
+
     public Transform Handle;
-    private VectorManager vectorManager;
-
-    public float K;//stiffness coeff
-
-    private InputController avatarInputController;
-
+    public float stiffness;
     public List<Transform> raquettesChild;//child that compose the raquette
 
-    public static int ShowMode = 0;
+    private VectorManager vectorManager;
+    private InputController avatarInputController;
 
     private Vector3 velocity;
     private Vector3 lastPosition;
+
+    private float interpenetrationDelta;
+    private float lastInterpenetration;
 
     private List<Transform> getChilds()
     {
@@ -45,6 +45,16 @@ public class RaquetteController : MonoBehaviour
         lastPosition = transform.position;
     }
 
+    public void StayPipe(Collision collision)
+    {
+        {
+            float interpenetration = Utils.MeanCollisonSeparation(collision);
+            interpenetrationDelta = interpenetration - lastInterpenetration;
+            lastInterpenetration = interpenetration;
+        }
+        HandleCollision(collision);
+    }
+
     public void UpdateChildOnTouch()
     {
         foreach (Transform child in getChilds())
@@ -63,6 +73,7 @@ public class RaquetteController : MonoBehaviour
 
     public void TouchPipe(Collision collision)
     {
+        lastInterpenetration = Utils.MeanCollisonSeparation(collision);
         UpdateChildOnTouch();
         HandleCollision(collision);
     }
@@ -79,11 +90,11 @@ public class RaquetteController : MonoBehaviour
         {
             ContactPoint contactPoint = collision.GetContact(i);
 
-            float distanceToHandle = Vector3.Distance(ApplicationForcePoint.position, contactPoint.point);
-            float force = Mathf.Abs(contactPoint.separation) * K;
+            float distanceToHandle = Vector3.Distance(Handle.position, contactPoint.point);
+            float force = Mathf.Abs(contactPoint.separation) * stiffness;
             Vector3 forceVector = force * contactPoint.normal;
 
-            float angle = Vector3.Angle(ApplicationForcePoint.position, forceVector);
+            float angle = Vector3.Angle(Handle.position, forceVector);
             Vector3 torques = forceVector * distanceToHandle * Mathf.Sin(angle); // torque = force * distance from axis * sin(angle between axis and force)
 
             forceVector *= -1;
@@ -103,24 +114,24 @@ public class RaquetteController : MonoBehaviour
             intersectionDistance /= collision.contactCount;
         }
         {//draw vector
-            if (ShowMode == 0) vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.green, "forceTotal");
-            if (ShowMode == 1) vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
-            if (ShowMode == 2) vectorManager.DrawVector(ApplicationForcePoint.position, normalTotal, Color.magenta, "normalTotal");
+            if (ShowMode == 0) vectorManager.DrawVector(Handle.position, forceTotal, Color.green, "forceTotal");
+            if (ShowMode == 1) vectorManager.DrawVector(Handle.position, torqueTotal, Color.cyan, "torqueTotal");
+            if (ShowMode == 2) vectorManager.DrawVector(Handle.position, normalTotal, Color.magenta, "normalTotal");
         }
 
         {//update value to output for the virtuose
 
             //used for impedance mode
             avatarInputController.Force = forceTotal;
-            avatarInputController.Torque = torqueTotal;
+            //avatarInputController.Torque = torqueTotal;
 
             if(false){//used for admitance mode, using the force to compute the next position
-                avatarInputController.Position = ApplicationForcePoint.position + forceTotal;
-                avatarInputController.Rotation = ApplicationForcePoint.rotation * Quaternion.Euler(torqueTotal);
+                avatarInputController.Position = Handle.position + forceTotal;
+                avatarInputController.Rotation = Handle.rotation * Quaternion.Euler(torqueTotal);
             }
             {//using the normal to compute the next position
-                avatarInputController.Position += normalTotal * K * intersectionDistance;
-                avatarInputController.Rotation *= Quaternion.Euler(torqueTotal);
+                avatarInputController.Position = normalTotal * stiffness * intersectionDistance;
+                //avatarInputController.Rotation = Quaternion.Euler(torqueTotal);
             }
 
             /* //physic simulation

@@ -37,4 +37,15 @@ public class Utils
 
         return childs;
     }
+
+    public static float MeanCollisonSeparation(Collision collision)
+    {
+        float separation = 0;
+        for (int i = 0; i < collision.contactCount; ++i)
+        {
+            separation += collision.GetContact(i).separation;
+        }
+        separation /= collision.contactCount;
+        return Mathf.Abs(separation);
+    }
 }
