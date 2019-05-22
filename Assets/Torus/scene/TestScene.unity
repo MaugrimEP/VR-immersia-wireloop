@@ -909,6 +909,11 @@ PrefabInstance:
       propertyPath: modeVirtuose
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2444826590754793784, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: objectToMove
+      value: 
+      objectReference: {fileID: 1965095074}
     - target: {fileID: 2444826590754793787, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: stiffness
@@ -946,6 +951,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1965095074 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2444826590754793785, guid: ccd034fa89df2724ea8188f7520ac1e4,
+    type: 3}
+  m_PrefabInstance: {fileID: 1719307038}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2012563693
 GameObject:
   m_ObjectHideFlags: 0

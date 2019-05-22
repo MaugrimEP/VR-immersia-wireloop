@@ -122,15 +122,15 @@ public class RaquetteController : MonoBehaviour
         {//update value to output for the virtuose
 
             //used for impedance mode
-            avatarInputController.Force = forceTotal;
+            avatarInputController.ForceOffset = forceTotal;
             //avatarInputController.Torque = torqueTotal;
 
             if(false){//used for admitance mode, using the force to compute the next position
-                avatarInputController.Position = Handle.position + forceTotal;
-                avatarInputController.Rotation = Handle.rotation * Quaternion.Euler(torqueTotal);
+                avatarInputController.PositionOffset = Handle.position + forceTotal;
+                avatarInputController.RotationOffset = Handle.rotation * Quaternion.Euler(torqueTotal);
             }
             {//using the normal to compute the next position
-                avatarInputController.Position = normalTotal * stiffness * intersectionDistance;
+                avatarInputController.PositionOffset = normalTotal * stiffness * intersectionDistance;
                 //avatarInputController.Rotation = Quaternion.Euler(torqueTotal);
             }
 
@@ -150,7 +150,7 @@ public class RaquetteController : MonoBehaviour
         UpdateChildOnLeave();
         vectorManager.ClearVector();
 
-        avatarInputController.Force = Vector3.zero;
-        avatarInputController.Torque = Vector3.zero;
+        avatarInputController.ForceOffset = Vector3.zero;
+        avatarInputController.TorqueOffset = Vector3.zero;
     }
 }

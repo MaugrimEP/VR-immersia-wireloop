@@ -229,6 +229,7 @@ GameObject:
   - component: {fileID: 2444826590754793785}
   - component: {fileID: 2444826590754793784}
   - component: {fileID: 2444826590754793787}
+  - component: {fileID: 2480179543131733526}
   m_Layer: 0
   m_Name: Avatar
   m_TagString: Untagged
@@ -265,14 +266,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armSelection: 0
   modeVirtuose: 3
-  Force: {x: 0, y: 0, z: 0}
-  Torque: {x: 0, y: 0, z: 0}
-  Position: {x: 0, y: 0, z: 0}
-  Rotation: {x: 0, y: 0, z: 0, w: 0}
+  ForceOffset: {x: 0, y: 0, z: 0}
+  TorqueOffset: {x: 0, y: 0, z: 0}
+  PositionOffset: {x: 0, y: 0, z: 0}
+  RotationOffset: {x: 0, y: 0, z: 0, w: 0}
   virtuose_Position: {x: 0, y: 0, z: 0}
   virtuose_Rotation: {x: 0, y: 0, z: 0, w: 0}
   virtuose_Force: {x: 0, y: 0, z: 0}
   virtuose_Torque: {x: 0, y: 0, z: 0}
+  mass: 0.2
+  inertie: 0
 --- !u!114 &2444826590754793787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,6 +295,25 @@ MonoBehaviour:
   - {fileID: 2444826590947580302}
   - {fileID: 2444826590997026947}
   - {fileID: 2444826591375240109}
+--- !u!114 &2480179543131733526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444826590754793790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c643729223d0902418b588fb66bada49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Arm:
+    Ip: 127.0.0.1
+  BaseFramePosition: {x: 0, y: 0, z: 0}
+  CommandType: 3
+  mass: 0.2
+  inertie: 0.1
+  powerOnKey: 112
 --- !u!1 &2444826590947580303
 GameObject:
   m_ObjectHideFlags: 0
