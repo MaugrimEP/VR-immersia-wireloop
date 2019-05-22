@@ -16,6 +16,7 @@ public class RaquetteController : MonoBehaviour
 
     public List<Transform> raquettesChild;//child that compose the raquette
 
+    public static int ShowMode = 0;
 
     private Vector3 velocity;
     private Vector3 lastPosition;
@@ -102,9 +103,9 @@ public class RaquetteController : MonoBehaviour
             intersectionDistance /= collision.contactCount;
         }
         {//draw vector
-            //vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.magenta, "forceTotal");
-            //vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
-            vectorManager.DrawVector(ApplicationForcePoint.position, normalTotal, Color.magenta, "normalTotal");
+            if (ShowMode == 0) vectorManager.DrawVector(ApplicationForcePoint.position, forceTotal, Color.green, "forceTotal");
+            if (ShowMode == 1) vectorManager.DrawVector(ApplicationForcePoint.position, torqueTotal, Color.cyan, "torqueTotal");
+            if (ShowMode == 2) vectorManager.DrawVector(ApplicationForcePoint.position, normalTotal, Color.magenta, "normalTotal");
         }
 
         {//update value to output for the virtuose
@@ -118,8 +119,8 @@ public class RaquetteController : MonoBehaviour
                 avatarInputController.Rotation = ApplicationForcePoint.rotation * Quaternion.Euler(torqueTotal);
             }
             {//using the normal to compute the next position
-                avatarInputController.Position = ApplicationForcePoint.position + normalTotal * K * intersectionDistance;
-                avatarInputController.Rotation = ApplicationForcePoint.rotation * Quaternion.Euler(torqueTotal);
+                avatarInputController.Position += normalTotal * K * intersectionDistance;
+                avatarInputController.Rotation *= Quaternion.Euler(torqueTotal);
             }
 
             /* //physic simulation
