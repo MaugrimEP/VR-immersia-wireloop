@@ -1,5 +1,49 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &683057480
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 683057482}
+  - component: {fileID: 683057481}
+  m_Layer: 0
+  m_Name: DynSystemCollision
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &683057482
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683057480}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.41300166, y: 0.112, z: 0.30499822}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2444826590242730691}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &683057481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683057480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90b7678d9e6213b469a598b858da94a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ElementsWrappers: []
 --- !u!1 &2444826590064072600
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +56,6 @@ GameObject:
   - component: {fileID: 2444826590064072580}
   - component: {fileID: 2444826590064072581}
   - component: {fileID: 2444826590064072602}
-  - component: {fileID: 2444826590064072583}
   - component: {fileID: 2444826590064072582}
   m_Layer: 0
   m_Name: Manette
@@ -96,18 +139,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2444826590064072583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2444826590064072600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e2f5d6fe52594e4cbed1bd225669e3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &2444826590064072582
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -178,11 +209,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2444826590242730688}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2444826590754793785}
+  - {fileID: 683057482}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -230,6 +262,8 @@ GameObject:
   - component: {fileID: 2444826590754793784}
   - component: {fileID: 2444826590754793787}
   - component: {fileID: 2480179543131733526}
+  - component: {fileID: 7794131833512707451}
+  - component: {fileID: 1719307040}
   m_Layer: 0
   m_Name: Avatar
   m_TagString: Untagged
@@ -264,8 +298,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d608bf4245001a14daa5a4ff2037d593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  armSelection: 0
-  modeVirtuose: 3
+  armSelection: 1
+  objectToMove: {fileID: 2444826590754793785}
+  modeVirtuose: 5
   ForceOffset: {x: 0, y: 0, z: 0}
   TorqueOffset: {x: 0, y: 0, z: 0}
   PositionOffset: {x: 0, y: 0, z: 0}
@@ -288,13 +323,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdc06856fbb776f4595ad1b727f0f634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Handle: {fileID: 2444826590064072603}
-  stiffness: 0
   raquettesChild:
   - {fileID: 2444826591697103783}
   - {fileID: 2444826590947580302}
   - {fileID: 2444826590997026947}
   - {fileID: 2444826591375240109}
+  avatarInputController: {fileID: 0}
+  dynRaquette: {fileID: 0}
+  system: {fileID: 0}
 --- !u!114 &2480179543131733526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +350,37 @@ MonoBehaviour:
   mass: 0.2
   inertie: 0.1
   powerOnKey: 112
+--- !u!114 &7794131833512707451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444826590754793790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ca11bbaacb353f4990b86ec89073013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1719307040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2444826590754793790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96225e96781e7d4197cd9d26b7ee470, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Element:
+    Position: {x: 0, y: 0, z: 0}
+    Velocity: {x: 0, y: 0, z: 0}
+    Mass: 2
+    IsFixed: 0
+    Force: {x: 0, y: 0, z: 0}
+  RaquetteController: {fileID: 0}
 --- !u!1 &2444826590947580303
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,7 +488,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &2444826590997026944
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,7 +596,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &2444826591375240098
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,7 +704,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &2444826591697103780
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,4 +812,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1

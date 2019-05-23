@@ -5,21 +5,21 @@ using UnityEngine;
 
 public class RaquetteController : MonoBehaviour
 {
-    public static int ShowMode = 0;
+    public static int ShowMode = 4;
     public static string tagname = "Raquette";
 
-    public Transform Handle;
-    public float stiffness;
-    public List<Transform> raquettesChild;//child that compose the raquette
+    /// <summary>
+    /// Childs that compose the raquette
+    /// </summary>
+    public List<Transform> raquettesChild;
 
     private VectorManager vectorManager;
-    private InputController avatarInputController;
-
-    private Vector3 velocity;
-    private Vector3 lastPosition;
-
-    private float interpenetrationDelta;
-    private float lastInterpenetration;
+    [HideInInspector]
+    public InputController avatarInputController;
+    [HideInInspector]
+    public DynElementWrapper dynRaquette;
+    [HideInInspector]
+    public DynSystemWrapper system;
 
     private List<Transform> getChilds()
     {
@@ -35,27 +35,49 @@ public class RaquetteController : MonoBehaviour
 
         vectorManager = GameObject.Find("VectorCreator").GetComponent<VectorManager>();
         avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
-        velocity = Vector3.zero;
-        lastPosition = transform.position;
+        system = GameObject.Find("DynSystemCollision").GetComponent<DynSystemWrapper>();
+        dynRaquette = GetComponent<DynElementWrapper>();
     }
 
-    private void Update()
+    public void AfterCollision()
     {
-        velocity = transform.position - lastPosition;
-        lastPosition = transform.position;
+        VectorManager.VECTOR_MANAGER.DrawVector(transform.position, dynRaquette.Element.Position - transform.position, Color.gray);
+        avatarInputController.PositionOffset = dynRaquette.Element.Position - transform.position;
+        avatarInputController.ForceOutput = dynRaquette.Element.Force;
+        //transform.position = dynRaquette.Element.Position;
+    }
+
+    public void NoCollision()
+    {
+        //avatarInputController.ResetOffsetToVirtuose();
+    }
+
+    private void addCollision(Collision collision)
+    {
+        system.DynSystem.Collisions.Add(new DynElementPipeCollision(1.0f, collision, dynRaquette.Element));
+        system.ElementsWrappers.Add(dynRaquette);
+    }
+
+    #region Handle pipe collision interaction
+    public void TouchPipe(Collision collision)
+    {
+        UpdateChildOnTouch();
+        addCollision(collision);
     }
 
     public void StayPipe(Collision collision)
     {
-        {
-            float interpenetration = Utils.MeanCollisonSeparation(collision);
-            interpenetrationDelta = interpenetration - lastInterpenetration;
-            lastInterpenetration = interpenetration;
-        }
-        HandleCollision(collision);
+        addCollision(collision);
+
     }
 
-    public void UpdateChildOnTouch()
+    public void LeavePipe(Collision collision)
+    {
+        UpdateChildOnLeave();
+    }
+
+    #region change the apparence of the raquette when interacting with the pipe
+    private void UpdateChildOnTouch()
     {
         foreach (Transform child in getChilds())
         {
@@ -63,94 +85,14 @@ public class RaquetteController : MonoBehaviour
         }
     }
 
-    public void UpdateChildOnLeave()
+    private void UpdateChildOnLeave()
     {
         foreach (Transform child in getChilds())
         {
             child.GetComponent<Renderer>().material.color = Color.green;
         }
     }
+    #endregion
 
-    public void TouchPipe(Collision collision)
-    {
-        lastInterpenetration = Utils.MeanCollisonSeparation(collision);
-        UpdateChildOnTouch();
-        HandleCollision(collision);
-    }
-
-    public void HandleCollision(Collision collision)
-    {
-        Vector3 forceTotal   = Vector3.zero;
-        Vector3 torqueTotal  = Vector3.zero;
-        Vector3 normalTotal  = Vector3.zero;
-        float intersectionDistance   = 0;
-
-        //show the vector for the collision
-        for (int i = 0; i < collision.contactCount; ++i)
-        {
-            ContactPoint contactPoint = collision.GetContact(i);
-
-            float distanceToHandle = Vector3.Distance(Handle.position, contactPoint.point);
-            float force = Mathf.Abs(contactPoint.separation) * stiffness;
-            Vector3 forceVector = force * contactPoint.normal;
-
-            float angle = Vector3.Angle(Handle.position, forceVector);
-            Vector3 torques = forceVector * distanceToHandle * Mathf.Sin(angle); // torque = force * distance from axis * sin(angle between axis and force)
-
-            forceVector *= -1;
-            //torques *= -1;
-
-            {//update of the function value 
-                forceTotal   += forceVector;
-                torqueTotal  += torques;
-                normalTotal  += contactPoint.normal;
-                intersectionDistance += contactPoint.separation;
-            }
-        }
-        {//compute average of the function value
-            forceTotal   /= collision.contactCount;
-            torqueTotal  /= collision.contactCount;
-            normalTotal  /= - collision.contactCount;
-            intersectionDistance /= collision.contactCount;
-        }
-        {//draw vector
-            if (ShowMode == 0) vectorManager.DrawVector(Handle.position, forceTotal, Color.green, "forceTotal");
-            if (ShowMode == 1) vectorManager.DrawVector(Handle.position, torqueTotal, Color.cyan, "torqueTotal");
-            if (ShowMode == 2) vectorManager.DrawVector(Handle.position, normalTotal, Color.magenta, "normalTotal");
-        }
-
-        {//update value to output for the virtuose
-
-            //used for impedance mode
-            avatarInputController.ForceOffset = forceTotal;
-            //avatarInputController.Torque = torqueTotal;
-
-            if(false){//used for admitance mode, using the force to compute the next position
-                avatarInputController.PositionOffset = Handle.position + forceTotal;
-                avatarInputController.RotationOffset = Handle.rotation * Quaternion.Euler(torqueTotal);
-            }
-            {//using the normal to compute the next position
-                avatarInputController.PositionOffset = normalTotal * stiffness * intersectionDistance;
-                //avatarInputController.Rotation = Quaternion.Euler(torqueTotal);
-            }
-
-            /* //physic simulation
-            (Vector3 returnedPosition, Quaternion returnedRotation) = Handle.GetComponent<SimulatePhysic>().simulateCollisonEffect(forceTotal, torqueTotal, 10);
-            
-            Debug.Log($"Computed offset : {returnedPosition}, {returnedRotation}");
-
-            avatarInputController.Position = returnedPosition;
-            avatarInputController.Rotation = returnedRotation;
-            */
-        }
-    } 
-
-    public void LeavePipe(Collision collision)
-    {
-        UpdateChildOnLeave();
-        vectorManager.ClearVector();
-
-        avatarInputController.ForceOffset = Vector3.zero;
-        avatarInputController.TorqueOffset = Vector3.zero;
-    }
+    #endregion
 }

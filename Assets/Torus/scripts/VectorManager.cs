@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class VectorManager : MonoBehaviour
 {
+    public static VectorManager VECTOR_MANAGER;
+
     public float vectorRadius;
     public float lifeTime;
+
+    private void Awake()
+    {
+        VECTOR_MANAGER = this;
+    }
 
     public void DrawVector(Vector3 position, Vector3 val, Color color, string name="not assigned")
     {

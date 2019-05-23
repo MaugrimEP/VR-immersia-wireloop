@@ -17,9 +17,9 @@ public class InputController : MonoBehaviour {
 
     #region value (to add if position and rotation or raw for the force and torque) to the virtuose input for update, they should be in unity coordinate system
     [HideInInspector]
-    public Vector3 ForceOffset;
+    public Vector3 ForceOutput;
     [HideInInspector]
-    public Vector3 TorqueOffset;
+    public Vector3 TorqueOutput;
     [HideInInspector]
     public Vector3 PositionOffset;
     [HideInInspector]
@@ -50,7 +50,9 @@ public class InputController : MonoBehaviour {
                 return "";
             case ArmSelection.Simulator:
                 return "127.0.0.1";
-            case ArmSelection.SingleArm:
+            case ArmSelection.SingleArm125:
+                return "131.254.18.52#5125";
+            case ArmSelection.SingleArm126:
                 return "131.254.18.52#5126";
             default:
                 return "";
@@ -87,7 +89,7 @@ public class InputController : MonoBehaviour {
     private (Vector3 force, Vector3 torque) GetForceAndTorque()
     {
         float[] forcesAndTorque = virtuoseManager.Virtuose.Force;
-        return (new Vector3(forcesAndTorque[0], forcesAndTorque[1], forcesAndTorque[2]), new Vector3(forcesAndTorque[3], forcesAndTorque[4], forcesAndTorque[5]));
+        return V2UForceTorque(new Vector3(forcesAndTorque[0], forcesAndTorque[1], forcesAndTorque[2]), new Vector3(forcesAndTorque[3], forcesAndTorque[4], forcesAndTorque[5]));
     }
 
     /// <summary>
@@ -96,7 +98,7 @@ public class InputController : MonoBehaviour {
     /// <returns></returns>
     private (Vector3 position, Quaternion rotation) GetPositionAndRotation()
     {
-        return virtuoseManager.Virtuose.Pose;
+        return V2UPosRot(virtuoseManager.Virtuose.Pose.position, virtuoseManager.Virtuose.Pose.rotation);
     }
 
     /// <summary>
@@ -106,6 +108,7 @@ public class InputController : MonoBehaviour {
     /// <param name="torque"></param>
     private void SetForceAndTorque(Vector3 force, Vector3 torque)
     {
+        (force, torque) = U2VForceTorque(force, torque);
         float[] forces = { force.x, force.y, force.z, torque.x, torque.y, torque.z };
         virtuoseManager.Virtuose.Force = forces;
     }
@@ -117,6 +120,7 @@ public class InputController : MonoBehaviour {
     /// <param name="rotation"></param>
     private void SetPositionAndRotation(Vector3 position, Quaternion rotation)
     {
+        (position, rotation) = U2VPosRot(position, rotation);
         virtuoseManager.Virtuose.Pose = (position, rotation);
     }
     #endregion
@@ -128,7 +132,19 @@ public class InputController : MonoBehaviour {
             FetchVirtuoseValue();
             HandleVirtuoseInput();
             OutputToVirtuose();
+            //ResetOffsetToVirtuose();
         }
+    }
+
+    /// <summary>
+    /// Reset manually the offset to add to the virtuose datas
+    /// </summary>
+    public void ResetOffsetToVirtuose()
+    {
+        ForceOutput    = Vector3.zero;
+        TorqueOutput   = Vector3.zero;
+        PositionOffset = Vector3.zero;
+        RotationOffset = Quaternion.identity;
     }
 
     /// <summary>
@@ -158,14 +174,15 @@ public class InputController : MonoBehaviour {
     {
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE)
         {
-            SetForceAndTorque(ForceOffset, TorqueOffset);
-            Debug.Log($"Forces : {ForceOffset}, Torques : {TorqueOffset}");
+            SetForceAndTorque(ForceOutput, TorqueOutput);
+            Debug.Log($"ForceOutput : {ForceOutput}, TorqueOutput : {TorqueOutput}");
         }
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH)
         {
             Debug.Log($"Offset position : {PositionOffset.ToString("F3")}, offset rotation {RotationOffset}");
             SetPositionAndRotation(virtuose_Position + PositionOffset, virtuose_Rotation * RotationOffset);
         }
+        ResetOffsetToVirtuose();
     }
 
     private Transform GetTransformToMove()
@@ -178,6 +195,28 @@ public class InputController : MonoBehaviour {
     /// </summary>
     public enum ArmSelection
     {
-        Unity, Simulator, SingleArm
+        Unity, Simulator, SingleArm125, SingleArm126
     }
+
+    #region Wrapper on virtuose input/output
+    private (Vector3 Position, Quaternion Rotation) V2UPosRot(Vector3 Position, Quaternion Rotation)
+    {
+        return (new Vector3(Position.x, Position.y, Position.z), new Quaternion(Rotation.x, Rotation.y, Rotation.z, Rotation.w));
+    }
+
+    private (Vector3 Force, Vector3 Torque) V2UForceTorque(Vector3 Force, Vector3 Torque)
+    {
+        return (Force, Torque);
+    }
+
+    private (Vector3 Position, Quaternion Rotation) U2VPosRot(Vector3 Position, Quaternion Rotation)
+    {
+        return (new Vector3(Position.x, Position.y, Position.z), new Quaternion(Rotation.x, Rotation.y, Rotation.z, Rotation.w));
+    }
+
+    private (Vector3 Force, Vector3 Torque) U2VForceTorque(Vector3 Force, Vector3 Torque)
+    {
+        return (Force, Torque);
+    }
+    #endregion
 }
