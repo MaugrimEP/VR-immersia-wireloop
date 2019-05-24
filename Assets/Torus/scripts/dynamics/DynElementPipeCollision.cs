@@ -49,7 +49,9 @@ public class DynElementPipeCollision : DynCollision
         if (element.IsFixed) return;
 
         // Project element along the normal vector
-        element.Position += interpenetrationDist * collisionNormal;
+        Vector3 previousPosition = element.Position;
+        Vector3 nextPosition = previousPosition + interpenetrationDist * collisionNormal;
+        element.Position = nextPosition;
 
         // Compute post-collision velocity
         element.Velocity -= (1 + restitution) * Vector3.Dot(element.Velocity, collisionNormal) * collisionNormal;

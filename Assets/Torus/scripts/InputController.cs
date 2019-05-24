@@ -7,6 +7,10 @@ public class InputController : MonoBehaviour {
 
     private VirtuoseManager virtuoseManager;
     public ArmSelection armSelection;
+    /// <summary>
+    /// If HapticEnable is True, then the output to the virtuose will use the class value, if it's False, the input will be the output
+    /// </summary>
+    public bool HapticEnable;
 
     /// <summary>
     /// Object that will be controlled by the virtuose
@@ -65,8 +69,9 @@ public class InputController : MonoBehaviour {
     }
 
     void Start () {
+       virtuoseManager = gameObject.GetComponent<VirtuoseManager>();
+        if(UseVirtuose())
         {//init the virtuoseManager component
-            virtuoseManager = gameObject.GetComponent<VirtuoseManager>();
             virtuoseManager.mass = mass;
             virtuoseManager.inertie = inertie;
             virtuoseManager.BaseFramePosition = Vector3.zero;
@@ -75,6 +80,7 @@ public class InputController : MonoBehaviour {
             virtuoseManager.Arm.Ip = GetIP();
 
         }
+
         {//init the offset
             PositionOffset = Vector3.zero;
             RotationOffset = Quaternion.identity;
@@ -132,7 +138,7 @@ public class InputController : MonoBehaviour {
             FetchVirtuoseValue();
             HandleVirtuoseInput();
             OutputToVirtuose();
-            //ResetOffsetToVirtuose();
+            ResetOffsetToVirtuose();
         }
     }
 
@@ -162,27 +168,42 @@ public class InputController : MonoBehaviour {
 
     private void HandleVirtuoseInput()
     {
-        Vector3 transformedPosition = virtuose_Position;
-        Quaternion transformedQuaternion = virtuose_Rotation;
-
         Transform objectMoved = GetTransformToMove();
-        objectMoved.transform.position = transformedPosition;
-        objectMoved.rotation = transformedQuaternion;
+        objectMoved.transform.position = virtuose_Position;
+        objectMoved.rotation = virtuose_Rotation;
     }
 
     private void OutputToVirtuose()
     {
+        Vector3 forceApplied  = Vector3.zero;
+        Vector3 torqueApplied = Vector3.zero;
+        Vector3 positionApplied = virtuose_Position;
+        Quaternion rotationApplied = virtuose_Rotation;
+
+        if (HapticEnable)
+        {
+            forceApplied = ForceOutput;
+            torqueApplied = TorqueOutput;
+            positionApplied += PositionOffset;
+
+            rotationApplied = virtuoseManager.Virtuose.Pose.rotation;//rotationApplied *= RotationOffset; //TODO : change the rotation
+        }
+        else
+        {//we set the output as the input
+            (positionApplied , rotationApplied) = virtuoseManager.Virtuose.Pose;
+            float [] forces = virtuoseManager.Virtuose.Force;
+            (forceApplied, torqueApplied) = (new Vector3(forces[0], forces[1], forces[2]), new Vector3(forces[3], forces[4], forces[5]) );
+        }
+
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE)
         {
-            SetForceAndTorque(ForceOutput, TorqueOutput);
-            Debug.Log($"ForceOutput : {ForceOutput}, TorqueOutput : {TorqueOutput}");
+            SetForceAndTorque(forceApplied, torqueApplied);
         }
         if (modeVirtuose == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH)
         {
-            Debug.Log($"Offset position : {PositionOffset.ToString("F3")}, offset rotation {RotationOffset}");
-            SetPositionAndRotation(virtuose_Position + PositionOffset, virtuose_Rotation * RotationOffset);
+            SetPositionAndRotation(positionApplied, rotationApplied);
         }
-        ResetOffsetToVirtuose();
+
     }
 
     private Transform GetTransformToMove()
@@ -201,7 +222,10 @@ public class InputController : MonoBehaviour {
     #region Wrapper on virtuose input/output
     private (Vector3 Position, Quaternion Rotation) V2UPosRot(Vector3 Position, Quaternion Rotation)
     {
-        return (new Vector3(Position.x, Position.y, Position.z), new Quaternion(Rotation.x, Rotation.y, Rotation.z, Rotation.w));
+        Vector3 newPosition = new Vector3(Position.x, Position.y, Position.z);
+        Quaternion newRotation = new Quaternion( - Rotation.y, - Rotation.z, Rotation.x, Rotation.w);
+
+        return (newPosition, newRotation);
     }
 
     private (Vector3 Force, Vector3 Torque) V2UForceTorque(Vector3 Force, Vector3 Torque)
@@ -211,12 +235,17 @@ public class InputController : MonoBehaviour {
 
     private (Vector3 Position, Quaternion Rotation) U2VPosRot(Vector3 Position, Quaternion Rotation)
     {
-        return (new Vector3(Position.x, Position.y, Position.z), new Quaternion(Rotation.x, Rotation.y, Rotation.z, Rotation.w));
+        Vector3 newPosition = new Vector3(Position.x, Position.y, Position.z);
+        Quaternion newRotation = new Quaternion(Rotation.x, Rotation.y, Rotation.x, Rotation.w);//TODO : change the rotation
+
+        return (newPosition, Rotation);
     }
 
     private (Vector3 Force, Vector3 Torque) U2VForceTorque(Vector3 Force, Vector3 Torque)
     {
-        return (Force, Torque);
+        return (new Vector3(-Force.z, Force.x, Force.y), new Vector3(Torque.z, Torque.x, Torque.y));
     }
+
+
     #endregion
 }

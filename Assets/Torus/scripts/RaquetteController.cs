@@ -41,10 +41,35 @@ public class RaquetteController : MonoBehaviour
 
     public void AfterCollision()
     {
-        VectorManager.VECTOR_MANAGER.DrawVector(transform.position, dynRaquette.Element.Position - transform.position, Color.gray);
-        avatarInputController.PositionOffset = dynRaquette.Element.Position - transform.position;
+        Vector3 targedtedNextPosition = dynRaquette.Element.Position;
+        Vector3 clampedNextPosition = ClampDisplacement(transform.position ,targedtedNextPosition);
+        Vector3 displacementVector = clampedNextPosition - transform.position;
+
+        VectorManager.VECTOR_MANAGER.DrawVector(transform.position, displacementVector, Color.gray);
+
+        avatarInputController.PositionOffset = displacementVector;
         avatarInputController.ForceOutput = dynRaquette.Element.Force;
-        //transform.position = dynRaquette.Element.Position;
+        if(avatarInputController.armSelection == InputController.ArmSelection.Unity)
+        {// will update the avatar position, if we are working with the arm we update the arm position and the avatar follow the arm position
+            transform.position = dynRaquette.Element.Position;
+        }
+    }
+
+    private Vector3 ClampDisplacement(Vector3 previousPosition, Vector3 nextPosition)
+    {
+        float travelDistance = Vector3.Distance(previousPosition, nextPosition);
+
+        float maxDisplacement = 0.02f;
+
+        if (travelDistance > maxDisplacement)
+        {// need to size down the distance
+            Vector3 newDisplacementVector = nextPosition - previousPosition;
+            newDisplacementVector /= travelDistance / maxDisplacement;
+
+            nextPosition = previousPosition + newDisplacementVector;
+        }
+
+        return nextPosition;
     }
 
     public void NoCollision()

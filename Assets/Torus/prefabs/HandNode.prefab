@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 683057480}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.41300166, y: 0.112, z: 0.30499822}
+  m_LocalPosition: {x: 0, y: 0, z: 0.196}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2444826590242730691}
@@ -298,11 +298,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d608bf4245001a14daa5a4ff2037d593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  armSelection: 1
+  armSelection: 3
+  HapticEnable: 1
   objectToMove: {fileID: 2444826590754793785}
   modeVirtuose: 5
-  ForceOffset: {x: 0, y: 0, z: 0}
-  TorqueOffset: {x: 0, y: 0, z: 0}
+  ForceOutput: {x: 0, y: 0, z: 0}
+  TorqueOutput: {x: 0, y: 0, z: 0}
   PositionOffset: {x: 0, y: 0, z: 0}
   RotationOffset: {x: 0, y: 0, z: 0, w: 0}
   virtuose_Position: {x: 0, y: 0, z: 0}
@@ -471,8 +472,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 20, y: 20, z: 5}
+  m_Center: {x: -9.35, y: 0, z: 0}
 --- !u!54 &2444826590947580298
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -487,8 +488,8 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2444826590997026944
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,8 +580,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 20, y: 20, z: 5}
+  m_Center: {x: 9.5, y: 0, z: 0}
 --- !u!54 &2444826590997026959
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -595,8 +596,8 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2444826591375240098
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,8 +688,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 20, y: 20, z: 5}
+  m_Center: {x: -9.5, y: 0, z: 0}
 --- !u!54 &2444826591375240105
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -703,8 +704,8 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2444826591697103780
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,8 +796,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 20, y: 20, z: 5}
+  m_Center: {x: 9.5, y: 0, z: 0}
 --- !u!54 &2444826591697103779
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -811,5 +812,5 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
