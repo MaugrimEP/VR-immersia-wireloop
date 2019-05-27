@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Raquette
+  - SelectionControl
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - LightMask
   - Invisible
   - PostProcessing
-  - 
+  - Raquette
   - 
   - 
   - 

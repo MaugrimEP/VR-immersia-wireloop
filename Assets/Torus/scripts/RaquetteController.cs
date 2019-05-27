@@ -11,48 +11,31 @@ public class RaquetteController : MonoBehaviour
     /// <summary>
     /// Childs that compose the raquette
     /// </summary>
-    public List<Transform> raquettesChild;
+    public List<Transform> RaquettesChilds;
+    [HideInInspector]
+    public List<Rigidbody> RigidBodyChilds;
 
     private VectorManager vectorManager;
     [HideInInspector]
     public InputController avatarInputController;
-    [HideInInspector]
-    public DynElementWrapper dynRaquette;
-    [HideInInspector]
-    public DynSystemWrapper system;
+
 
     private List<Transform> getChilds()
     {
-        return raquettesChild;
+        return RaquettesChilds;
     }
 
     private void Awake()
     {
+        RigidBodyChilds = new List<Rigidbody>();
         foreach(Transform child in getChilds()) //apply the tagname on child to filter the collisions
         {
             child.tag = tagname;
+            RigidBodyChilds.Add(child.gameObject.GetComponent<Rigidbody>());
         }
 
         vectorManager = GameObject.Find("VectorCreator").GetComponent<VectorManager>();
         avatarInputController = GameObject.Find("Avatar").GetComponent<InputController>();
-        system = GameObject.Find("DynSystemCollision").GetComponent<DynSystemWrapper>();
-        dynRaquette = GetComponent<DynElementWrapper>();
-    }
-
-    public void AfterCollision()
-    {
-        Vector3 targedtedNextPosition = dynRaquette.Element.Position;
-        Vector3 clampedNextPosition = ClampDisplacement(transform.position ,targedtedNextPosition);
-        Vector3 displacementVector = clampedNextPosition - transform.position;
-
-        VectorManager.VECTOR_MANAGER.DrawVector(transform.position, displacementVector, Color.gray);
-
-        avatarInputController.PositionOffset = displacementVector;
-        avatarInputController.ForceOutput = dynRaquette.Element.Force;
-        if(avatarInputController.armSelection == InputController.ArmSelection.Unity)
-        {// will update the avatar position, if we are working with the arm we update the arm position and the avatar follow the arm position
-            transform.position = dynRaquette.Element.Position;
-        }
     }
 
     private Vector3 ClampDisplacement(Vector3 previousPosition, Vector3 nextPosition)
@@ -72,28 +55,35 @@ public class RaquetteController : MonoBehaviour
         return nextPosition;
     }
 
-    public void NoCollision()
+    private void HandleCollision(Collision collision)
     {
-        //avatarInputController.ResetOffsetToVirtuose();
-    }
+        float interpenetrationDistance = 0.0f;
+        Vector3 normal = Vector3.zero;
+        {
+            foreach(Rigidbody rb in RigidBodyChilds)
+            {
+                //distance entre le game object et le rigidbody
+                //Vector3 normal = target.transform.position - targetRigidbody.position;
+                normal += rb.gameObject.transform.position - rb.position;
+            }
+            normal /= RigidBodyChilds.Count;
+            interpenetrationDistance = normal.magnitude;
+            normal = normal.normalized;
+        }
 
-    private void addCollision(Collision collision)
-    {
-        system.DynSystem.Collisions.Add(new DynElementPipeCollision(1.0f, collision, dynRaquette.Element));
-        system.ElementsWrappers.Add(dynRaquette);
+
     }
 
     #region Handle pipe collision interaction
     public void TouchPipe(Collision collision)
     {
         UpdateChildOnTouch();
-        addCollision(collision);
+        HandleCollision(collision);
     }
 
     public void StayPipe(Collision collision)
     {
-        addCollision(collision);
-
+        HandleCollision(collision);
     }
 
     public void LeavePipe(Collision collision)

@@ -12,12 +12,9 @@ public class InputController : MonoBehaviour {
     /// </summary>
     public bool HapticEnable;
 
-    /// <summary>
-    /// Object that will be controlled by the virtuose
-    /// </summary>
-    public Transform objectToMove;
-
     public VirtuoseAPI.VirtCommandType modeVirtuose;
+
+    public List<Rigidbody> RigidbodyToMove;
 
     #region value (to add if position and rotation or raw for the force and torque) to the virtuose input for update, they should be in unity coordinate system
     [HideInInspector]
@@ -69,6 +66,7 @@ public class InputController : MonoBehaviour {
     }
 
     void Start () {
+
        virtuoseManager = gameObject.GetComponent<VirtuoseManager>();
         if(UseVirtuose())
         {//init the virtuoseManager component
@@ -168,9 +166,11 @@ public class InputController : MonoBehaviour {
 
     private void HandleVirtuoseInput()
     {
-        Transform objectMoved = GetTransformToMove();
-        objectMoved.transform.position = virtuose_Position;
-        objectMoved.rotation = virtuose_Rotation;
+        foreach(Rigidbody rb in RigidbodyToMove)
+        {
+            rb.MovePosition(virtuose_Position);
+            rb.MoveRotation(virtuose_Rotation);
+        }
     }
 
     private void OutputToVirtuose()
@@ -204,11 +204,6 @@ public class InputController : MonoBehaviour {
             SetPositionAndRotation(positionApplied, rotationApplied);
         }
 
-    }
-
-    private Transform GetTransformToMove()
-    {
-        return transform;
     }
 
     /// <summary>
@@ -245,7 +240,5 @@ public class InputController : MonoBehaviour {
     {
         return (new Vector3(-Force.z, Force.x, Force.y), new Vector3(Torque.z, Torque.x, Torque.y));
     }
-
-
     #endregion
 }
