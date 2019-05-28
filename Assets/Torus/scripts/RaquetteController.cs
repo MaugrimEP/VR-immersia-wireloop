@@ -17,7 +17,6 @@ public class RaquetteController : MonoBehaviour
     public VirtuoseManager vm;
     public GameObject target;
 
-
     Rigidbody targetRigidbody;
     public float stiffness = 1;
 
