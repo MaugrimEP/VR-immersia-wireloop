@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InputController : MonoBehaviour {
 
-    private VirtuoseManager virtuoseManager;
+    public VirtuoseManager virtuoseManager;
     public ArmSelection armSelection;
     /// <summary>
     /// If HapticEnable is True, then the output to the virtuose will use the class value, if it's False, the input will be the output
@@ -14,7 +14,6 @@ public class InputController : MonoBehaviour {
 
     public VirtuoseAPI.VirtCommandType modeVirtuose;
 
-    public List<Rigidbody> RigidbodyToMove;
 
     #region value (to add if position and rotation or raw for the force and torque) to the virtuose input for update, they should be in unity coordinate system
     [HideInInspector]
@@ -65,9 +64,7 @@ public class InputController : MonoBehaviour {
         return armSelection != ArmSelection.Unity;
     }
 
-    void Start () {
-
-       virtuoseManager = gameObject.GetComponent<VirtuoseManager>();
+    private void Awake () {
         if(UseVirtuose())
         {//init the virtuoseManager component
             virtuoseManager.mass = mass;
@@ -76,7 +73,6 @@ public class InputController : MonoBehaviour {
             virtuoseManager.powerOnKey = KeyCode.P;
             virtuoseManager.CommandType = modeVirtuose;
             virtuoseManager.Arm.Ip = GetIP();
-
         }
 
         {//init the offset
@@ -128,15 +124,12 @@ public class InputController : MonoBehaviour {
         virtuoseManager.Virtuose.Pose = (position, rotation);
     }
     #endregion
-
-    void Update () {
+    
+    private void Update () {
 
         if (UseVirtuose() && virtuoseManager.Initialized && virtuoseManager.Arm.IsConnected)
         {
             FetchVirtuoseValue();
-            HandleVirtuoseInput();
-            OutputToVirtuose();
-            ResetOffsetToVirtuose();
         }
     }
 
@@ -163,16 +156,10 @@ public class InputController : MonoBehaviour {
             (virtuose_Force, virtuose_Torque) = GetForceAndTorque();
         }
     }
-
-    private void HandleVirtuoseInput()
-    {
-        foreach(Rigidbody rb in RigidbodyToMove)
-        {
-            rb.MovePosition(virtuose_Position);
-            rb.MoveRotation(virtuose_Rotation);
-        }
-    }
-
+    
+    /// <summary>
+    /// Write value to the virtuose
+    /// </summary>
     private void OutputToVirtuose()
     {
         Vector3 forceApplied  = Vector3.zero;
