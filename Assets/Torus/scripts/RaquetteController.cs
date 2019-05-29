@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class RaquetteController : MonoBehaviour
 {
-    public InputController avatarInputController;
     public List<Renderer> renderers;
 
     public enum SolverStr
     {
-        Default, Block, PhysicSimulate
+        Default, Block, PhysicSimulate, OpenGLSolver
     }
     [Header("Solver str")]
     public SolverStr SolverStrategy;
@@ -21,8 +20,7 @@ public class RaquetteController : MonoBehaviour
     public GameObject target;
     [HideInInspector]
     public Rigidbody targetRigidbody;
-    [HideInInspector]
-    public float stiffness = 1;
+    public float stiffness = 10;
     [HideInInspector]
     public RaquetteCollider infoCollision;
     [HideInInspector]
@@ -37,16 +35,20 @@ public class RaquetteController : MonoBehaviour
     public void HandleCollisionEnter(Collision collision)
     {
         UpdateChildOnTouch();
+        str.HandleCollisionEnter(collision);
     }
 
 
     public void HandleCollisionExit(Collision collision)
     {
         UpdateChildOnLeave();
+        str.HandleCollisionExit(collision);
     }
 
     public void HandleCollisionStay(Collision collision)
     {
+        UpdateChildOnTouch();
+        str.HandleCollisionStay(collision);
     }
     #endregion
 
@@ -79,11 +81,15 @@ public class RaquetteController : MonoBehaviour
         switch (SolverStrategy)
         {
             case SolverStr.Default:
-                return new DefaultStr();
+                return new DefaultStr(this);
             case SolverStr.Block:
-                return new BlockStr();
+                return new BlockStr(this);
+            case SolverStr.PhysicSimulate:
+                return new PhysicSimulate(this);
+            case SolverStr.OpenGLSolver:
+                return new OpenGLSolver(this);
             default:
-                return new DefaultStr();
+                return new DefaultStr(this);
         }
     }
 
@@ -144,35 +150,72 @@ public class RaquetteController : MonoBehaviour
             target.transform.SetPose(pose);
         }
     }
- 
+
+    public Vector3 GetPosition()
+    {
+        return infoCollision.IsCollided ? target.transform.position : targetRigidbody.position;
+    }
+
+    public Quaternion GetRotation()
+    {
+        return infoCollision.IsCollided ? target.transform.rotation : targetRigidbody.rotation;
+    }
+
+    /// <summary>
+    /// Handle collision process and solve the collision
+    /// </summary>
     private void SetRigidbodyPositions()
+    {
+        if (target == null) return;
+        str.ComputeSimulationStep();
+    }
+
+    /// <summary>
+    /// the old SetRigidbodyPositions as a save
+    /// </summary>
+    private void SetRigidbodyPositionsSAVE()
     {
         if (target != null)
         {
-            (Vector3 READposition, Quaternion READrotation) = vm.Virtuose.Pose;
+            (Vector3 position, Quaternion rotation) = vm.Virtuose.Pose;
+            (position, rotation) = Utils.V2UPosRot(position, rotation);
 
-            (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = str.Solve(this);
+            targetRigidbody.MovePosition(position);
+            targetRigidbody.MoveRotation(rotation);
 
-            Vector3 clampedDisplacementVector = Utils.ClampDisplacement(solvedNextPosition - READposition, MAX_CLAMP);
+            float distance = 0;
+            float dot = 0;
 
-            float distance = Vector3.Distance(READposition, clampedDisplacementVector);
-            float dot = Quaternion.Dot(READrotation, solvedNextRotation);
+            Vector3 normal = target.transform.position - targetRigidbody.position;
+            //When there is a collision the rigidbody position is at the virtuose arm position but the transform.position is impacted by the scene physic.
+            Vector3 oldPosition = infoCollision.IsCollided ? target.transform.position : targetRigidbody.position;
+            Vector3 newPosition = infoCollision.IsCollided ? target.transform.position + stiffness * normal : targetRigidbody.position;
+            Quaternion newRotation = infoCollision.IsCollided ? target.transform.rotation : targetRigidbody.rotation;
+
+            distance = Vector3.Distance(oldPosition, newPosition);
+
+            Vector3 displacementClamped = Utils.ClampDisplacement(newPosition - position, MAX_CLAMP);
+            newPosition = oldPosition + displacementClamped;
+
+            dot = Quaternion.Dot(rotation, newRotation);
+
             //Add extra protection to avoid high velocity movement.
             if (distance > VirtuoseAPIHelper.MAX_DISTANCE_PER_FRAME)
             {
                 VRTools.LogWarning("[Warning][VirtuoseTargetCollision] Haption arm new position is aboved the authorized threshold distance (" + distance + ">" + VirtuoseAPIHelper.MAX_DISTANCE_PER_FRAME + "). Power off.");
                 vm.Virtuose.Power = false;
             }
+
             if (dot < 1 - VirtuoseAPIHelper.MAX_DOT_DIFFERENCE)
             {
                 VRTools.LogWarning("[Warning][VirtuoseManager] Haption arm new rotation is aboved authorized the threshold dot (" + (1 - dot) + " : " + VirtuoseAPIHelper.MAX_DOT_DIFFERENCE + "). Power off.");
                 vm.Virtuose.Power = false;
             }
 
-            vm.Virtuose.Pose = (clampedDisplacementVector, solvedNextRotation);
+            vm.Virtuose.Pose = (newPosition, vm.Virtuose.Pose.rotation);
 
-            lastFramePosition = READposition;
-            lastFrameRotation = READrotation;
+            lastFramePosition = position;
+            lastFrameRotation = rotation;
         }
     }
 }

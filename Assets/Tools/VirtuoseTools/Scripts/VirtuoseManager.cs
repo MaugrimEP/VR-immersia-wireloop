@@ -21,7 +21,7 @@ public class VirtuoseManager : MonoBehaviour
     public VirtuoseAPI.VirtCommandType CommandType = VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE;
 
     [Range(VirtuoseAPIHelper.MIN_MASS, VirtuoseAPIHelper.MAX_MASS)]
-    public float mass = 0.2f;
+    public float mass = 0.2f;//0.05
     [Range(VirtuoseAPIHelper.MIN_INERTIE, VirtuoseAPIHelper.MAX_INERTIE)]
     public float inertie = 0.1f;
 

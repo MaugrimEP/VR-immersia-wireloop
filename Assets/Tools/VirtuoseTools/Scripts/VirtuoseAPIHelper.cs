@@ -477,6 +477,7 @@ public class VirtuoseAPIHelper
         }
     }
 
+
     /// <summary>
     /// Timeout value used in communications with the Virtuose controller. 
     /// Expressed in seconds.
@@ -655,6 +656,18 @@ public class VirtuoseAPIHelper
 
             ExecLogOnError(
                 VirtuoseAPI.virtSetForce, value);
+        }
+    }
+
+    /// <summary>
+    /// Add a force to the VIRTUOSE.
+    /// </summary>
+    public float[] Testforce
+    {
+        set
+        {
+            ExecLogOnError(
+                VirtuoseAPI.virtAddForce, value);
         }
     }
 

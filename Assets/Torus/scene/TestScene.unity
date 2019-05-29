@@ -411,7 +411,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282840810}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -1.731, y: 0.145, z: 0.76}
+  m_LocalPosition: {x: -2.189, y: 0.145, z: 0.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1029,7 +1029,12 @@ PrefabInstance:
     - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: armSelection
-      value: 1
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: mass
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
@@ -1040,6 +1045,44 @@ PrefabInstance:
         type: 3}
       propertyPath: distanceStep
       value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: SolverStrategy
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: MAX_CLAMP
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: stiffness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1233430155, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
+      propertyPath: m_TagString
+      value: Raquette
+      objectReference: {fileID: 0}
+    - target: {fileID: 1233430155, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2444826590754793790, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2444826590292140445, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2444826590064072600, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}

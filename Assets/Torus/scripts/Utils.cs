@@ -55,9 +55,25 @@ public class Utils
 
         if (travelDistance > clampDistance)
         {// need to size down the distance
-            displacementVector /= (travelDistance / clampDistance);
+            displacementVector = Vector3.Lerp(Vector3.zero, displacementVector, clampDistance / travelDistance);
+            //displacementVector /= (travelDistance / clampDistance);
         }
         return displacementVector;
+    }
+
+    public static Vector3 ClampDisplacement(Vector3 oldPosition, Vector3 newPosition, float clampDistance)
+    {
+        return oldPosition + ClampDisplacement(newPosition - oldPosition, clampDistance);
+    }
+
+    public static Quaternion ClampRotation(Quaternion rotation, float maxDot)
+    {
+        float dot = Quaternion.Dot(Quaternion.identity, rotation);
+        if (dot > maxDot)
+        {
+            rotation = Quaternion.Slerp(Quaternion.identity, rotation, maxDot / dot);
+        }
+        return rotation;
     }
 
     #region Wrapper on virtuose input/output
@@ -77,9 +93,10 @@ public class Utils
     public static (Vector3 Position, Quaternion Rotation) U2VPosRot(Vector3 Position, Quaternion Rotation)
     {
         Vector3 newPosition = new Vector3(Position.x, Position.y, Position.z);
-        Quaternion newRotation = new Quaternion(Rotation.x, Rotation.y, Rotation.x, Rotation.w);//TODO : change the rotation
-
-        return (newPosition, Rotation);
+        //TODO : la rotation
+        Vector3 eulerRotation = Rotation.eulerAngles;
+        Quaternion newRotation = Quaternion.Euler(-eulerRotation.z, eulerRotation.x, eulerRotation.y);
+        return (newPosition, newRotation.normalized);
     }
 
     public static (Vector3 Force, Vector3 Torque) U2VForceTorque(Vector3 Force, Vector3 Torque)
