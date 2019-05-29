@@ -1026,6 +1026,11 @@ PrefabInstance:
       propertyPath: HapticEnable
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: armSelection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: maximalDisplacementUnity
