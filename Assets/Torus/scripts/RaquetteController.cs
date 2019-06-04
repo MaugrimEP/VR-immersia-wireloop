@@ -167,6 +167,11 @@ public class RaquetteController : MonoBehaviour
     private void SetRigidbodyPositions()
     {
         if (target == null) return;
+        if(vm.Virtuose.IsInShiftPosition)
+        {
+            vm.Virtuose.Pose = GetVirtuosePose();
+            return;
+        }
         str.ComputeSimulationStep();
     }
 
