@@ -12,9 +12,9 @@ public class BlockStr : IReactionStr
     {
         (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuosePose();
 
-        (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = Solve();
+        (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = SolvePositiondAndRotation();
 
-        Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - READposition, rc.MAX_CLAMP);
+        Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - READposition, rc.MAX_DISPLACEMENT);
         solvedNextPosition = READposition + displacementClamped;
 
         #region check threshold distance and rotation
@@ -28,7 +28,7 @@ public class BlockStr : IReactionStr
             (rc.lastFramePosition, rc.lastFrameRotation) = (READposition, READrotation);
     }
 
-    protected override (Vector3 Position, Quaternion Rotation) Solve()
+    protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
         (Vector3 READposition, Quaternion READrotation) = rc.vm.Virtuose.Pose;
         (Vector3 position, Quaternion rotation) = Utils.V2UPosRot(READposition, READrotation);
@@ -56,5 +56,10 @@ public class BlockStr : IReactionStr
 
     public override void HandleCollisionStay(Collision collision)
     {
+    }
+
+    protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
+    {
+        throw new System.NotImplementedException();
     }
 }

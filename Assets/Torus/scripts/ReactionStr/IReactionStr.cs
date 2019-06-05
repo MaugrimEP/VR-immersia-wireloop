@@ -17,9 +17,9 @@ public abstract class IReactionStr
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
 
-        (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = Solve();
+        (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = SolvePositiondAndRotation();
 
-        Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - position, rc.MAX_CLAMP);
+        Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - position, rc.MAX_DISPLACEMENT);
         solvedNextPosition = oldPosition + displacementClamped;
 
         #region check threshold distance and rotation
@@ -59,7 +59,8 @@ public abstract class IReactionStr
         }
         return (dot < 1 - VirtuoseAPIHelper.MAX_DOT_DIFFERENCE) || (distance > VirtuoseAPIHelper.MAX_DISTANCE_PER_FRAME);
     }
-    protected abstract (Vector3 Position, Quaternion Rotation) Solve();
+    protected abstract (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation();
+    protected abstract (Vector3 forces, Vector3 torques) SolveForceAndTorque();
 
     public abstract void HandleCollisionEnter(Collision collision);
     public abstract void HandleCollisionStay(Collision collision);

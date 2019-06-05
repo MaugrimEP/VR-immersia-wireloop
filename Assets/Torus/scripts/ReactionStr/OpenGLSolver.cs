@@ -38,7 +38,7 @@ public class OpenGLSolver : IReactionStr
         collidingList.AddLast(new CollisionData(collision, 1.0f, rc.transform));
     }
 
-    protected override (Vector3 Position, Quaternion Rotation) Solve()
+    protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
         Vector3 solvedPosition = rc.GetPosition();
         Quaternion solvedRotation = rc.GetRotation();
@@ -90,5 +90,8 @@ public class OpenGLSolver : IReactionStr
         return (displacement, Quaternion.identity);
     }
 
-
+    protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
+    {
+        throw new System.NotImplementedException();
+    }
 }

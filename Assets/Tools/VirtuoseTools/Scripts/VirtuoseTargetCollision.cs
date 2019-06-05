@@ -162,7 +162,7 @@ public class VirtuoseTargetCollision : MonoBehaviour
     private (Vector3 Position, Quaternion Rotation) U2VPosRot(Vector3 Position, Quaternion Rotation)
     {
         Vector3 newPosition = new Vector3(Position.x, Position.y, Position.z);
-        Quaternion newRotation = new Quaternion(Rotation.x, Rotation.y, Rotation.x, Rotation.w);//TODO : change the rotation
+        Quaternion newRotation = new Quaternion(Rotation.x, Rotation.y, Rotation.x, Rotation.w);
 
         return (newPosition, Rotation);
     }

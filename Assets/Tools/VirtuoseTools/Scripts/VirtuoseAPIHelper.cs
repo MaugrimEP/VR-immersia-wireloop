@@ -199,7 +199,7 @@ public class VirtuoseAPIHelper
     /// </summary>
     public void InitDefault()
     {
-        IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_ALL;
+        IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_ALL_FORCE_FEEDBACK_INHIBITION;
         ForceFactor = 1;
         SpeedFactor = 1;
         Timestep = 0.006f;
@@ -662,12 +662,15 @@ public class VirtuoseAPIHelper
     /// <summary>
     /// Add a force to the VIRTUOSE.
     /// </summary>
-    public float[] Testforce
+    public (Vector3 forces, Vector3 torques) virtAddForce
     {
         set
         {
+            value.forces = Utils.ClampVector3(value.forces, 30f);
+            value.torques = Utils.ClampVector3(value.torques, 3.1f);
+
             ExecLogOnError(
-                VirtuoseAPI.virtAddForce, value);
+                VirtuoseAPI.virtAddForce, new float []{ value.forces.x,value.forces.y,value.forces.z, value.torques.x, value.torques.y, value.torques.z});
         }
     }
 
@@ -949,6 +952,8 @@ public class VirtuoseAPIHelper
         return Vector3.zero;
     }
 
+    //Quaternion newRotation = new Quaternion(-Rotation.y, -Rotation.z, Rotation.x, Rotation.w);
+    //x:3 y:4 z:5 w:6
     public static Quaternion VirtuoseToUnityRotation(float[] pose, int axe = 0)
     {
         if(pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)

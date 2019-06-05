@@ -7,12 +7,15 @@ public class RaquetteController : MonoBehaviour
 
     public enum SolverStr
     {
-        Default, Block, PhysicSimulate, OpenGLSolver
+        Default, Block, PhysicSimulate, OpenGLSolver, CopieTransform, ForceTorque
     }
     [Header("Solver str")]
     public SolverStr SolverStrategy;
     private IReactionStr str;
-    public float MAX_CLAMP = 0.05f;
+    public float MAX_DISPLACEMENT = 0.05f;
+    public float MAX_ROTATION     = 0.05f;
+    public float MAX_FORCE        = 30;
+    public float MAX_TORQUE       = 2f;
     [Space(10)]
 
     #region oldVar
@@ -71,6 +74,11 @@ public class RaquetteController : MonoBehaviour
         return vm.Virtuose.Pose;
     }
 
+    public bool IsColliding()
+    {
+        return infoCollision.IsCollided;
+    }
+
     private void Reset()
     {
         vm = GetComponent<VirtuoseManager>();
@@ -88,6 +96,10 @@ public class RaquetteController : MonoBehaviour
                 return new PhysicSimulate(this);
             case SolverStr.OpenGLSolver:
                 return new OpenGLSolver(this);
+            case SolverStr.CopieTransform:
+                return new CopieStr(this);
+            case SolverStr.ForceTorque:
+                return new ForceTorque(this);
             default:
                 return new DefaultStr(this);
         }
@@ -120,6 +132,7 @@ public class RaquetteController : MonoBehaviour
 
     private void Update()
     {
+
         if (vm.CommandType == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE && vm.Arm.IsConnected)
             SetForce();
     }
@@ -167,12 +180,8 @@ public class RaquetteController : MonoBehaviour
     private void SetRigidbodyPositions()
     {
         if (target == null) return;
-        if(vm.Virtuose.IsInShiftPosition)
-        {
-            vm.Virtuose.Pose = GetVirtuosePose();
-            return;
-        }
         str.ComputeSimulationStep();
+
     }
 
     /// <summary>
@@ -199,7 +208,7 @@ public class RaquetteController : MonoBehaviour
 
             distance = Vector3.Distance(oldPosition, newPosition);
 
-            Vector3 displacementClamped = Utils.ClampDisplacement(newPosition - position, MAX_CLAMP);
+            Vector3 displacementClamped = Utils.ClampDisplacement(newPosition - position, MAX_DISPLACEMENT);
             newPosition = oldPosition + displacementClamped;
 
             dot = Quaternion.Dot(rotation, newRotation);

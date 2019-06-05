@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-public class DefaultStr : IReactionStr
+public class CopieStr : IReactionStr
 {
 
-    public DefaultStr(RaquetteController rc) : base(rc)
+    public CopieStr(RaquetteController rc) : base(rc)
     {
     }
 
@@ -21,7 +21,7 @@ public class DefaultStr : IReactionStr
         solvedNextPosition = oldPosition + displacementClamped;
 
         #region check threshold distance and rotation
-        if (CheckTreshold(oldPosition, solvedNextPosition, rotation, solvedNextRotation))
+        if (CheckTreshold(oldPosition, solvedNextPosition, rotation, rotation))//TODO : CHECK LA ROTATION
             rc.vm.Virtuose.Power = false;
         #endregion
 
@@ -45,11 +45,17 @@ public class DefaultStr : IReactionStr
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);
 
-        Vector3 normal = rc.target.transform.position - rc.targetRigidbody.position;
         //When there is a collision the rigidbody position is at the virtuose arm position but the transform.position is impacted by the scene 
-        //Vector3 newPosition = rc.infoCollision.IsCollided ? rc.target.transform.position + rc.stiffness * normal : rc.targetRigidbody.position;
-        Vector3 newPosition = rc.GetPosition() + (rc.infoCollision.IsCollided ? rc.stiffness * normal : Vector3.zero);
-        Quaternion newRotation = rc.GetRotation();
+        Vector3 newPosition = rc.target.transform.position;
+        Quaternion newRotation = rc.target.transform.rotation;
+
+        {
+            //Need to apply the possible shifting position and rotation
+            (Vector3 PosWithshiftPosition, Quaternion RotWithshiftRotation) = rc.vm.Virtuose.AvatarPose;
+
+            Vector3 offsetPosition = PosWithshiftPosition - position;
+            Quaternion offsetRotatino = RotWithshiftRotation * Quaternion.Inverse(rotation);
+        }
 
         return (newPosition, newRotation);
     }

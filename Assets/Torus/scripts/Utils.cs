@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Utils
 {
-    public static Vector3 Pow(Vector3 v,float power)
+    public static Vector3 Pow(Vector3 v, float power)
     {
         return new Vector3(Mathf.Pow(v.x, power), Mathf.Pow(v.y, power), Mathf.Pow(v.z, power));
     }
@@ -30,7 +29,7 @@ public class Utils
     public static List<Transform> getAllChilds(Transform me)
     {
         List<Transform> childs = new List<Transform>();
-        foreach(Transform child in me)
+        foreach (Transform child in me)
         {
             childs.AddRange(getAllChilds(child));
         }
@@ -64,6 +63,26 @@ public class Utils
     public static Vector3 ClampDisplacement(Vector3 oldPosition, Vector3 newPosition, float clampDistance)
     {
         return oldPosition + ClampDisplacement(newPosition - oldPosition, clampDistance);
+    }
+
+    public static Vector3 ClampVector3(Vector3 v, float max)
+    {
+        return new Vector3(Mathf.Clamp(v.x, -max, max), Mathf.Clamp(v.y, -max, max), Mathf.Clamp(v.z, -max, max));
+    }
+
+    public static Vector3 U2VVector3(Vector3 v)
+    {
+        return new Vector3(-v.z, v.x, v.y);
+    }
+
+    public static Vector3 U2VTorque(Vector3 t)
+    {
+        return new Vector3(t.x, t.y, t.z);
+    }
+
+    public static Vector3 V2UVector3(Vector3 v)
+    {
+        return new Vector3(v.y, v.z, -v.x);
     }
 
     public static Quaternion ClampRotation(Quaternion rotation, float maxDot)
@@ -102,6 +121,20 @@ public class Utils
     public static (Vector3 Force, Vector3 Torque) U2VForceTorque(Vector3 Force, Vector3 Torque)
     {
         return (new Vector3(-Force.z, Force.x, Force.y), new Vector3(Torque.z, Torque.x, Torque.y));
+    }
+
+    public static Vector3 Angles(Vector3 v1, Vector3 v2)
+    {
+        return new Vector3(
+            Vector2.SignedAngle(new Vector2(v1.y, v1.z), new Vector2(v2.y, v2.z)),
+            Vector2.SignedAngle(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z)),
+            Vector2.SignedAngle(new Vector2(v1.x, v1.y), new Vector2(v2.x, v2.y))
+            );
+    }
+
+    public static Color RandomColor()
+    {
+        return Random.ColorHSV();
     }
     #endregion
 

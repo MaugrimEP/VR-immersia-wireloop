@@ -8,7 +8,7 @@ public class PhysicSimulate : IReactionStr
     {
     }
 
-    protected override (Vector3 Position, Quaternion Rotation) Solve()
+    protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
         (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuosePose();
         (Vector3 objectTargetedPosition, Quaternion objectTargetedRotation) = Utils.V2UPosRot(READposition, READrotation);
@@ -55,5 +55,10 @@ public class PhysicSimulate : IReactionStr
 
     public override void HandleCollisionStay(Collision collision)
     {
+    }
+
+    protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
+    {
+        throw new System.NotImplementedException();
     }
 }

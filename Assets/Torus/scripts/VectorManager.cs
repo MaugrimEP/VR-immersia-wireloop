@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class VectorManager : MonoBehaviour
@@ -14,14 +13,47 @@ public class VectorManager : MonoBehaviour
         VECTOR_MANAGER = this;
     }
 
-    public void DrawVector(Vector3 position, Vector3 val, Color color, string name="not assigned")
+    public static void DrawVectorS(Vector3 position, Vector3 val, Color color, string name = "not assigned")
+    {
+        VECTOR_MANAGER.DrawVector(position, val, color, name);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            ClearVector();
+    }
+
+    public static void DrawLineS(Vector3 start, Vector3 end, float radius, Color color)
+    {
+        VECTOR_MANAGER.DrawLine(start, end, radius, color);
+    }
+
+    public void DrawLine(Vector3 start, Vector3 end, float radius, Color color)
+    {
+        float distance = Vector3.Distance(start, end);
+
+        GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        cylinder.transform.position = Vector3.Lerp(start, end, 0.5f);
+        cylinder.transform.localScale = new Vector3(radius, distance / 2.0f, radius);
+        cylinder.transform.LookAt(end);
+        cylinder.transform.Rotate(Vector3.right, 90.0f);
+
+        cylinder.GetComponent<Renderer>().material.color = color;
+
+        //add the vector under the VectorCreator
+        cylinder.transform.parent = transform;
+    }
+
+
+    public void DrawVector(Vector3 position, Vector3 val, Color color, string name = "not assigned")
     {
         Vector3 endPoint = position + val;
         float distance = Vector3.Distance(position, endPoint);
 
         GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         cylinder.transform.position = Vector3.Lerp(position, endPoint, 0.5f);
-        cylinder.transform.localScale = new Vector3(vectorRadius, distance/2.0f, vectorRadius);
+        cylinder.transform.localScale = new Vector3(vectorRadius, distance / 2.0f, vectorRadius);
         cylinder.transform.LookAt(endPoint);
         cylinder.transform.Rotate(Vector3.right, 90.0f);
 
@@ -34,7 +66,7 @@ public class VectorManager : MonoBehaviour
 
         //add the vector under the VectorCreator
         cylinder.transform.parent = transform;
-        cube.transform.parent = transform;
+        cube.transform.parent = cylinder.transform;
 
         //just to be able to see the data in the inspector
         {
@@ -52,6 +84,14 @@ public class VectorManager : MonoBehaviour
         Destroy(cube, lifeTime);
     }
 
+    public static void DrawSphereS(Vector3 position, Vector3 scale, Color color)
+    {
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.position = position;
+        sphere.transform.localScale = scale;
+        sphere.GetComponent<Renderer>().material.color = color;
+        sphere.transform.parent = VECTOR_MANAGER.transform;
+    }
 
     public void ClearVector()
     {
