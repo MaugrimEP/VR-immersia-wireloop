@@ -47,7 +47,6 @@ public class DefaultStr : IReactionStr
 
         Vector3 normal = rc.target.transform.position - rc.targetRigidbody.position;
         //When there is a collision the rigidbody position is at the virtuose arm position but the transform.position is impacted by the scene 
-        //Vector3 newPosition = rc.infoCollision.IsCollided ? rc.target.transform.position + rc.stiffness * normal : rc.targetRigidbody.position;
         Vector3 newPosition = rc.GetPosition() + (rc.infoCollision.IsCollided ? rc.stiffness * normal : Vector3.zero);
         Quaternion newRotation = rc.GetRotation();
 

@@ -49,14 +49,6 @@ public class CopieStr : IReactionStr
         Vector3 newPosition = rc.target.transform.position;
         Quaternion newRotation = rc.target.transform.rotation;
 
-        {
-            //Need to apply the possible shifting position and rotation
-            (Vector3 PosWithshiftPosition, Quaternion RotWithshiftRotation) = rc.vm.Virtuose.AvatarPose;
-
-            Vector3 offsetPosition = PosWithshiftPosition - position;
-            Quaternion offsetRotatino = RotWithshiftRotation * Quaternion.Inverse(rotation);
-        }
-
         return (newPosition, newRotation);
     }
 

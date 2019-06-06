@@ -85,7 +85,7 @@ public class ForceTorque : IReactionStr
                 Vector3 vectorToHandle = contactPoint.point - handleTransform.position;
                 Vector3 normalToContact = contactPoint.normal;
 
-                Vector3 localTorque = Vector3.Cross(normalToContact, vectorToHandle);
+                Vector3 localTorque = Vector3.Cross(vectorToHandle, normalToContact);
 
                 torques += localTorque;
             }

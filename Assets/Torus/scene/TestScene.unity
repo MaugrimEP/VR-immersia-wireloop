@@ -949,10 +949,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1233430156, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
+      propertyPath: m_Size.z
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 1233430157, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
+      propertyPath: m_Size.z
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 1233430158, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
+      propertyPath: m_Size.z
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 1233430159, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
+      propertyPath: m_Size.z
+      value: 0.03
+      objectReference: {fileID: 0}
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: SolverStrategy
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
