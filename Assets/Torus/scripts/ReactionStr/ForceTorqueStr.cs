@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 public class ForceTorque : IReactionStr
 {
@@ -7,6 +9,8 @@ public class ForceTorque : IReactionStr
     private float stiffnessForce;
     private float stiffnessTorque;
     private Collision currentCollision;
+
+    private float minContactPointDistance = 0.05f;
 
     public ForceTorque(RaquetteController rc) : base(rc)
     {
@@ -36,7 +40,6 @@ public class ForceTorque : IReactionStr
         if (rc.infoCollision.IsCollided)
         {
             rc.vm.Virtuose.Pose = rc.vm.Virtuose.Pose;
-            Debug.Log($"torques total = {torques}");
 
             rc.vm.Virtuose.virtAddForce = (Utils.U2VVector3(forces), Utils.U2VVector3(torques));
         }
@@ -69,7 +72,15 @@ public class ForceTorque : IReactionStr
         Vector3 torques = Vector3.zero;
         {// compute the torque
 
-            foreach (ContactPoint contactPoint in currentCollision.contacts)
+            //we first filter the contactPoint where the distance is less than minContactPointDistance
+            List<ContactPoint> filteredContactPoint = new List<ContactPoint>();
+            foreach(ContactPoint cp in currentCollision.contacts)
+            {
+                if (filteredContactPoint.FindAll(cp2 => Vector3.Distance(cp.point, cp2.point) <= minContactPointDistance).Count == 0)
+                    filteredContactPoint.Add(cp);
+            }
+
+            foreach (ContactPoint contactPoint in filteredContactPoint)
             {
                 Vector3 vectorToHandle = contactPoint.point - handleTransform.position;
                 Vector3 normalToContact = contactPoint.normal;
@@ -81,9 +92,6 @@ public class ForceTorque : IReactionStr
             torques *= forces.magnitude * stiffnessTorque;
             torques /= currentCollision.contactCount;
         }
-
-        //VectorManager.DrawVectorS(handlePosition.pos)
-
         return (forces, torques);
     }
 
