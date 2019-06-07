@@ -39,8 +39,10 @@ public class InputController : MonoBehaviour {
 
     [Range(VirtuoseAPIHelper.MIN_MASS, VirtuoseAPIHelper.MAX_MASS)]
     public float mass    = 0.2f;
-    [Range(VirtuoseAPIHelper.MIN_INERTIE, VirtuoseAPIHelper.MAX_INERTIE)]
-    public float inertie = 0f;
+    public bool useDefaultInertie;
+    public float[] inerties = new float[] { 0.1f, 0f  , 0f ,
+                                            0f  , 0.1f, 0f ,
+                                            0f  , 0f  ,0.1f};
 
     private string GetIP()
     {
@@ -65,10 +67,13 @@ public class InputController : MonoBehaviour {
     }
 
     private void Awake () {
+
+        Debug.Log($"inertia matrix : {InertiaMatrix.GetRaquette(massPave: 2f)}");
+
         if(UseVirtuose())
         {//init the virtuoseManager component
             virtuoseManager.mass = mass;
-            virtuoseManager.inertie = inertie;
+            virtuoseManager.inerties = useDefaultInertie ? inerties : InertiaMatrix.GetRaquette(massPave:mass).GetMatrix1D();
             virtuoseManager.BaseFramePosition = Vector3.zero;
             virtuoseManager.powerOnKey = KeyCode.P;
             virtuoseManager.CommandType = modeVirtuose;

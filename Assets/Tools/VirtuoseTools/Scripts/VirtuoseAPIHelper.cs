@@ -866,8 +866,14 @@ public class VirtuoseAPIHelper
         }
     }
 
-    public void AttachVO(float mass, float inertie)
+    public void AttachVO(float mass, float[] inerties)
     {
+        float inertie = MAX_INERTIE;
+        {
+            for (int i = 0; i < inerties.Length; ++i)
+                inertie = Mathf.Max(inertie, inerties[i]);
+        }
+
         Pose = (Vector3.zero, Quaternion.identity);
 
         Speed = new float[] { 0, 0, 0, 0, 0, 0 };
@@ -885,12 +891,7 @@ public class VirtuoseAPIHelper
             VRTools.LogWarning("[Warning][VirtuoseManager] Inertie must be >= 0.");
 
         inertie = Mathf.Clamp(inertie, MIN_INERTIE, MAX_INERTIE);
-
-        float[] inerties = {
-                inertie, 0, 0,
-                0, inertie, 0,
-                0, 0, inertie }; // Haption CObject.SetInertie();
-
+        
         ExecLogOnError(
             VirtuoseAPI.virtAttachVO, mass, inerties);
     }

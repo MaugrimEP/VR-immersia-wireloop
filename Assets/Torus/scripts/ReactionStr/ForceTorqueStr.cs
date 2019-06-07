@@ -71,7 +71,7 @@ public class ForceTorque : IReactionStr
 
             //we first filter the contactPoint where the distance is less than minContactPointDistance
             List<ContactPoint> filteredContactPoint = new List<ContactPoint>();
-            foreach(ContactPoint cp in currentCollision.contacts)
+            foreach (ContactPoint cp in currentCollision.contacts)
             {
                 if (filteredContactPoint.FindAll(cp2 => Vector3.Distance(cp.point, cp2.point) <= minContactPointDistance).Count == 0)
                     filteredContactPoint.Add(cp);
@@ -81,7 +81,7 @@ public class ForceTorque : IReactionStr
             foreach (ContactPoint contactPoint in filteredContactPoint)
             {
                 Vector3 vectorToHandle = contactPoint.point - handleTransform.position;
-                Vector3 normalToContact =  - contactPoint.normal; // minus because you need the normal to point to the contact point
+                Vector3 normalToContact = -contactPoint.normal; // minus because you need the normal to point to the contact point
 
                 VectorManager.DrawVectorS(contactPoint.point, normalToContact, Color.red, "normalToContact"); //TODO to remove : verbose
                 VectorManager.DrawVectorS(handleTransform.position, vectorToHandle, Color.magenta, "vectorToHandle");//TODO to remove : verbose

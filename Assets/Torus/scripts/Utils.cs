@@ -90,3 +90,141 @@ public class Utils
         return Random.ColorHSV();
     }
 }
+
+
+/// <summary>
+/// X toward us, y right, z up
+/// </summary>
+public class InertiaMatrix
+{
+    private float[,] tab;
+
+    public float[,] GetMatrix2D()
+    {
+        return tab;
+    }
+
+    public float[] GetMatrix1D()
+    {
+        float[] res = new float[9];
+        for (int line = 0; line < 3; ++line)
+            for (int column = 0; column < 3; ++column)
+                res[line * 3 + column] = tab[line, column];
+        return res;
+    }
+
+    public static InertiaMatrix GetRaquette(float massPave)
+    {
+        InertiaMatrix PaveExterieur = GetPave(mass: 1f, length: 0.4f, width: 0.4f, heigh: 0.02f);
+        InertiaMatrix PaveInterieur = GetPave(mass: 1f, length: 0.33f, width: 0.33f, heigh: 0.02f);
+
+        InertiaMatrix CerceauCentered = massPave * (PaveExterieur - PaveInterieur);
+        InertiaMatrix Cerceau = Translated(im: CerceauCentered, t: new Vector3(0.2f + 0.1f, 0f, 0f), mass: 2f);
+
+        InertiaMatrix Handle = GetCylinder(mass: 2f, radius: 0.05f / 2, heigh: 0.2f);
+
+        InertiaMatrix Raquette = Handle + Cerceau;
+
+        return Raquette;
+    }
+
+    /// <summary>
+    /// With the application point at the center
+    /// </summary>
+    /// <param name="mass"></param>
+    /// <param name="length"></param>
+    /// <param name="width"></param>
+    /// <param name="heigh"></param>
+    /// <returns></returns>
+    public static InertiaMatrix GetPave(float mass, float length, float width, float heigh)
+    {
+        return new InertiaMatrix(new float[3, 3] {
+            { mass*(width*width+heigh*heigh) / 12f, 0                                      , 0                                        },
+            { 0                                   , mass*(length*length+heigh*heigh) / 12f , 0                                        },
+            { 0                                   , 0                                      , mass*(length*length+width*width) / 12f } });
+    }
+
+    /// <summary>
+    /// With the application point a the center
+    /// </summary>
+    /// <param name="mass"></param>
+    /// <param name="radius"></param>
+    /// <param name="heigh"></param>
+    /// <returns></returns>
+    public static InertiaMatrix GetCylinder(float mass, float radius, float heigh)
+    {
+
+        return new InertiaMatrix(new float[3, 3] {
+            { mass*(radius*radius/4f + heigh*heigh/12f), 0                                         , 0                            },
+            { 0                                        , mass*(radius*radius/4f + heigh*heigh/12f) , 0                            },
+            { 0                                        , 0                                         , mass * radius * radius / 2f} });
+    }
+
+    private InertiaMatrix(float[,] tab)
+    {
+        this.tab = tab;
+    }
+
+    private InertiaMatrix()
+    {
+        tab = new float[3, 3] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+    }
+
+    public static InertiaMatrix operator +(InertiaMatrix im1, InertiaMatrix im2)
+    {
+        InertiaMatrix res = new InertiaMatrix();
+        for (int line = 0; line < 3; ++line)
+            for (int column = 0; column < 3; ++column)
+                res.tab[line, column] = im1.tab[line, column] + im2.tab[line, column];
+
+        return res;
+    }
+    public static InertiaMatrix operator *(float scalar, InertiaMatrix im2)
+    {
+        InertiaMatrix res = new InertiaMatrix();
+        for (int line = 0; line < 3; ++line)
+            for (int column = 0; column < 3; ++column)
+                res.tab[line, column] = scalar * im2.tab[line, column];
+        return res;
+    }
+
+    public static InertiaMatrix operator -(InertiaMatrix im1, InertiaMatrix im2)
+    {
+        return im1 + (-1 * im2);
+    }
+    /// <summary>
+    /// Translate the inertia matrice from the previous application point, to the previous application point + the translation vector t
+    /// </summary>
+    /// <param name="t"></param>
+    /// <param name="mass"></param>
+    public static InertiaMatrix Translated(InertiaMatrix im, Vector3 t, float mass)
+    {
+        float[,] translationMatrix = new float[3, 3] {
+                                                        { t.y*t.y + t.z*t.z, -t.x*t.y         , -t.x*t.z            },
+                                                        { -t.x*t.y         , t.x*t.x + t.z*t.z, -t.y*t.z            },
+                                                        { -t.x*t.z         , -t.y*t.z         , t.x*t.x + t.y*t.y } };
+
+        InertiaMatrix temp = mass * new InertiaMatrix(translationMatrix);
+        InertiaMatrix res = im + temp;
+        return res;
+    }
+
+    public override string ToString()
+    {
+        string res = "";
+
+        for (int line = 0; line < 3; ++line)
+        {
+            res += "[";
+            for (int column = 0; column < 3; ++column)
+            {
+                res += $"{tab[line, column]}, ";
+            }
+            res += "\n";
+
+        }
+        res += "]";
+
+        return res;
+    }
+}

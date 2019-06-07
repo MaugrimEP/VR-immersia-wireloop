@@ -22,8 +22,10 @@ public class VirtuoseManager : MonoBehaviour
 
     [Range(VirtuoseAPIHelper.MIN_MASS, VirtuoseAPIHelper.MAX_MASS)]
     public float mass = 0.2f;//0.05
-    [Range(VirtuoseAPIHelper.MIN_INERTIE, VirtuoseAPIHelper.MAX_INERTIE)]
-    public float inertie = 0.1f;
+    //[Range(VirtuoseAPIHelper.MIN_INERTIE, VirtuoseAPIHelper.MAX_INERTIE)]
+    public float[] inerties = new float[] { 0.1f, 0f  , 0f ,
+                                            0f  , 0.1f, 0f ,
+                                            0f  , 0f  ,0.1f};
 
     public KeyCode powerOnKey = KeyCode.P;
 
@@ -117,7 +119,7 @@ public class VirtuoseManager : MonoBehaviour
 
         if (CommandType == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_VIRTMECH)
         {
-            Virtuose.AttachVO(mass, inertie);
+            Virtuose.AttachVO(mass, inerties);
         }
     }
     
