@@ -2,15 +2,13 @@
 
 public class DefaultStr : IReactionStr
 {
-
     public DefaultStr(RaquetteController rc) : base(rc)
     {
     }
 
     public override void ComputeSimulationStep()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuosePose();
-        (Vector3 position, Quaternion rotation) = Utils.V2UPosRot(READposition, READrotation);
+        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
 
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
@@ -27,11 +25,11 @@ public class DefaultStr : IReactionStr
 
         if (rc.infoCollision.IsCollided)
         {
-            rc.vm.Virtuose.Pose = (solvedNextPosition, U2VRotation(solvedNextRotation).normalized);
+            rc.vm.Virtuose.Pose = (solvedNextPosition, solvedNextRotation);
         }
         else
         {
-            rc.vm.Virtuose.Pose = rc.vm.Virtuose.Pose;
+            rc.vm.Virtuose.RawPose = rc.vm.Virtuose.RawPose;
         }
 
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
@@ -39,8 +37,7 @@ public class DefaultStr : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 position, Quaternion rotation) = rc.vm.Virtuose.Pose;
-        (position, rotation) = Utils.V2UPosRot(position, rotation);
+        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
 
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);
@@ -51,13 +48,6 @@ public class DefaultStr : IReactionStr
         Quaternion newRotation = rc.GetRotation();
 
         return (newPosition, newRotation);
-    }
-
-    private Quaternion U2VRotation(Quaternion URotation)
-    {
-        Vector3 eulerRotation = URotation.eulerAngles;
-        return Quaternion.Euler(-eulerRotation.z, eulerRotation.x, eulerRotation.y);
-
     }
 
     public override void HandleCollisionEnter(Collision collision)

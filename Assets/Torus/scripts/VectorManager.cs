@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class VectorManager : MonoBehaviour
@@ -82,6 +83,11 @@ public class VectorManager : MonoBehaviour
 
         Destroy(cylinder, lifeTime);
         Destroy(cube, lifeTime);
+    }
+
+    public static void Clear()
+    {
+        VECTOR_MANAGER.ClearVector();
     }
 
     public static void DrawSphereS(Vector3 position, Vector3 scale, Color color)

@@ -75,16 +75,6 @@ public class Utils
         return new Vector3(-v.z, v.x, v.y);
     }
 
-    public static Vector3 U2VTorque(Vector3 t)
-    {
-        return new Vector3(t.x, t.y, t.z);
-    }
-
-    public static Vector3 V2UVector3(Vector3 v)
-    {
-        return new Vector3(v.y, v.z, -v.x);
-    }
-
     public static Quaternion ClampRotation(Quaternion rotation, float maxDot)
     {
         float dot = Quaternion.Dot(Quaternion.identity, rotation);
@@ -95,47 +85,8 @@ public class Utils
         return rotation;
     }
 
-    #region Wrapper on virtuose input/output
-    public static (Vector3 Position, Quaternion Rotation) V2UPosRot(Vector3 Position, Quaternion Rotation)
-    {
-        Vector3 newPosition = new Vector3(Position.x, Position.y, Position.z);
-        Quaternion newRotation = new Quaternion(-Rotation.y, -Rotation.z, Rotation.x, Rotation.w);
-
-        return (newPosition, newRotation);
-    }
-
-    public static (Vector3 Force, Vector3 Torque) V2UForceTorque(Vector3 Force, Vector3 Torque)
-    {
-        return (Force, Torque);
-    }
-
-    public static (Vector3 Position, Quaternion Rotation) U2VPosRot(Vector3 Position, Quaternion Rotation)
-    {
-        Vector3 newPosition = new Vector3(Position.x, Position.y, Position.z);
-        //TODO : la rotation
-        Vector3 eulerRotation = Rotation.eulerAngles;
-        Quaternion newRotation = Quaternion.Euler(-eulerRotation.z, eulerRotation.x, eulerRotation.y);
-        return (newPosition, newRotation.normalized);
-    }
-
-    public static (Vector3 Force, Vector3 Torque) U2VForceTorque(Vector3 Force, Vector3 Torque)
-    {
-        return (new Vector3(-Force.z, Force.x, Force.y), new Vector3(Torque.z, Torque.x, Torque.y));
-    }
-
-    public static Vector3 Angles(Vector3 v1, Vector3 v2)
-    {
-        return new Vector3(
-            Vector2.SignedAngle(new Vector2(v1.y, v1.z), new Vector2(v2.y, v2.z)),
-            Vector2.SignedAngle(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z)),
-            Vector2.SignedAngle(new Vector2(v1.x, v1.y), new Vector2(v2.x, v2.y))
-            );
-    }
-
     public static Color RandomColor()
     {
         return Random.ColorHSV();
     }
-    #endregion
-
 }

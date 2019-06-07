@@ -13,9 +13,9 @@ public class RaquetteController : MonoBehaviour
     public SolverStr SolverStrategy;
     private IReactionStr str;
     public float MAX_DISPLACEMENT = 0.05f;
-    public float MAX_ROTATION     = 0.05f;
-    public float MAX_FORCE        = 30;
-    public float MAX_TORQUE       = 2f;
+    public float MAX_ROTATION = 0.05f;
+    public float MAX_FORCE = 30;
+    public float MAX_TORQUE = 2f;
     [Space(10)]
 
     #region oldVar
@@ -69,9 +69,21 @@ public class RaquetteController : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// Return the viruose position and rotation in unity coordinate system
+    /// </summary>
+    /// <returns></returns>
     public (Vector3 Position, Quaternion Rotation) GetVirtuosePose()
     {
         return vm.Virtuose.Pose;
+    }
+    /// <summary>
+    /// Return the viruose position and rotation in virtuose coordinate system
+    /// </summary>
+    /// <returns></returns>
+    public (Vector3 Position, Quaternion Rotation) GetVirtuoseRawPose()
+    {
+        return vm.Virtuose.RawPose;
     }
 
     public bool IsColliding()
@@ -182,54 +194,5 @@ public class RaquetteController : MonoBehaviour
         if (target == null) return;
         str.ComputeSimulationStep();
 
-    }
-
-    /// <summary>
-    /// the old SetRigidbodyPositions as a save
-    /// </summary>
-    private void SetRigidbodyPositionsSAVE()
-    {
-        if (target != null)
-        {
-            (Vector3 position, Quaternion rotation) = vm.Virtuose.Pose;
-            (position, rotation) = Utils.V2UPosRot(position, rotation);
-
-            targetRigidbody.MovePosition(position);
-            targetRigidbody.MoveRotation(rotation);
-
-            float distance = 0;
-            float dot = 0;
-
-            Vector3 normal = target.transform.position - targetRigidbody.position;
-            //When there is a collision the rigidbody position is at the virtuose arm position but the transform.position is impacted by the scene physic.
-            Vector3 oldPosition = infoCollision.IsCollided ? target.transform.position : targetRigidbody.position;
-            Vector3 newPosition = infoCollision.IsCollided ? target.transform.position + stiffness * normal : targetRigidbody.position;
-            Quaternion newRotation = infoCollision.IsCollided ? target.transform.rotation : targetRigidbody.rotation;
-
-            distance = Vector3.Distance(oldPosition, newPosition);
-
-            Vector3 displacementClamped = Utils.ClampDisplacement(newPosition - position, MAX_DISPLACEMENT);
-            newPosition = oldPosition + displacementClamped;
-
-            dot = Quaternion.Dot(rotation, newRotation);
-
-            //Add extra protection to avoid high velocity movement.
-            if (distance > VirtuoseAPIHelper.MAX_DISTANCE_PER_FRAME)
-            {
-                VRTools.LogWarning("[Warning][VirtuoseTargetCollision] Haption arm new position is aboved the authorized threshold distance (" + distance + ">" + VirtuoseAPIHelper.MAX_DISTANCE_PER_FRAME + "). Power off.");
-                vm.Virtuose.Power = false;
-            }
-
-            if (dot < 1 - VirtuoseAPIHelper.MAX_DOT_DIFFERENCE)
-            {
-                VRTools.LogWarning("[Warning][VirtuoseManager] Haption arm new rotation is aboved authorized the threshold dot (" + (1 - dot) + " : " + VirtuoseAPIHelper.MAX_DOT_DIFFERENCE + "). Power off.");
-                vm.Virtuose.Power = false;
-            }
-
-            vm.Virtuose.Pose = (newPosition, vm.Virtuose.Pose.rotation);
-
-            lastFramePosition = position;
-            lastFrameRotation = rotation;
-        }
     }
 }

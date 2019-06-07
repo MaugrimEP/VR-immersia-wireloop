@@ -222,12 +222,12 @@ public class VirtuoseAPIHelper
             ExecLogOnError(
                 VirtuoseAPI.virtGetCommandType, ref commandType);
 
-            return (VirtuoseAPI.VirtCommandType) commandType;
+            return (VirtuoseAPI.VirtCommandType)commandType;
         }
         set
         {
             ExecLogOnError(
-                VirtuoseAPI.virtSetCommandType, (ushort) value);
+                VirtuoseAPI.virtSetCommandType, (ushort)value);
         }
     }
 
@@ -236,7 +236,7 @@ public class VirtuoseAPIHelper
         set
         {
             ExecLogOnError(
-                VirtuoseAPI.virtSetGripperCommandType, (ushort) value);
+                VirtuoseAPI.virtSetGripperCommandType, (ushort)value);
         }
     }
 
@@ -259,7 +259,7 @@ public class VirtuoseAPIHelper
         set
         {
             ExecLogOnError(
-                 VirtuoseAPI.virtSetIndexingMode, (ushort) value);
+                 VirtuoseAPI.virtSetIndexingMode, (ushort)value);
         }
     }
 
@@ -670,7 +670,35 @@ public class VirtuoseAPIHelper
             value.torques = Utils.ClampVector3(value.torques, 3.1f);
 
             ExecLogOnError(
-                VirtuoseAPI.virtAddForce, new float []{ value.forces.x,value.forces.y,value.forces.z, value.torques.x, value.torques.y, value.torques.z});
+                VirtuoseAPI.virtAddForce, new float[] { value.forces.x, value.forces.y, value.forces.z, value.torques.x, value.torques.y, value.torques.z });
+        }
+    }
+
+    /// <summary>
+    /// Current value of the control position and sends it to the Virtuose controller.
+    /// If an object is attached to the Virtuose (virtAttachVO called before),
+    /// then the control point is the center of the object,
+    /// otherwise it is the center of the Virtuose end-effector.
+    /// </summary>
+    public (Vector3 position, Quaternion rotation) RawPose
+    {
+        get
+        {
+            ExecLogOnError(
+                VirtuoseAPI.virtGetPosition, pose);
+            return (new Vector3(pose[0], pose[1], pose[2]), new Quaternion(pose[3], pose[4], pose[5], pose[6]));
+        }
+        set
+        {
+            pose[0] = value.position.x;
+            pose[1] = value.position.y;
+            pose[2] = value.position.z;
+            pose[3] = value.rotation.x;
+            pose[4] = value.rotation.y;
+            pose[5] = value.rotation.z;
+            pose[6] = value.rotation.w;
+            ExecLogOnError(
+                VirtuoseAPI.virtSetPosition, pose);
         }
     }
 
@@ -754,7 +782,7 @@ public class VirtuoseAPIHelper
         position.x = -position.x;
         position.z = -position.z;
         position += offset;
-        Quaternion rotation = Quaternion.AngleAxis(- articulars[(int)ArticularScaleOne.Base], Vector3.up);
+        Quaternion rotation = Quaternion.AngleAxis(-articulars[(int)ArticularScaleOne.Base], Vector3.up);
         return (position, rotation);
     }
 
@@ -842,7 +870,7 @@ public class VirtuoseAPIHelper
     {
         Pose = (Vector3.zero, Quaternion.identity);
 
-        Speed = new float[] {0, 0, 0, 0, 0, 0 };
+        Speed = new float[] { 0, 0, 0, 0, 0, 0 };
 
         if (mass > MAX_MASS)
             VRTools.LogWarning("[Warning][VirtuoseManager] Mass is aboved authorized threshold (" + mass + ">" + MAX_MASS + ")");
@@ -874,9 +902,9 @@ public class VirtuoseAPIHelper
     }
 
     public void UpdateArm()
-    {       
+    {
         int buttonState = 0;
-        for(int b = 0; b < 3; b++)
+        for (int b = 0; b < 3; b++)
         {
             ExecLogOnError(
                 VirtuoseAPI.virtGetButton, b, ref buttonState);
@@ -910,16 +938,16 @@ public class VirtuoseAPIHelper
     {
         float[] articulars = Articulars;
         float x = (referencearticulars[(int)ArticularScaleOne.Handle_Roll] - articulars[(int)ArticularScaleOne.Handle_Roll]) / 80;
-        float y = (referencearticulars[(int)ArticularScaleOne.Handle_Pitch] - articulars[(int)ArticularScaleOne.Handle_Pitch]) / - 70;
+        float y = (referencearticulars[(int)ArticularScaleOne.Handle_Pitch] - articulars[(int)ArticularScaleOne.Handle_Pitch]) / -70;
         if (clamped)
-        { 
+        {
             x = Mathf.Clamp(x, -1, 1);
             y = Mathf.Clamp(y, -1, 1);
         }
         return new Vector2(x, y);
     }
 
- 
+
 
 
     /// <summary>
@@ -956,12 +984,17 @@ public class VirtuoseAPIHelper
     //x:3 y:4 z:5 w:6
     public static Quaternion VirtuoseToUnityRotation(float[] pose, int axe = 0)
     {
-        if(pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
-            return new Quaternion(
+        if (pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
+        {
+            Quaternion read = new Quaternion(
                 pose[axe * POSE_COMPONENTS_NUMBER + 3],
                 pose[axe * POSE_COMPONENTS_NUMBER + 4],
                 pose[axe * POSE_COMPONENTS_NUMBER + 5],
                 pose[axe * POSE_COMPONENTS_NUMBER + 6]);
+            Quaternion rotation = new Quaternion(-read.y, -read.z, read.x, read.w);
+            return rotation;
+        }
+
 
         VRTools.LogError("[Error][VirtuoseManager] Wrong pose length: " + pose.Length + ".");
         return Quaternion.identity;
@@ -969,10 +1002,8 @@ public class VirtuoseAPIHelper
 
     public static (Vector3, Quaternion) VirtuoseToUnityPose(float[] pose, int axe = 0)
     {
-        return (VirtuoseToUnityPosition(pose, axe),  VirtuoseToUnityRotation(pose, axe));
+        return (VirtuoseToUnityPosition(pose, axe), VirtuoseToUnityRotation(pose, axe));
     }
-
-
 
     /// <summary>
     /// [ x y z qx qy qz qw ] 
@@ -982,8 +1013,10 @@ public class VirtuoseAPIHelper
     /// <returns></returns>
     public static float[] ConvertUnityToVirtuose(Vector3 position, Quaternion rotation)
     {
-        float[] positions = { 0, 0, 0,  0, 0, 0, 0 };
-        positions[0] = - position.z;
+        rotation = rotation.normalized;
+
+        float[] positions = { 0, 0, 0, 0, 0, 0, 0 };
+        positions[0] = -position.z;
         positions[1] = position.x;
         positions[2] = position.y;
 

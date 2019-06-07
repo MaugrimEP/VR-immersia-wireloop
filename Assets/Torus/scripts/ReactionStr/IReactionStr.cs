@@ -11,8 +11,7 @@ public abstract class IReactionStr
 
     public virtual void ComputeSimulationStep()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuosePose();
-        (Vector3 position, Quaternion rotation) = Utils.V2UPosRot(READposition, READrotation);
+        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
 
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
@@ -27,7 +26,10 @@ public abstract class IReactionStr
             rc.vm.Virtuose.Power = false;
         #endregion
 
-        rc.vm.Virtuose.Pose = (solvedNextPosition, solvedNextRotation.normalized);
+        if (rc.IsColliding())
+            rc.vm.Virtuose.Pose = (solvedNextPosition, solvedNextRotation);
+        else
+            rc.vm.Virtuose.RawPose = rc.vm.Virtuose.RawPose;
 
         #region verbose mode
         if (false)

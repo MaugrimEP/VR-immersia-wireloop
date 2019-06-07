@@ -10,7 +10,7 @@ public class BlockStr : IReactionStr
 
     public override void ComputeSimulationStep()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuosePose();
+        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuoseRawPose();
 
         (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = SolvePositiondAndRotation();
 
@@ -22,7 +22,7 @@ public class BlockStr : IReactionStr
             rc.vm.Virtuose.Power = false;
         #endregion
 
-        rc.vm.Virtuose.Pose = (solvedNextPosition, solvedNextRotation.normalized);
+        rc.vm.Virtuose.RawPose = (solvedNextPosition, solvedNextRotation);
 
         if(!rc.infoCollision.IsCollided)
             (rc.lastFramePosition, rc.lastFrameRotation) = (READposition, READrotation);
@@ -30,11 +30,8 @@ public class BlockStr : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.vm.Virtuose.Pose;
-        (Vector3 position, Quaternion rotation) = Utils.V2UPosRot(READposition, READrotation);
-
-        rc.targetRigidbody.MovePosition(position);
-        rc.targetRigidbody.MoveRotation(rotation);
+        rc.targetRigidbody.MovePosition(rc.GetVirtuosePose().Position);
+        rc.targetRigidbody.MoveRotation(rc.GetVirtuosePose().Rotation);
 
         if (rc.infoCollision.IsCollided)
         {
@@ -42,7 +39,7 @@ public class BlockStr : IReactionStr
         }
         else
         {
-            return rc.vm.Virtuose.Pose;
+            return rc.GetVirtuoseRawPose();
         }
     }
 

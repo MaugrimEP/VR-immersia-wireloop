@@ -10,8 +10,8 @@ public class PhysicSimulate : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuosePose();
-        (Vector3 objectTargetedPosition, Quaternion objectTargetedRotation) = Utils.V2UPosRot(READposition, READrotation);
+        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuoseRawPose();
+        (Vector3 objectTargetedPosition, Quaternion objectTargetedRotation) = rc.GetVirtuosePose();
 
         Physics.autoSimulation = false;
 
