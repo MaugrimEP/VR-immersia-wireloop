@@ -992,7 +992,7 @@ PrefabInstance:
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: SolverStrategy
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
@@ -1054,6 +1054,11 @@ PrefabInstance:
       propertyPath: rc
       value: 
       objectReference: {fileID: 1133159809}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: modeInertie
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
 --- !u!1 &1925559339
