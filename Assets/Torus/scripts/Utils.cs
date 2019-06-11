@@ -113,19 +113,36 @@ public class InertiaMatrix
         return res;
     }
 
-    public static InertiaMatrix GetRaquette(float massPave)
+    /// <summary>
+    /// Compute the inertia matrix for the raquette
+    /// </summary>
+    /// <param name="density">the density in kg.m^-3</param>
+    /// <returns>
+    /// the inertia matrix
+    /// mass in kg
+    /// </returns>
+    public static (InertiaMatrix inertiaMatrix, float mass) GetRaquette(float density)
     {
-        InertiaMatrix PaveExterieur = GetPave(mass: 1f, length: 0.4f, width: 0.4f, heigh: 0.02f);
-        InertiaMatrix PaveInterieur = GetPave(mass: 1f, length: 0.33f, width: 0.33f, heigh: 0.02f);
+        //old > this would need a axis changement
+        //InertiaMatrix PaveExterieur = GetPave(mass: 1f, length: 0.4f, width: 0.4f, heigh: 0.02f);
+        //InertiaMatrix PaveInterieur = GetPave(mass: 1f, length: 0.33f, width: 0.33f, heigh: 0.02f);
 
-        InertiaMatrix CerceauCentered = massPave * (PaveExterieur - PaveInterieur);
-        InertiaMatrix Cerceau = Translated(im: CerceauCentered, t: new Vector3(0.2f + 0.1f, 0f, 0f), mass: 2f);
+        //this new call take into account the change of axis, we just swap the height and the lenght
+        (InertiaMatrix PaveExterieur, float massPaveExterieur) = GetPaveDensity(density: density, length: 0.02f, width: 0.4f, heigh: 0.4f);
+        (InertiaMatrix PaveInterieur, float massPaveInterieur) = GetPaveDensity(density: density, length: 0.02f, width: 0.33f, heigh: 0.33f);
 
-        InertiaMatrix Handle = GetCylinder(mass: 2f, radius: 0.05f / 2, heigh: 0.2f);
+        InertiaMatrix CerceauCentered = (PaveExterieur - PaveInterieur);
+        // translation from the center to the handle
+        Vector3 translation = new Vector3(0f, 0f, 0.2f + 0.1f);
+        InertiaMatrix Cerceau = Translated(im: CerceauCentered, t: translation, mass: massPaveExterieur - massPaveInterieur); 
+
+        (InertiaMatrix Handle, float massHandle) = GetCylinderDensity(density: density, radius: 0.05f / 2, heigh: 0.2f);
 
         InertiaMatrix Raquette = Handle + Cerceau;
 
-        return Raquette;
+        float totalMass = massPaveExterieur - massPaveInterieur + massHandle;
+
+        return (Raquette, totalMass);
     }
 
     /// <summary>
@@ -144,6 +161,14 @@ public class InertiaMatrix
             { 0                                   , 0                                      , mass*(length*length+width*width) / 12f } });
     }
 
+    public static (InertiaMatrix inertiaMatrix, float mass) GetPaveDensity(float density, float length, float width, float heigh)
+    {
+        float volume = length * width * heigh;
+        float mass = volume * density;
+
+        return (GetPave(mass, length, width, heigh), mass);
+    }
+
     /// <summary>
     /// With the application point a the center
     /// </summary>
@@ -158,6 +183,12 @@ public class InertiaMatrix
             { mass*(radius*radius/4f + heigh*heigh/12f), 0                                         , 0                            },
             { 0                                        , mass*(radius*radius/4f + heigh*heigh/12f) , 0                            },
             { 0                                        , 0                                         , mass * radius * radius / 2f} });
+    }
+    public static (InertiaMatrix inertiaMatrix, float mass) GetCylinderDensity(float density, float radius, float heigh)
+    {
+        float volume = Mathf.PI * Mathf.Pow(radius, 2) * heigh;
+        float mass = volume * density;
+        return (GetCylinder(mass, radius, heigh), mass);
     }
 
     private InertiaMatrix(float[,] tab)

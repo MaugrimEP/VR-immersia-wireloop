@@ -38,7 +38,8 @@ public class InputController : MonoBehaviour {
     #endregion
 
     [Range(VirtuoseAPIHelper.MIN_MASS, VirtuoseAPIHelper.MAX_MASS)]
-    public float mass    = 0.2f;
+    public float mass    = 0.2f; // used if useDefaultInertie = false
+    public float density = 1350; // in kg.m^-3
     public bool useDefaultInertie;
     public float[] inerties = new float[] { 0.1f, 0f  , 0f ,
                                             0f  , 0.1f, 0f ,
@@ -67,13 +68,16 @@ public class InputController : MonoBehaviour {
     }
 
     private void Awake () {
+        (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
 
-        Debug.Log($"inertia matrix : {InertiaMatrix.GetRaquette(massPave: 2f)}");
+        inertiaMatrix = 0.1f * inertiaMatrix;
+        massFromInertia *= 0.1f;
+        Debug.Log($"inertia matrix : {inertiaMatrix}, massFromInertia = {massFromInertia}"); //TODO to remove verbose
 
-        if(UseVirtuose())
+        if (UseVirtuose())
         {//init the virtuoseManager component
-            virtuoseManager.mass = mass;
-            virtuoseManager.inerties = useDefaultInertie ? inerties : InertiaMatrix.GetRaquette(massPave:mass).GetMatrix1D();
+
+            (virtuoseManager.inerties, virtuoseManager.mass) = useDefaultInertie ? (inerties, mass) : (inertiaMatrix.GetMatrix1D(), massFromInertia);
             virtuoseManager.BaseFramePosition = Vector3.zero;
             virtuoseManager.powerOnKey = KeyCode.P;
             virtuoseManager.CommandType = modeVirtuose;

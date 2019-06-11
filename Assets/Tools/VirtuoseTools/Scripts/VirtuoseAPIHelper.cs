@@ -1006,25 +1006,30 @@ public class VirtuoseAPIHelper
         return (VirtuoseToUnityPosition(pose, axe), VirtuoseToUnityRotation(pose, axe));
     }
 
-    /// <summary>
-    /// [ x y z qx qy qz qw ] 
-    /// /// </summary>
-    /// <param name="position"></param>
-    /// <param name="rotation"></param>
-    /// <returns></returns>
+    public static Vector3 UnityToVirtuosePosition(Vector3 position)
+    {
+        return new Vector3(-position.z, position.x, position.y);
+    }
+
+    public static Quaternion UnityToVirtuoseRotation(Quaternion rotation)
+    {
+        return rotation.normalized;
+    }
+
     public static float[] ConvertUnityToVirtuose(Vector3 position, Quaternion rotation)
     {
-        rotation = rotation.normalized;
-
+        Vector3 virtuosePos = UnityToVirtuosePosition(position);
+        Quaternion virtuoseRot = UnityToVirtuoseRotation(rotation);
         float[] positions = { 0, 0, 0, 0, 0, 0, 0 };
-        positions[0] = -position.z;
-        positions[1] = position.x;
-        positions[2] = position.y;
 
-        positions[3] = rotation.x;
-        positions[4] = rotation.y;
-        positions[5] = rotation.z;
-        positions[6] = rotation.w;
+        positions[0] = virtuosePos.x;
+        positions[1] = virtuosePos.y;
+        positions[2] = virtuosePos.z;
+
+        positions[3] = virtuoseRot.x;
+        positions[4] = virtuoseRot.y;
+        positions[5] = virtuoseRot.z;
+        positions[6] = virtuoseRot.w;
 
         return positions;
     }
