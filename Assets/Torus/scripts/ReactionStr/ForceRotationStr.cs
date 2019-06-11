@@ -43,10 +43,8 @@ public class ForceRotationStr : IReactionStr
 
             VectorManager.Clear();//TODO to remove : mode verbose
             VectorManager.DrawVectorS(handleTransform.position, forces, Color.red, "force"); //TODO to remove : verbose
-            Debug.Log($"Forces = {forces}");
 
             rc.vm.Virtuose.virtAddForce= (Utils.U2VVector3(forces), Vector3.zero);
-
 
             return (rc.GetVirtuoseRawPose().Position, rc.lastFrameRotation);
         }
