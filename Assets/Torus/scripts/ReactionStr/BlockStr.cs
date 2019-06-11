@@ -17,11 +17,6 @@ public class BlockStr : IReactionStr
         Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - READposition, rc.MAX_DISPLACEMENT);
         solvedNextPosition = READposition + displacementClamped;
 
-        #region check threshold distance and rotation
-        if (CheckTreshold(READposition, solvedNextPosition, READrotation, solvedNextRotation))
-            rc.vm.Virtuose.Power = false;
-        #endregion
-
         rc.vm.Virtuose.RawPose = (solvedNextPosition, solvedNextRotation);
 
         if(!rc.infoCollision.IsCollided)
