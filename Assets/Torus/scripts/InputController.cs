@@ -3,7 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputController : MonoBehaviour {
+public class InputController : MonoBehaviour
+{
+    public enum MassInertiaMode
+    {
+        Default, InertiesInventor, ComputedInertie
+    }
 
     public VirtuoseManager virtuoseManager;
     public ArmSelection armSelection;
@@ -13,7 +18,6 @@ public class InputController : MonoBehaviour {
     public bool HapticEnable;
 
     public VirtuoseAPI.VirtCommandType modeVirtuose;
-
 
     #region value (to add if position and rotation or raw for the force and torque) to the virtuose input for update, they should be in unity coordinate system
     [HideInInspector]
@@ -38,16 +42,18 @@ public class InputController : MonoBehaviour {
     #endregion
 
     [Range(VirtuoseAPIHelper.MIN_MASS, VirtuoseAPIHelper.MAX_MASS)]
-    public float mass    = 0.2f; // used if useDefaultInertie = false
+    public float mass    = 0.2f;
     public float density = 1350; // in kg.m^-3
-    public bool useDefaultInertie;
-    public float[] inerties = new float[] { 0.1f, 0f  , 0f ,
-                                            0f  , 0.1f, 0f ,
-                                            0f  , 0f  ,0.1f};
+    private readonly float[] defaultInertie = new float[] 
+                                            { 0.02f, 0f  , 0f ,
+                                            0f  , 0.02f, 0f ,
+                                            0f  , 0f  ,0.02f};
 
-    public float[] inertiesIventor = new float[] { 77067f *  0.000001f, 0f  , 0f ,
+    private readonly float[] inertiesInventor = new float[] { 77067f *  0.000001f, 0f  , 0f ,
                                                   0f  , 52828f * 0.000001f, 0f ,
                                                   0f  , 0f  , 24441f * 0.000001f};
+    public MassInertiaMode modeInertie;
+    public RaquetteController rc;
 
     private string GetIP()
     {
@@ -71,16 +77,44 @@ public class InputController : MonoBehaviour {
         return armSelection != ArmSelection.Unity;
     }
 
+    public (float[] inertie, float mass) GetMassAndInertie()
+    {
+        float[] appliedInertie = new float[] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+        float appliedMass = 0.2f;
+
+        if (rc.SendForce())
+        {
+            (appliedInertie, appliedMass) = (new float[] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f }, mass);
+        }
+        else
+        {
+            switch (modeInertie)
+            {
+                case MassInertiaMode.ComputedInertie:
+                    (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
+                    (appliedInertie, appliedMass) = (inertiaMatrix.GetMatrix1D(), massFromInertia);
+                    break;
+                case MassInertiaMode.InertiesInventor:
+                    (appliedInertie, appliedMass) = (inertiesInventor, 0.2f);
+                    break;
+                case MassInertiaMode.Default:
+                    (appliedInertie, appliedMass) = (defaultInertie, mass);
+                    break;
+            }
+        }
+        return (appliedInertie, appliedMass);
+    }
+
     private void Awake () {
+        Application.targetFrameRate = 100;
 
-        (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
+        (float[] appliedInertie, float appliedMass) = GetMassAndInertie();
 
-        Debug.Log($"inertia matrix : {inertiaMatrix}, massFromInertia = {massFromInertia}"); //TODO to remove verbose
+        Debug.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}"); //TODO to remove verbose
 
         if (UseVirtuose())
         {//init the virtuoseManager component
-
-            (virtuoseManager.inerties, virtuoseManager.mass) = useDefaultInertie ? (inerties, mass) : (inertiaMatrix.GetMatrix1D(), massFromInertia);
+            (virtuoseManager.inerties, virtuoseManager.mass) = (appliedInertie, appliedMass);
             virtuoseManager.BaseFramePosition = Vector3.zero;
             virtuoseManager.powerOnKey = KeyCode.P;
             virtuoseManager.CommandType = modeVirtuose;

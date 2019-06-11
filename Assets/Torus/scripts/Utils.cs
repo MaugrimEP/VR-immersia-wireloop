@@ -16,6 +16,17 @@ public class Utils
         return new Vector3(signex * Mathf.Pow(v.x, power), signey * Mathf.Pow(v.y, power), signez * Mathf.Pow(v.z, power));
     }
 
+    public static string ArrayToString(float [] array)
+    {
+        string str = "[";
+        foreach(float val in array)
+        {
+            str += $" {val},";
+        }
+        str += "]";
+        return str;
+    }
+
     public static Vector3 Abs(Vector3 v)
     {
         return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));

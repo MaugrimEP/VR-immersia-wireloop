@@ -85,6 +85,15 @@ public class RaquetteController : MonoBehaviour
     {
         return vm.Virtuose.RawPose;
     }
+    /// <summary>
+    /// return True if we should send force/torque to the virtuose, return False if
+    /// we should send position and rotations
+    /// </summary>
+    /// <returns></returns>
+    public bool SendForce()
+    {
+        return SolverStrategy == SolverStr.ForceTorque;
+    }
 
     public bool IsColliding()
     {

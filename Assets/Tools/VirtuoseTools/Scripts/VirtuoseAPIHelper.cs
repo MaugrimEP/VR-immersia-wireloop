@@ -202,7 +202,7 @@ public class VirtuoseAPIHelper
         IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_ALL_FORCE_FEEDBACK_INHIBITION;
         ForceFactor = 1;
         SpeedFactor = 1;
-        Timestep = 0.006f;
+        Timestep = 0.010f;
         BaseFrame = (Vector3.zero, Quaternion.identity);
         ObservationFrame = (Vector3.zero, Quaternion.identity);
         ObservationFrameSpeed = (Vector3.zero, Quaternion.identity);
@@ -892,9 +892,6 @@ public class VirtuoseAPIHelper
 
         inertie = Mathf.Clamp(inertie, MIN_INERTIE, MAX_INERTIE);
 
-        Debug.Log($"inertie used : {inerties}"); //TODO to remove
-        for (int i = 0; i < 9; ++i) Debug.Log(inerties[i]);//TODO to remove
-
         ExecLogOnError(
             VirtuoseAPI.virtAttachVO, mass, inerties);
     }
@@ -1017,7 +1014,7 @@ public class VirtuoseAPIHelper
     public static Quaternion UnityToVirtuoseRotation(Quaternion rotation)
     {
         Vector3 rotationEuler = rotation.eulerAngles;
-        Quaternion virtRot = Quaternion.Euler(-rotationEuler.y, rotationEuler.x, -rotationEuler.z);
+        Quaternion virtRot = Quaternion.Euler(-rotationEuler.z, rotationEuler.x, rotationEuler.y);
         return virtRot.normalized;
     }
 
