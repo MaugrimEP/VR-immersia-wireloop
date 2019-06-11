@@ -75,8 +75,6 @@ public class InputController : MonoBehaviour {
 
         (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
 
-        inertiaMatrix = 0.1f * inertiaMatrix;
-        massFromInertia *= 0.1f;
         Debug.Log($"inertia matrix : {inertiaMatrix}, massFromInertia = {massFromInertia}"); //TODO to remove verbose
 
         if (UseVirtuose())

@@ -871,7 +871,7 @@ public class VirtuoseAPIHelper
         float inertie = MAX_INERTIE;
         {
             for (int i = 0; i < inerties.Length; ++i)
-                inertie = Mathf.Max(inertie, inerties[i]);
+                inertie = Mathf.Min(inertie, inerties[i]);
         }
 
         Pose = (Vector3.zero, Quaternion.identity);
@@ -891,7 +891,10 @@ public class VirtuoseAPIHelper
             VRTools.LogWarning("[Warning][VirtuoseManager] Inertie must be >= 0.");
 
         inertie = Mathf.Clamp(inertie, MIN_INERTIE, MAX_INERTIE);
-        
+
+        Debug.Log($"inertie used : {inerties}"); //TODO to remove
+        for (int i = 0; i < 9; ++i) Debug.Log(inerties[i]);//TODO to remove
+
         ExecLogOnError(
             VirtuoseAPI.virtAttachVO, mass, inerties);
     }
