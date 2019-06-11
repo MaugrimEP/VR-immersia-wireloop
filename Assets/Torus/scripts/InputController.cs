@@ -64,7 +64,7 @@ public class InputController : MonoBehaviour
             case ArmSelection.Simulator:
                 return "127.0.0.1";
             case ArmSelection.SingleArm125:
-                return "131.254.18.52#5125";
+                return "131.254.154.16#5125";//return "131.254.18.52#5125";
             case ArmSelection.SingleArm126:
                 return "131.254.18.52#5126";
             default:
@@ -92,6 +92,8 @@ public class InputController : MonoBehaviour
             {
                 case MassInertiaMode.ComputedInertie:
                     (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
+                    inertiaMatrix = 0.1f * inertiaMatrix;
+                    massFromInertia = 0.1f * massFromInertia;
                     (appliedInertie, appliedMass) = (inertiaMatrix.GetMatrix1D(), massFromInertia);
                     break;
                 case MassInertiaMode.InertiesInventor:

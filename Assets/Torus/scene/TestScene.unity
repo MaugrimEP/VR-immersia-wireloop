@@ -748,18 +748,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebe5001a4a22b0949845850d89a6589f, type: 3}
---- !u!114 &1133159809 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
-    type: 3}
-  m_PrefabInstance: {fileID: 1719307038}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdc06856fbb776f4595ad1b727f0f634, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1550451322
 GameObject:
   m_ObjectHideFlags: 0
@@ -894,18 +882,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4313c948958cdaa4583acddbf5fe63c6, type: 3}
---- !u!114 &1712594782 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1233430161, guid: ccd034fa89df2724ea8188f7520ac1e4,
-    type: 3}
-  m_PrefabInstance: {fileID: 1719307038}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c643729223d0902418b588fb66bada49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1719307038
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -972,92 +948,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1233430156, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
-      propertyPath: m_Size.z
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 1233430157, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
-      propertyPath: m_Size.z
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 1233430158, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
-      propertyPath: m_Size.z
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 1233430159, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
-      propertyPath: m_Size.z
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: SolverStrategy
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: MAX_FORCE
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: MAX_TORQUE
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: armSelection
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: modeVirtuose
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: inertie
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: virtuoseManager
-      value: 
-      objectReference: {fileID: 1712594782}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: HapticEnable
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: useDefaultInertie
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: inertiesIventor.Array.data[0]
-      value: 0.02
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: inertiesIventor.Array.data[4]
-      value: 0.02
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: inertiesIventor.Array.data[8]
-      value: 0.02
-      objectReference: {fileID: 0}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: rc
-      value: 
-      objectReference: {fileID: 1133159809}
-    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
-        type: 3}
-      propertyPath: modeInertie
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}
