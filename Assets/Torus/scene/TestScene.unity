@@ -980,7 +980,7 @@ PrefabInstance:
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: SolverStrategy
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4903607610819129879, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
@@ -995,7 +995,7 @@ PrefabInstance:
     - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: armSelection
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
@@ -1016,6 +1016,26 @@ PrefabInstance:
         type: 3}
       propertyPath: HapticEnable
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: useDefaultInertie
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: inertiesIventor.Array.data[0]
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: inertiesIventor.Array.data[4]
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219676833901493136, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: inertiesIventor.Array.data[8]
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ccd034fa89df2724ea8188f7520ac1e4, type: 3}

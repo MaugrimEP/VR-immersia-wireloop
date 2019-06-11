@@ -45,6 +45,10 @@ public class InputController : MonoBehaviour {
                                             0f  , 0.1f, 0f ,
                                             0f  , 0f  ,0.1f};
 
+    public float[] inertiesIventor = new float[] { 77067f *  0.000001f, 0f  , 0f ,
+                                                  0f  , 52828f * 0.000001f, 0f ,
+                                                  0f  , 0f  , 24441f * 0.000001f};
+
     private string GetIP()
     {
         switch (armSelection)
@@ -68,6 +72,7 @@ public class InputController : MonoBehaviour {
     }
 
     private void Awake () {
+
         (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
 
         inertiaMatrix = 0.1f * inertiaMatrix;
