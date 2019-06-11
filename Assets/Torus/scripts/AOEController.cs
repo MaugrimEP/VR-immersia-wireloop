@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class AOEController : MonoBehaviour
 {
+    public VirtuoseManager vm;
     private void Update()
     {
-        if (VRTools.GetKeyDown(KeyCode.A) || VRTools.IsButtonToggled(0))
+        if (VRTools.GetKeyDown(KeyCode.A) || VRTools.IsButtonToggled(0) // manage the wand
+            || vm.IsButtonPressed(1))
             ToggleChildDisplay();
     }
 
