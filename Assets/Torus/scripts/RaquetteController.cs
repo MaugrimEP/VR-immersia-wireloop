@@ -7,7 +7,7 @@ public class RaquetteController : MonoBehaviour
 
     public enum SolverStr
     {
-        Default, Block, PhysicSimulate, OpenGLSolver, CopieTransform, ForceTorque
+        Default, Block, PhysicSimulate, OpenGLSolver, CopieTransform, ForceTorque, ForceRotationStr
     }
     [Header("Solver str")]
     public SolverStr SolverStrategy;
@@ -121,6 +121,8 @@ public class RaquetteController : MonoBehaviour
                 return new CopieStr(this);
             case SolverStr.ForceTorque:
                 return new ForceTorque(this);
+            case SolverStr.ForceRotationStr:
+                return new ForceRotationStr(this);
             default:
                 return new DefaultStr(this);
         }

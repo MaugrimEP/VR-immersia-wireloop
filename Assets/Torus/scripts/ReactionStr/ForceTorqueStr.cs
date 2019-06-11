@@ -14,7 +14,7 @@ public class ForceTorque : IReactionStr
 
     public ForceTorque(RaquetteController rc) : base(rc)
     {
-        handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>(); ;
+        handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
         stiffnessForce = 30 * 100;//10000f;
         stiffnessTorque = 0.1f;
     }
