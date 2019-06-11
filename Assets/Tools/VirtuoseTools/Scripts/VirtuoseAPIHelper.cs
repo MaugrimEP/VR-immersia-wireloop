@@ -1013,7 +1013,9 @@ public class VirtuoseAPIHelper
 
     public static Quaternion UnityToVirtuoseRotation(Quaternion rotation)
     {
-        return rotation.normalized;
+        Vector3 rotationEuler = rotation.eulerAngles;
+        Quaternion virtRot = Quaternion.Euler(-rotationEuler.y, rotationEuler.x, -rotationEuler.z);
+        return virtRot.normalized;
     }
 
     public static float[] ConvertUnityToVirtuose(Vector3 position, Quaternion rotation)
