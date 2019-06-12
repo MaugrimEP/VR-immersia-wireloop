@@ -39,7 +39,7 @@ public class ForceTorque : IReactionStr
         if (rc.infoCollision.IsCollided)
         {
             ic.SetVirtuosePoseIdentity();
-            ic.virtAddForce(Utils.U2VVector3(forces), Utils.U2VVector3(torques));
+            ic.virtAddForce(forces, torques);
         }
         else
         {

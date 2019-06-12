@@ -135,6 +135,11 @@ public class RaquetteController : MonoBehaviour
         vm = GetComponent<VirtuoseManager>();
         handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
         str = GetStr();
+        if(!ic.UseVirtuose())
+        {
+            targetRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+        }
+
         if (target)
         {
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
@@ -143,18 +148,19 @@ public class RaquetteController : MonoBehaviour
             infoCollision = target.GetComponentInChildren<RaquetteCollider>();
             infoCollision.LogErrorIfNull();
 
-            StartCoroutine(vm.WaitVirtuoseConnexion(Init));
+            if(ic.UseVirtuose())
+                StartCoroutine(vm.WaitVirtuoseConnexion(Init));
         }
     }
 
     private void Init()
     {
-        var pose = vm.Virtuose.Pose;
-        targetRigidbody.position = pose.position;
-        targetRigidbody.rotation = pose.rotation;
+        var pose = ic.GetVirtuosePose();
+        targetRigidbody.position = pose.Position;
+        targetRigidbody.rotation = pose.Rotation;
 
-        lastFramePosition = pose.position;
-        lastFrameRotation = pose.rotation;
+        lastFramePosition = pose.Position;
+        lastFrameRotation = pose.Rotation;
     }
 
     private void Update()
@@ -207,7 +213,9 @@ public class RaquetteController : MonoBehaviour
     private void SetRigidbodyPositions()
     {
         if (target == null) return;
-
         str.ComputeSimulationStep();
+
+        if (ic.UseVirtuose())
+            ic.SetSpeedIdentity();
     }
 }

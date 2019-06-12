@@ -10,7 +10,7 @@ public class InputController : MonoBehaviour
     /// </summary>
     public enum ArmSelection
     {
-        Unity, Simulator, SingleArm125, SingleArm126
+        Unity, Simulator, SingleArm125, SingleArm126, ImmersiaLeftArm, ImmersiaRightArm
     }
     public enum MassInertiaMode
     {
@@ -37,9 +37,9 @@ public class InputController : MonoBehaviour
     #endregion
 
     [Range(VirtuoseAPIHelper.MIN_MASS, VirtuoseAPIHelper.MAX_MASS)]
-    public float mass    = 0.2f;
+    public float mass = 0.2f;
     public float density = 1350; // in kg.m^-3
-    private readonly float[] defaultInertie = new float[] 
+    private readonly float[] defaultInertie = new float[]
                                             { 0.02f, 0f  , 0f ,
                                             0f  , 0.02f, 0f ,
                                             0f  , 0f  ,0.02f};
@@ -62,6 +62,10 @@ public class InputController : MonoBehaviour
                 return "131.254.154.16#5125";
             case ArmSelection.SingleArm126:
                 return "131.254.18.52#5126";
+            case ArmSelection.ImmersiaLeftArm:
+                return "131.254.154.172#6001";
+            case ArmSelection.ImmersiaRightArm:
+                return "131.254.154.172#6003";
             default:
                 return "";
         }
@@ -87,8 +91,6 @@ public class InputController : MonoBehaviour
             {
                 case MassInertiaMode.ComputedInertie:
                     (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
-                    inertiaMatrix = 0.1f * inertiaMatrix;
-                    massFromInertia = 0.1f * massFromInertia;
                     (appliedInertie, appliedMass) = (inertiaMatrix.GetMatrix1D(), massFromInertia);
                     break;
                 case MassInertiaMode.InertiesInventor:
@@ -102,7 +104,8 @@ public class InputController : MonoBehaviour
         return (appliedInertie, appliedMass);
     }
 
-    private void Awake () {
+    private void Awake()
+    {
         Application.targetFrameRate = 100;
 
         (float[] appliedInertie, float appliedMass) = GetMassAndInertie();
@@ -117,6 +120,12 @@ public class InputController : MonoBehaviour
             virtuoseManager.CommandType = modeVirtuose;
             virtuoseManager.Arm.Ip = GetIP();
         }
+    }
+
+    public void SetSpeedIdentity()
+    {
+        if(UseVirtuose())
+            virtuoseManager.Virtuose.Speed = virtuoseManager.Virtuose.Speed;
     }
 
     public (Vector3 Position, Quaternion Rotation) GetVirtuosePose()
@@ -158,7 +167,7 @@ public class InputController : MonoBehaviour
         virtuoseManager.Virtuose.RawPose = virtuoseManager.Virtuose.RawPose;
     }
 
-    public void SetPower(bool powerState)
+     public void SetPower(bool powerState)
     {
         virtuoseManager.Virtuose.Power = powerState;
     }

@@ -83,7 +83,6 @@ public class VectorManager : MonoBehaviour
 
     public static void Clear()
     {
-        Debug.Log("Clear vector");
         VECTOR_MANAGER.ClearVector();
     }
 

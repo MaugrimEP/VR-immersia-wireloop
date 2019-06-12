@@ -10,7 +10,6 @@ public class CopieStr : IReactionStr
     public override void ComputeSimulationStep()
     {
         (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
-
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
 
@@ -26,7 +25,7 @@ public class CopieStr : IReactionStr
 
         if (rc.infoCollision.IsCollided)
         {
-            ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
+           ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
         }
         else
         {

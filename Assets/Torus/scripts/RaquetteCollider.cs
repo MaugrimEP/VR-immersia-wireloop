@@ -26,6 +26,7 @@ public class RaquetteCollider : MonoBehaviour
     {
         collidingRaquetteElements.Add(collision.collider);
         SetIsCollided();
+        IsCollided = true;
         raquetteController.HandleCollisionEnter(collision);
     }
 
@@ -33,6 +34,7 @@ public class RaquetteCollider : MonoBehaviour
     {
         collidingRaquetteElements.Remove(collision.collider);
         SetIsCollided();
+        IsCollided = false;
         raquetteController.HandleCollisionExit(collision);
 
     }
@@ -40,7 +42,8 @@ public class RaquetteCollider : MonoBehaviour
     private void OnCollisionStay(Collision collision)
     {
         collidingRaquetteElements.Add(collision.collider);
-        SetIsCollided();
+        //SetIsCollided();
+        IsCollided = true;
         raquetteController.HandleCollisionStay(collision);
     }
 }

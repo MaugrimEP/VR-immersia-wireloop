@@ -14,6 +14,148 @@ using UnityEngine.Assertions;
 /// </summary>
 public class VirtuoseAPIHelper
 {
+    #region force and torque
+    /// <summary>
+    /// Add a force to the VIRTUOSE.
+    /// </summary>
+    public (Vector3 forces, Vector3 torques) virtAddForce
+    {
+        set
+        {
+            value.forces = Utils.ClampVector3(value.forces, 30f);
+            value.torques = Utils.ClampVector3(value.torques, 3.1f);
+
+            value.forces = UnityToVirtuoseVector3(value.forces);
+            value.torques = UnityToVirtuoseVector3(value.torques);
+
+            ExecLogOnError(
+                VirtuoseAPI.virtAddForce, new float[] { value.forces.x, value.forces.y, value.forces.z, value.torques.x, value.torques.y, value.torques.z });
+        }
+    }
+    #endregion
+
+
+
+    #region position and rotation
+    /// <summary>
+    /// Current value of the control position and sends it to the Virtuose controller.
+    /// If an object is attached to the Virtuose (virtAttachVO called before),
+    /// then the control point is the center of the object,
+    /// otherwise it is the center of the Virtuose end-effector.
+    /// </summary>
+    public (Vector3 position, Quaternion rotation) Pose
+    {
+        get
+        {
+            ExecLogOnError(
+                VirtuoseAPI.virtGetPosition, pose);
+            return VirtuoseToUnityPose(pose);
+        }
+        set
+        {
+            Vector3 castedPosition = UnityToVirtuosePosition(value.position);
+            Quaternion castedRotation = UnityToVirtuoseRotation(value.rotation);
+
+            pose = new float[]{ castedPosition.x, castedPosition.y, castedPosition.z,
+                    castedRotation.x, castedRotation.y, castedRotation.z, castedRotation.w};
+
+            ExecLogOnError(
+                VirtuoseAPI.virtSetPosition, pose);
+        }
+    }
+
+    #region virtuose to unity
+    public static (Vector3, Quaternion) VirtuoseToUnityPose(float[] pose, int axe = 0)
+    {
+        return (VirtuoseToUnityPosition(pose, axe), VirtuoseToUnityRotation(pose, axe));
+    }
+
+    /// <summary>
+    /// Unity
+    /// Y       
+    /// |   Z   
+    /// | /
+    /// |/___X
+    /// 
+    /// Virtuose
+    /// Z       
+    /// |   Y   
+    /// | /
+    /// |/___X
+    /// </summary>
+    /// <param name="positions"></param>
+    /// <returns></returns>
+    public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
+    {
+        //Need to check the size of the array.
+        if (positions.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
+            return new Vector3
+                (
+                    positions[axe * POSE_COMPONENTS_NUMBER + 1],
+                    positions[axe * POSE_COMPONENTS_NUMBER + 2],
+                   -positions[axe * POSE_COMPONENTS_NUMBER + 0]
+                );
+
+        VRTools.LogError("[Error][VirtuoseManager] Wrong array length for the pose: " + positions.Length + ".");
+        return Vector3.zero;
+    }
+
+    //Quaternion newRotation = new Quaternion(-Rotation.y, -Rotation.z, Rotation.x, Rotation.w);
+    //x:3 y:4 z:5 w:6
+    public static Quaternion VirtuoseToUnityRotation(float[] pose, int axe = 0)
+    {
+        if (pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
+        {
+            Quaternion read = new Quaternion(
+                pose[axe * POSE_COMPONENTS_NUMBER + 3],
+                pose[axe * POSE_COMPONENTS_NUMBER + 4],
+                pose[axe * POSE_COMPONENTS_NUMBER + 5],
+                pose[axe * POSE_COMPONENTS_NUMBER + 6]);
+            Quaternion rotation = new Quaternion(-read.y, -read.z, read.x, read.w);
+            return rotation;
+        }
+
+
+        VRTools.LogError("[Error][VirtuoseManager] Wrong pose length: " + pose.Length + ".");
+        return Quaternion.identity;
+    }
+    #endregion
+
+    #region unity to virtuose
+
+    public static Vector3 UnityToVirtuosePosition(Vector3 position)
+    {
+        return new Vector3(-position.z, position.x, position.y);
+    }
+
+
+    public static Quaternion UnityToVirtuoseRotation(Quaternion rotation)
+    {
+        Vector3 rotationEuler = rotation.eulerAngles;
+        Quaternion virtRot = Quaternion.Euler(-rotationEuler.z, rotationEuler.x, rotationEuler.y);
+        return virtRot.normalized;
+    }
+
+    /// <summary>
+    /// Cast a Vector3 form unity axis system, to Virtuose axis system
+    /// work for Force, Torque,
+    /// Position ? Rotation ?
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public Vector3 UnityToVirtuoseVector3(Vector3 value)
+    {
+        float[] poseMax = new float[6] { 0, 0, 0, 0, 0, 0 };
+        ExecLogOnError(VirtuoseAPI.virtGetArticularPosition, poseMax);
+        Vector3 vect = new Vector3(-value[2] * Mathf.Cos(poseMax[0]) + value[0] * Mathf.Sin(poseMax[0]), value[0] * Mathf.Cos(poseMax[0]) + value[2] * Mathf.Sin(poseMax[0]), value[1]);
+
+        return vect;
+    }
+
+    #endregion
+
+    #endregion
+
     /// <summary>
     /// Vector3(x, y, z) + Quaternion(x, y, z, w)
     /// </summary>
@@ -107,6 +249,8 @@ public class VirtuoseAPIHelper
         DEVICE_1AXE = 12,
         DEVICE_OTHER = 13
     }
+
+
 
     /// <param name="arm"></param>
     public VirtuoseAPIHelper(VirtuoseArm arm)
@@ -447,6 +591,13 @@ public class VirtuoseAPIHelper
     /// </summary>
     public float[] Speed
     {
+        get
+        {
+            float[] speed = new float[6] { 0,0,0 ,0,0,0};
+            ExecLogOnError(
+                VirtuoseAPI.virtGetSpeed, speed);
+            return speed;
+        }
         set
         {
             ExecLogOnError(
@@ -659,20 +810,7 @@ public class VirtuoseAPIHelper
         }
     }
 
-    /// <summary>
-    /// Add a force to the VIRTUOSE.
-    /// </summary>
-    public (Vector3 forces, Vector3 torques) virtAddForce
-    {
-        set
-        {
-            value.forces = Utils.ClampVector3(value.forces, 30f);
-            value.torques = Utils.ClampVector3(value.torques, 3.1f);
 
-            ExecLogOnError(
-                VirtuoseAPI.virtAddForce, new float[] { value.forces.x, value.forces.y, value.forces.z, value.torques.x, value.torques.y, value.torques.z });
-        }
-    }
 
     /// <summary>
     /// Current value of the control position and sends it to the Virtuose controller.
@@ -702,27 +840,6 @@ public class VirtuoseAPIHelper
         }
     }
 
-    /// <summary>
-    /// Current value of the control position and sends it to the Virtuose controller.
-    /// If an object is attached to the Virtuose (virtAttachVO called before),
-    /// then the control point is the center of the object,
-    /// otherwise it is the center of the Virtuose end-effector.
-    /// </summary>
-    public (Vector3 position, Quaternion rotation) Pose
-    {
-        get
-        {
-            ExecLogOnError(
-                VirtuoseAPI.virtGetPosition, pose);
-            return VirtuoseToUnityPose(pose);
-        }
-        set
-        {
-            pose = ConvertUnityToVirtuose(value.position, value.rotation);
-            ExecLogOnError(
-                VirtuoseAPI.virtSetPosition, pose);
-        }
-    }
 
     /// <summary>
     /// Indexed position of the end-effector.
@@ -851,6 +968,23 @@ public class VirtuoseAPIHelper
                VirtuoseAPI.virtSetObservationFrame, pose);
         }
     }
+    public float[] ConvertUnityToVirtuose(Vector3 position, Quaternion rotation)
+    {
+        Vector3 virtuosePos = UnityToVirtuosePosition(position);
+        Quaternion virtuoseRot = UnityToVirtuoseRotation(rotation);
+        float[] positions = { 0, 0, 0, 0, 0, 0, 0 };
+
+        positions[0] = virtuosePos.x;
+        positions[1] = virtuosePos.y;
+        positions[2] = virtuosePos.z;
+
+        positions[3] = virtuoseRot.x;
+        positions[4] = virtuoseRot.y;
+        positions[5] = virtuoseRot.z;
+        positions[6] = virtuoseRot.w;
+
+        return positions;
+    }
 
     /// <summary>
     /// Speed of the observation reference frame. 
@@ -950,91 +1084,6 @@ public class VirtuoseAPIHelper
 
 
 
-
-    /// <summary>
-    /// Unity
-    /// Y       
-    /// |   Z   
-    /// | /
-    /// |/___X
-    /// 
-    /// Virtuose
-    /// Z       
-    /// |   Y   
-    /// | /
-    /// |/___X
-    /// </summary>
-    /// <param name="positions"></param>
-    /// <returns></returns>
-    public static Vector3 VirtuoseToUnityPosition(float[] positions, int axe = 0)
-    {
-        //Need to check the size of the array.
-        if (positions.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
-            return new Vector3
-                (
-                    positions[axe * POSE_COMPONENTS_NUMBER + 1],
-                    positions[axe * POSE_COMPONENTS_NUMBER + 2],
-                   -positions[axe * POSE_COMPONENTS_NUMBER + 0]
-                );
-
-        VRTools.LogError("[Error][VirtuoseManager] Wrong array length for the pose: " + positions.Length + ".");
-        return Vector3.zero;
-    }
-
-    //Quaternion newRotation = new Quaternion(-Rotation.y, -Rotation.z, Rotation.x, Rotation.w);
-    //x:3 y:4 z:5 w:6
-    public static Quaternion VirtuoseToUnityRotation(float[] pose, int axe = 0)
-    {
-        if (pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
-        {
-            Quaternion read = new Quaternion(
-                pose[axe * POSE_COMPONENTS_NUMBER + 3],
-                pose[axe * POSE_COMPONENTS_NUMBER + 4],
-                pose[axe * POSE_COMPONENTS_NUMBER + 5],
-                pose[axe * POSE_COMPONENTS_NUMBER + 6]);
-            Quaternion rotation = new Quaternion(-read.y, -read.z, read.x, read.w);
-            return rotation;
-        }
-
-
-        VRTools.LogError("[Error][VirtuoseManager] Wrong pose length: " + pose.Length + ".");
-        return Quaternion.identity;
-    }
-
-    public static (Vector3, Quaternion) VirtuoseToUnityPose(float[] pose, int axe = 0)
-    {
-        return (VirtuoseToUnityPosition(pose, axe), VirtuoseToUnityRotation(pose, axe));
-    }
-
-    public static Vector3 UnityToVirtuosePosition(Vector3 position)
-    {
-        return new Vector3(-position.z, position.x, position.y);
-    }
-
-    public static Quaternion UnityToVirtuoseRotation(Quaternion rotation)
-    {
-        Vector3 rotationEuler = rotation.eulerAngles;
-        Quaternion virtRot = Quaternion.Euler(-rotationEuler.z, rotationEuler.x, rotationEuler.y);
-        return virtRot.normalized;
-    }
-
-    public static float[] ConvertUnityToVirtuose(Vector3 position, Quaternion rotation)
-    {
-        Vector3 virtuosePos = UnityToVirtuosePosition(position);
-        Quaternion virtuoseRot = UnityToVirtuoseRotation(rotation);
-        float[] positions = { 0, 0, 0, 0, 0, 0, 0 };
-
-        positions[0] = virtuosePos.x;
-        positions[1] = virtuosePos.y;
-        positions[2] = virtuosePos.z;
-
-        positions[3] = virtuoseRot.x;
-        positions[4] = virtuoseRot.y;
-        positions[5] = virtuoseRot.z;
-        positions[6] = virtuoseRot.w;
-
-        return positions;
-    }
 
     /// <summary>
     /// Transform int button state into boolean button state.
