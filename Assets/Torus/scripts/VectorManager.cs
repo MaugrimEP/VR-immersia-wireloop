@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class VectorManager : MonoBehaviour
     public float vectorRadius;
     public float lifeTime;
 
+    public GameObject textPrefab;
+
     private void Awake()
     {
         VECTOR_MANAGER = this;
@@ -18,13 +21,7 @@ public class VectorManager : MonoBehaviour
     {
         VECTOR_MANAGER.DrawVector(position, val, color, name);
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-            ClearVector();
-    }
-
+    
     public static void DrawLineS(Vector3 start, Vector3 end, float radius, Color color)
     {
         VECTOR_MANAGER.DrawLine(start, end, radius, color);
@@ -45,7 +42,6 @@ public class VectorManager : MonoBehaviour
         //add the vector under the VectorCreator
         cylinder.transform.parent = transform;
     }
-
 
     public void DrawVector(Vector3 position, Vector3 val, Color color, string name = "not assigned")
     {
@@ -87,16 +83,34 @@ public class VectorManager : MonoBehaviour
 
     public static void Clear()
     {
+        Debug.Log("Clear vector");
         VECTOR_MANAGER.ClearVector();
     }
 
-    public static void DrawSphereS(Vector3 position, Vector3 scale, Color color)
+    public static GameObject DrawSphereS(Vector3 position, Vector3 scale, Color color)
     {
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = position;
         sphere.transform.localScale = scale;
         sphere.GetComponent<Renderer>().material.color = color;
         sphere.transform.parent = VECTOR_MANAGER.transform;
+
+        return sphere;
+    }
+
+    public static void DrawTextS(Transform target, Transform viewer, Vector3 offset, string text, Color color)
+    {
+        VECTOR_MANAGER.DrawTextAboveTransform(target, viewer, offset, text, color);
+    }
+
+    public void DrawTextAboveTransform(Transform target, Transform viewer, Vector3 offset, string text, Color color)
+    {
+        GameObject textGO = Instantiate(textPrefab,Vector3.zero,Quaternion.identity);
+        textGO.transform.parent = transform;
+
+        TextBehaviour tb = textGO.GetComponent<TextBehaviour>();
+        tb.SetParam(target, viewer, offset, text, color);
+
     }
 
     public void ClearVector()

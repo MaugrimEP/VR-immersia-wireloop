@@ -52,7 +52,6 @@ public class ForceTorque : IReactionStr
 
     protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
     {
-        VectorManager.Clear();//TODO to remove : verbose
         (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
 
         rc.targetRigidbody.MovePosition(position);
@@ -61,6 +60,8 @@ public class ForceTorque : IReactionStr
         if (!rc.IsColliding()) return (Vector3.zero, Vector3.zero);
 
         //IsColliding
+        VectorManager.Clear();//TODO to remove : verbose
+
         Vector3 normal = Vector3.Normalize(rc.target.transform.position - rc.targetRigidbody.position);
 
         float interpenetrationDistance = Vector3.Distance(rc.target.transform.position, rc.targetRigidbody.position);

@@ -100,6 +100,12 @@ public class Utils
     {
         return Random.ColorHSV();
     }
+
+    public static string Vector3Text(Vector3 v, int decimalNumber)
+    {
+        string format = $"F{decimalNumber}";
+        return $"({v.x.ToString(format)}, {v.y.ToString(format)}, {v.z.ToString(format)})";
+    }
 }
 
 
