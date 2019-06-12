@@ -4,6 +4,7 @@ using UnityEngine;
 public class RaquetteController : MonoBehaviour
 {
     public List<Renderer> renderers;
+    private Transform handleTransform;
 
     public enum SolverStr
     {
@@ -39,34 +40,49 @@ public class RaquetteController : MonoBehaviour
     #region handle collision behaviour
     public void HandleCollisionEnter(Collision collision)
     {
-        UpdateChildOnTouch();
+        UpdateChildOnEnter(collision);
         str.HandleCollisionEnter(collision);
     }
 
     public void HandleCollisionExit(Collision collision)
     {
-        UpdateChildOnLeave();
+        UpdateChildOnLeave(collision);
         str.HandleCollisionExit(collision);
     }
 
     public void HandleCollisionStay(Collision collision)
     {
-        UpdateChildOnTouch();
+        UpdateChildOnStay(collision);
         str.HandleCollisionStay(collision);
     }
     #endregion
 
     #region change the apparence of the raquette when interacting with the pipe
-    private void UpdateChildOnTouch()
+    private void UpdateChildOnStay(Collision collision)
     {
+
         foreach (Renderer r in renderers)
             r.material.color = Color.red;
     }
 
-    private void UpdateChildOnLeave()
+    private void UpdateChildOnEnter(Collision collision)
+    {
+        foreach (Renderer r in renderers)
+            r.material.color = Color.red;
+
+        foreach (ContactPoint cp in collision.contacts)
+        {
+            ElectricityManager.DrawElectricityS(handleTransform, cp.point);
+        }
+    }
+
+    private void UpdateChildOnLeave(Collision collision)
     {
         foreach (Renderer r in renderers)
             r.material.color = Color.green;
+
+        ElectricityManager.ClearS();
+
     }
     #endregion
 
@@ -117,6 +133,7 @@ public class RaquetteController : MonoBehaviour
     {
         ic = GetComponent<InputController>();
         vm = GetComponent<VirtuoseManager>();
+        handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
         str = GetStr();
         if (target)
         {

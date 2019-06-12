@@ -39,6 +39,7 @@ public class RaquetteCollider : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
+        collidingRaquetteElements.Add(collision.collider);
         SetIsCollided();
         raquetteController.HandleCollisionStay(collision);
     }

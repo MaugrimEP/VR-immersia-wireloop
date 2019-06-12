@@ -24,15 +24,28 @@ public class Electric : MonoBehaviour
     private float timer;
     private float timerTimeOut = 0.05f;
 
-    private void Start ()
+    [HideInInspector]
+    public Material elecMat;
+
+    [HideInInspector]
+    public Transform targetStart;
+    [HideInInspector]
+    public Transform targetEnd;
+
+    private void Start()
     {
-        lRend = GetComponent<LineRenderer>();
+        lRend = gameObject.AddComponent(typeof(LineRenderer)) as LineRenderer;
+        lRend.material = elecMat;
         points = new Vector3[pointsCount];
         lRend.positionCount = pointsCount;
     }
 
     private void Update()
     {
+        if (targetStart != null)
+            transformPointA.position = targetStart.position;
+        if (targetEnd != null)
+            transformPointB.position = targetEnd.position;
         CalculatePoints();
     }
 
