@@ -8,7 +8,7 @@ public class DefaultStr : IReactionStr
 
     public override void ComputeSimulationStep()
     {
-        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
+        (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
@@ -20,16 +20,16 @@ public class DefaultStr : IReactionStr
 
         #region check threshold distance and rotation
         if (CheckTreshold(oldPosition, solvedNextPosition, rotation, solvedNextRotation))
-            rc.vm.Virtuose.Power = false;
+            ic.SetPower(false);
         #endregion
 
         if (rc.infoCollision.IsCollided)
         {
-            rc.vm.Virtuose.Pose = (solvedNextPosition, solvedNextRotation);
+            ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
         }
         else
         {
-            rc.vm.Virtuose.RawPose = rc.vm.Virtuose.RawPose;
+            ic.SetVirtuosePoseIdentity();
         }
 
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
@@ -37,7 +37,7 @@ public class DefaultStr : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
+        (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);

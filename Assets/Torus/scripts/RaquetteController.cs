@@ -19,7 +19,7 @@ public class RaquetteController : MonoBehaviour
     [Space(10)]
 
     #region oldVar
-    public VirtuoseManager vm;
+    private VirtuoseManager vm;
     public GameObject target;
     [HideInInspector]
     public Rigidbody targetRigidbody;
@@ -33,6 +33,8 @@ public class RaquetteController : MonoBehaviour
 
     public float[] forces = { 0, 0, 0, 0, 0, 0 };
     #endregion
+    [HideInInspector]
+    public InputController ic;
 
     #region handle collision behaviour
     public void HandleCollisionEnter(Collision collision)
@@ -40,7 +42,6 @@ public class RaquetteController : MonoBehaviour
         UpdateChildOnTouch();
         str.HandleCollisionEnter(collision);
     }
-
 
     public void HandleCollisionExit(Collision collision)
     {
@@ -69,22 +70,6 @@ public class RaquetteController : MonoBehaviour
     }
     #endregion
 
-    /// <summary>
-    /// Return the viruose position and rotation in unity coordinate system
-    /// </summary>
-    /// <returns></returns>
-    public (Vector3 Position, Quaternion Rotation) GetVirtuosePose()
-    {
-        return vm.Virtuose.Pose;
-    }
-    /// <summary>
-    /// Return the viruose position and rotation in virtuose coordinate system
-    /// </summary>
-    /// <returns></returns>
-    public (Vector3 Position, Quaternion Rotation) GetVirtuoseRawPose()
-    {
-        return vm.Virtuose.RawPose;
-    }
     /// <summary>
     /// return True if we should send force/torque to the virtuose, return False if
     /// we should send position and rotations
@@ -130,6 +115,8 @@ public class RaquetteController : MonoBehaviour
 
     private void Start()
     {
+        ic = GetComponent<InputController>();
+        vm = GetComponent<VirtuoseManager>();
         str = GetStr();
         if (target)
         {
@@ -203,13 +190,6 @@ public class RaquetteController : MonoBehaviour
     private void SetRigidbodyPositions()
     {
         if (target == null) return;
-
-        if (vm.Virtuose.IsInShiftPosition)
-        {
-            vm.Virtuose.RawPose = vm.Virtuose.RawPose;
-            (targetRigidbody.position, targetRigidbody.rotation) = vm.Virtuose.Pose;
-            return;
-        }
 
         str.ComputeSimulationStep();
     }

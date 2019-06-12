@@ -119,6 +119,47 @@ public class InputController : MonoBehaviour
         }
     }
 
-    private void Update () {
+    public (Vector3 Position, Quaternion Rotation) GetVirtuosePose()
+    {
+        if (UseVirtuose())
+            return virtuoseManager.Virtuose.Pose;
+        else
+            return (Vector3.zero, Quaternion.identity);
+    }
+
+    public (Vector3 Position, Quaternion Rotation) GetVirtuosePoseRaw()
+    {
+        if (UseVirtuose())
+            return virtuoseManager.Virtuose.RawPose;
+        else
+            return (Vector3.zero, Quaternion.identity);
+    }
+
+    public void SetVirtuosePose(Vector3 position, Quaternion rotation)
+    {
+        if (!UseVirtuose()) return;
+        virtuoseManager.Virtuose.Pose = (position, rotation);
+    }
+
+    public void SetVirtuosePoseRaw(Vector3 position, Quaternion rotation)
+    {
+        if (!UseVirtuose()) return;
+        virtuoseManager.Virtuose.RawPose = (position, rotation);
+    }
+
+    public void virtAddForce(Vector3 force, Vector3 torque)
+    {
+        if (!UseVirtuose()) return;
+        virtuoseManager.Virtuose.virtAddForce = (force, torque);
+    }
+
+    public void SetVirtuosePoseIdentity()
+    {
+        virtuoseManager.Virtuose.RawPose = virtuoseManager.Virtuose.RawPose;
+    }
+
+    public void SetPower(bool powerState)
+    {
+        virtuoseManager.Virtuose.Power = powerState;
     }
 }

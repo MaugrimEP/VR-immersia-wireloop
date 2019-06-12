@@ -10,8 +10,8 @@ public class PhysicSimulate : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuoseRawPose();
-        (Vector3 objectTargetedPosition, Quaternion objectTargetedRotation) = rc.GetVirtuosePose();
+        (Vector3 READposition, Quaternion READrotation) = ic.GetVirtuosePoseRaw();
+        (Vector3 objectTargetedPosition, Quaternion objectTargetedRotation) = ic.GetVirtuosePose();
 
         Physics.autoSimulation = false;
 
@@ -42,7 +42,7 @@ public class PhysicSimulate : IReactionStr
             currentRotationStep = rc.targetRigidbody.rotation;
         }
         Physics.autoSimulation = true;
-        return rc.GetVirtuosePose();
+        return ic.GetVirtuosePose();
     }
 
     public override void HandleCollisionEnter(Collision collision)

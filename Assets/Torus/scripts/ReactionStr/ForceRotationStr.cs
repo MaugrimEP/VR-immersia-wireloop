@@ -16,14 +16,14 @@ public class ForceRotationStr : IReactionStr
 
     public override void ComputeSimulationStep()
     {
-        (Vector3 READposition, Quaternion READrotation) = rc.GetVirtuoseRawPose();
+        (Vector3 READposition, Quaternion READrotation) = ic.GetVirtuosePoseRaw();
 
         (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = SolvePositiondAndRotation();
 
         Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - READposition, rc.MAX_DISPLACEMENT);
         solvedNextPosition = READposition + displacementClamped;
 
-        rc.vm.Virtuose.RawPose = (solvedNextPosition, solvedNextRotation);
+        ic.SetVirtuosePoseRaw(solvedNextPosition, solvedNextRotation);
 
         if(!rc.infoCollision.IsCollided)
             (rc.lastFramePosition, rc.lastFrameRotation) = (READposition, READrotation);
@@ -31,8 +31,8 @@ public class ForceRotationStr : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        rc.targetRigidbody.MovePosition(rc.GetVirtuosePose().Position);
-        rc.targetRigidbody.MoveRotation(rc.GetVirtuosePose().Rotation);
+        rc.targetRigidbody.MovePosition(ic.GetVirtuosePose().Position);
+        rc.targetRigidbody.MoveRotation(ic.GetVirtuosePose().Rotation);
         
         if (rc.infoCollision.IsCollided)
         {
@@ -44,14 +44,14 @@ public class ForceRotationStr : IReactionStr
             VectorManager.Clear();//TODO to remove : mode verbose
             VectorManager.DrawVectorS(handleTransform.position, forces, Color.red, "force"); //TODO to remove : verbose
 
-            rc.vm.Virtuose.virtAddForce= (Utils.U2VVector3(forces), Vector3.zero);
+            ic.virtAddForce(Utils.U2VVector3(forces), Vector3.zero);
 
-            return (rc.GetVirtuoseRawPose().Position, rc.lastFrameRotation);
+            return (ic.GetVirtuosePoseRaw().Position, rc.lastFrameRotation);
         }
         else
         {
-            rc.vm.Virtuose.virtAddForce = (Vector3.zero, Vector3.zero);
-            return rc.GetVirtuoseRawPose();
+            ic.virtAddForce(Vector3.zero, Vector3.zero);
+            return ic.GetVirtuosePoseRaw();
         }
     }
 

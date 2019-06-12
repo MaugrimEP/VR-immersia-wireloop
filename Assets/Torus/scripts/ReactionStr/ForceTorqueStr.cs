@@ -21,7 +21,7 @@ public class ForceTorque : IReactionStr
 
     public override void ComputeSimulationStep()
     {
-        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
+        (Vector3 position, Quaternion rotation) = rc.ic.GetVirtuosePose();
 
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
@@ -38,13 +38,13 @@ public class ForceTorque : IReactionStr
 
         if (rc.infoCollision.IsCollided)
         {
-            rc.vm.Virtuose.Pose = rc.vm.Virtuose.Pose;
-            rc.vm.Virtuose.virtAddForce = (Utils.U2VVector3(forces), Utils.U2VVector3(torques));
+            ic.SetVirtuosePoseIdentity();
+            ic.virtAddForce(Utils.U2VVector3(forces), Utils.U2VVector3(torques));
         }
         else
         {
-            rc.vm.Virtuose.RawPose = rc.vm.Virtuose.RawPose;
-            rc.vm.Virtuose.virtAddForce = (Vector3.zero, Vector3.zero);
+            ic.SetVirtuosePoseIdentity() ;
+            ic.virtAddForce(Vector3.zero, Vector3.zero);
         }
 
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
@@ -52,7 +52,7 @@ public class ForceTorque : IReactionStr
 
     protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
     {
-        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
+        (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);
@@ -117,7 +117,7 @@ public class ForceTorque : IReactionStr
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 position, Quaternion rotation) = rc.GetVirtuosePose();
+        (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);
