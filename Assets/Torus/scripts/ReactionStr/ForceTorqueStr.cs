@@ -15,7 +15,7 @@ public class ForceTorque : IReactionStr
     public ForceTorque(RaquetteController rc) : base(rc)
     {
         handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
-        stiffnessForce = 30 * 100;//10000f;
+        stiffnessForce = 30f * 100f / 4f;
         stiffnessTorque = 0.1f;
     }
 
@@ -43,7 +43,7 @@ public class ForceTorque : IReactionStr
         }
         else
         {
-            ic.SetVirtuosePoseIdentity() ;
+            ic.SetVirtuosePoseIdentity();
             ic.virtAddForce(Vector3.zero, Vector3.zero);
         }
 
@@ -59,45 +59,32 @@ public class ForceTorque : IReactionStr
 
         if (!rc.IsColliding()) return (Vector3.zero, Vector3.zero);
 
-        //IsColliding
-        VectorManager.Clear();//TODO to remove : verbose
+        Vector3 totalForce = Vector3.zero;
+        Vector3 totalTorque = Vector3.zero;
 
-        Vector3 normal = Vector3.Normalize(rc.target.transform.position - rc.targetRigidbody.position);
+        foreach (ContactPoint contactPoint in currentCollision.contacts)
+        {
+            Vector3 vectorHandleContractPoint = contactPoint.point - handleTransform.position;
+            Vector3 normalToContact = contactPoint.normal;
+            float interpenetrationDistance = Mathf.Abs(contactPoint.separation);
 
-        float interpenetrationDistance = Vector3.Distance(rc.target.transform.position, rc.targetRigidbody.position);
-        Vector3 forces = normal * interpenetrationDistance * stiffnessForce;
+            Vector3 localForce = normalToContact * interpenetrationDistance * stiffnessForce;
+            Vector3 localTorque = Vector3.Cross(vectorHandleContractPoint, -localForce.normalized) * localForce.magnitude * stiffnessTorque;
 
-        Vector3 torques = Vector3.zero;
-        {// compute the torque
+            Debug.DrawLine(handleTransform.position, contactPoint.point, Color.magenta);
+            Debug.DrawLine(handleTransform.position, handleTransform.position + localTorque, Color.black);
+            Debug.Log($"localTorque {localTorque}");
 
-            //we first filter the contactPoint where the distance is less than minContactPointDistance
-            List<ContactPoint> filteredContactPoint = new List<ContactPoint>();
-            foreach (ContactPoint cp in currentCollision.contacts)
-            {
-                if (filteredContactPoint.FindAll(cp2 => Vector3.Distance(cp.point, cp2.point) <= minContactPointDistance).Count == 0)
-                    filteredContactPoint.Add(cp);
-            }
-
-
-            foreach (ContactPoint contactPoint in filteredContactPoint)
-            {
-                Vector3 vectorToHandle = contactPoint.point - handleTransform.position;
-                Vector3 normalToContact = -contactPoint.normal; // minus because you need the normal to point to the contact point
-
-                VectorManager.DrawVectorS(contactPoint.point, normalToContact, Color.red, "normalToContact"); //TODO to remove : verbose
-                VectorManager.DrawVectorS(handleTransform.position, vectorToHandle, Color.magenta, "vectorToHandle");//TODO to remove : verbose
-
-                Vector3 localTorque = Vector3.Cross(vectorToHandle, normalToContact);
-
-                torques += localTorque;
-            }
-            torques *= forces.magnitude * stiffnessTorque;
-            torques /= currentCollision.contactCount;
+            totalForce += localForce;
+            totalTorque += localTorque;
         }
+        Debug.Log($"contactPoint.count = {currentCollision.contactCount}");
+        Debug.DrawLine(handleTransform.position, handleTransform.position + totalForce, Color.red);
+        Debug.DrawLine(handleTransform.position, handleTransform.position + totalTorque, Color.green);
 
-        Debug.Log($"torques = {torques}");//TODO to remove : verbose
+        Debug.Log($"impulsion = {currentCollision.impulse}  totalForce = {totalForce}   ,totalTorque = {totalTorque}");//TODO to remove : verbose
 
-        return (forces, torques);
+        return (totalForce, totalTorque);
     }
 
     public override void HandleCollisionEnter(Collision collision)

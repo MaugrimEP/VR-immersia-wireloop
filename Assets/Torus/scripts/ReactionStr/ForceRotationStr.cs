@@ -51,6 +51,8 @@ public class ForceRotationStr : IReactionStr
 
         ic.virtAddForce(forces, Vector3.zero);
 
+        Debug.Log($"forces = {forces}");
+
         return (ic.GetVirtuosePoseRaw().Position, rc.lastFrameRotation);
 
     }
