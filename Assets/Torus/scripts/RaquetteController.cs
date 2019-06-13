@@ -135,14 +135,14 @@ public class RaquetteController : MonoBehaviour
         vm = GetComponent<VirtuoseManager>();
         handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
         str = GetStr();
-        if(!ic.UseVirtuose())
-        {
-            targetRigidbody.constraints = RigidbodyConstraints.FreezeAll;
-        }
 
         if (target)
         {
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
+            if (!ic.UseVirtuose())
+            {
+                targetRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+            }
             targetRigidbody.LogErrorIfNull();
 
             infoCollision = target.GetComponentInChildren<RaquetteCollider>();
