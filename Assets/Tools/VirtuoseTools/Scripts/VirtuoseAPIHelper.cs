@@ -14,6 +14,9 @@ using UnityEngine.Assertions;
 /// </summary>
 public class VirtuoseAPIHelper
 {
+
+    public static VirtuoseAPIHelper me;
+
     #region force and torque
     /// <summary>
     /// Add a force to the VIRTUOSE.
@@ -106,11 +109,7 @@ public class VirtuoseAPIHelper
     {
         if (pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
         {
-            Quaternion read = new Quaternion(
-                pose[axe * POSE_COMPONENTS_NUMBER + 3],
-                pose[axe * POSE_COMPONENTS_NUMBER + 4],
-                pose[axe * POSE_COMPONENTS_NUMBER + 5],
-                pose[axe * POSE_COMPONENTS_NUMBER + 6]);
+            Quaternion read = new Quaternion(pose[axe * POSE_COMPONENTS_NUMBER + 3],pose[axe * POSE_COMPONENTS_NUMBER + 4],pose[axe * POSE_COMPONENTS_NUMBER + 5],pose[axe * POSE_COMPONENTS_NUMBER + 6]);
             Quaternion rotation = new Quaternion(-read.y, -read.z, read.x, read.w);
             return rotation;
         }
@@ -131,9 +130,23 @@ public class VirtuoseAPIHelper
 
     public static Quaternion UnityToVirtuoseRotation(Quaternion rotation)
     {
-        Vector3 rotationEuler = rotation.eulerAngles;
-        Quaternion virtRot = Quaternion.Euler(-rotationEuler.z, rotationEuler.x, rotationEuler.y);
+        Quaternion virtRot = new Quaternion(rotation.z, -rotation.x, -rotation.y, rotation.w);
         return virtRot.normalized;
+    }
+
+    /// <summary>
+    /// Cast a Vector3 form unity axis system, to Virtuose axis system
+    /// work for Force, Torque,
+    /// Position ? Rotation ?
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public Vector3 UnityToVirtuoseVector3Rotation(Vector3 value)
+    {
+        float[] poseMax = new float[6] { 0, 0, 0, 0, 0, 0 };
+        ExecLogOnError(VirtuoseAPI.virtGetArticularPosition, poseMax);
+        Vector3 vect = new Vector3(-value[2] * Mathf.Cos(poseMax[0]) + value[0] * Mathf.Sin(poseMax[0]), value[0] * Mathf.Cos(poseMax[0]) + value[2] * Mathf.Sin(poseMax[0]), value[1]);
+        return vect;
     }
 
     /// <summary>
@@ -255,6 +268,7 @@ public class VirtuoseAPIHelper
     /// <param name="arm"></param>
     public VirtuoseAPIHelper(VirtuoseArm arm)
     {
+        me = this;
         this.arm = arm;
     }
 
@@ -343,7 +357,7 @@ public class VirtuoseAPIHelper
     /// </summary>
     public void InitDefault()
     {
-        IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_ALL_FORCE_FEEDBACK_INHIBITION;
+        IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_TRANS;
         ForceFactor = 1;
         SpeedFactor = 1;
         Timestep = 0.010f;

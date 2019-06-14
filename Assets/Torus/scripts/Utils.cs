@@ -57,6 +57,20 @@ public class Utils
         string format = $"F{decimalNumber}";
         return $"({v.x.ToString(format)}, {v.y.ToString(format)}, {v.z.ToString(format)})";
     }
+
+    public static bool Equals(Collision c1, Collision c2)
+    {
+        if (c1.contactCount != c2.contactCount) return false;
+        for(int i = 0; i<c1.contactCount; ++i)
+        {
+            ContactPoint c1Point = c1.GetContact(i);
+            ContactPoint c2Point = c2.GetContact(i);
+
+            if (c1Point.separation != c2Point.separation) return false;
+            if (c1Point.normal     != c2Point.normal)     return false;
+        }
+        return true;
+    }
 }
 
 

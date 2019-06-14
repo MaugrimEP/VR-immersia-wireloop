@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class RaquetteCollider : MonoBehaviour
 {
-    new Rigidbody rigidbody;
-    private RaquetteController raquetteController;
+    public RaquetteController raquetteController;
     public bool IsCollided;
 
     public List<Collider> collidingRaquetteElements;
 
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        raquetteController = GetComponent<RaquetteController>();
         collidingRaquetteElements = new List<Collider>();
+    }
+
+    private void Update()
+    {
+        collidingRaquetteElements.Clear();
     }
 
     private void SetIsCollided()
@@ -26,24 +28,19 @@ public class RaquetteCollider : MonoBehaviour
     {
         collidingRaquetteElements.Add(collision.collider);
         SetIsCollided();
-        IsCollided = true;
         raquetteController.HandleCollisionEnter(collision);
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        collidingRaquetteElements.Remove(collision.collider);
         SetIsCollided();
-        IsCollided = false;
         raquetteController.HandleCollisionExit(collision);
-
     }
 
     private void OnCollisionStay(Collision collision)
     {
         collidingRaquetteElements.Add(collision.collider);
-        //SetIsCollided();
-        IsCollided = true;
+        SetIsCollided();
         raquetteController.HandleCollisionStay(collision);
     }
 }

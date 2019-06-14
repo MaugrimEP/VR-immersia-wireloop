@@ -77,6 +77,6 @@ public abstract class IReactionStr
     }
     public virtual void HandleCollisionExit(Collision collision)
     {
-        currentCollision = null;
+        currentCollision = collision;
     }
 }

@@ -60,7 +60,6 @@ public class RaquetteController : MonoBehaviour
     #region change the apparence of the raquette when interacting with the pipe
     private void UpdateChildOnStay(Collision collision)
     {
-
         foreach (Renderer r in renderers)
             r.material.color = Color.red;
     }
@@ -78,11 +77,13 @@ public class RaquetteController : MonoBehaviour
 
     private void UpdateChildOnLeave(Collision collision)
     {
-        foreach (Renderer r in renderers)
-            r.material.color = Color.green;
+        if (!infoCollision.IsCollided)
+        {
+            foreach (Renderer r in renderers)
+                r.material.color = Color.green;
+        }
 
         ElectricityManager.ClearS();
-
     }
     #endregion
 

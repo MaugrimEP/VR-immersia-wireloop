@@ -122,6 +122,13 @@ public class InputController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (VRTools.IsClient()){
+            virtuoseManager.enabled = false;
+        }
+    }
+
     public void SetSpeedIdentity()
     {
         if(UseVirtuose())

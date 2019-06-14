@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class CopieStr : IReactionStr
 {
@@ -25,7 +26,7 @@ public class CopieStr : IReactionStr
 
         if (rc.infoCollision.IsCollided)
         {
-           ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
+            ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
         }
         else
         {
@@ -33,6 +34,8 @@ public class CopieStr : IReactionStr
         }
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
     }
+
+
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
