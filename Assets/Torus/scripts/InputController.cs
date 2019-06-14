@@ -147,18 +147,26 @@ public class InputController : MonoBehaviour
     public void SetVirtuosePose(Vector3 position, Quaternion rotation)
     {
         if (!UseVirtuose()) return;
+        if (!HapticEnable) { SetVirtuosePoseIdentity(); return; }
         virtuoseManager.Virtuose.Pose = (position, rotation);
     }
 
     public void SetVirtuosePoseRaw(Vector3 position, Quaternion rotation)
     {
         if (!UseVirtuose()) return;
+        if (!HapticEnable) { SetVirtuosePoseIdentity(); return; }
         virtuoseManager.Virtuose.RawPose = (position, rotation);
+    }
+
+    public void VirtAddForceIdentity()
+    {
+        virtAddForce(Vector3.zero, Vector3.zero);
     }
 
     public void virtAddForce(Vector3 force, Vector3 torque)
     {
         if (!UseVirtuose()) return;
+        if (!HapticEnable) { VirtAddForceIdentity(); return; }
         virtuoseManager.Virtuose.virtAddForce = (force, torque);
     }
 

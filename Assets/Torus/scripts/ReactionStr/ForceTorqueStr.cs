@@ -9,8 +9,6 @@ public class ForceTorque : IReactionStr
     private float stiffnessForce;
     private float stiffnessTorque;
 
-    private float minContactPointDistance = 0.05f;
-
     public ForceTorque(RaquetteController rc) : base(rc)
     {
         handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
