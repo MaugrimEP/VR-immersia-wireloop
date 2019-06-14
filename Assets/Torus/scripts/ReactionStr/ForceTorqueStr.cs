@@ -8,7 +8,6 @@ public class ForceTorque : IReactionStr
     private Transform handleTransform;
     private float stiffnessForce;
     private float stiffnessTorque;
-    private Collision currentCollision;
 
     private float minContactPointDistance = 0.05f;
 
@@ -85,21 +84,6 @@ public class ForceTorque : IReactionStr
         Debug.Log($"impulsion = {currentCollision.impulse}  totalForce = {totalForce}   ,totalTorque = {totalTorque}");//TODO to remove : verbose
 
         return (totalForce, totalTorque);
-    }
-
-    public override void HandleCollisionEnter(Collision collision)
-    {
-        currentCollision = collision;
-    }
-
-    public override void HandleCollisionExit(Collision collision)
-    {
-        currentCollision = null;
-    }
-
-    public override void HandleCollisionStay(Collision collision)
-    {
-        currentCollision = collision;
     }
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()

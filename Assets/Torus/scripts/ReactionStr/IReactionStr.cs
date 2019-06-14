@@ -4,6 +4,7 @@ public abstract class IReactionStr
 {
     protected RaquetteController rc;
     protected InputController ic;
+    protected Collision currentCollision;
 
     protected IReactionStr(RaquetteController rc)
     {
@@ -66,7 +67,16 @@ public abstract class IReactionStr
     protected abstract (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation();
     protected abstract (Vector3 forces, Vector3 torques) SolveForceAndTorque();
 
-    public abstract void HandleCollisionEnter(Collision collision);
-    public abstract void HandleCollisionStay(Collision collision);
-    public abstract void HandleCollisionExit(Collision collision);
+    public virtual void HandleCollisionEnter(Collision collision)
+    {
+        currentCollision = collision;
+    }
+    public virtual void HandleCollisionStay(Collision collision)
+    {
+        currentCollision = collision;
+    }
+    public virtual void HandleCollisionExit(Collision collision)
+    {
+        currentCollision = null;
+    }
 }

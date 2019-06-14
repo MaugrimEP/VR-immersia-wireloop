@@ -26,15 +26,18 @@ public class OpenGLSolver : IReactionStr
 
     public override void HandleCollisionEnter(Collision collision)
     {
+        base.HandleCollisionEnter(collision);
         collidingList.AddLast(new CollisionData(collision, 1.0f, rc.transform));
     }
 
     public override void HandleCollisionExit(Collision collision)
     {
+        base.HandleCollisionExit(collision);
     }
 
     public override void HandleCollisionStay(Collision collision)
     {
+        base.HandleCollisionStay(collision);
         collidingList.AddLast(new CollisionData(collision, 1.0f, rc.transform));
     }
 

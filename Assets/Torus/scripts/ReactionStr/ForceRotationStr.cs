@@ -57,18 +57,6 @@ public class ForceRotationStr : IReactionStr
 
     }
 
-    public override void HandleCollisionEnter(Collision collision)
-    {
-    }
-
-    public override void HandleCollisionExit(Collision collision)
-    {
-    }
-
-    public override void HandleCollisionStay(Collision collision)
-    {
-    }
-
     protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
     {
         throw new System.NotImplementedException();
