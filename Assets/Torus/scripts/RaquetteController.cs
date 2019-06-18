@@ -6,6 +6,8 @@ public class RaquetteController : MonoBehaviour
     public List<Renderer> renderers;
     private Transform handleTransform;
 
+    public List<Transform> ListToRotateOnScaleOne;
+
     public enum SolverStr
     {
         Default, Block, PhysicSimulate, OpenGLSolver, CopieTransform, ForceTorque, ForceRotationStr
@@ -137,6 +139,12 @@ public class RaquetteController : MonoBehaviour
         handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
         str = GetStr();
 
+        if (ic.IsScaleOne())//for the scale one the raquette need to be rotated 90° on X
+        {
+            foreach (Transform transform in ListToRotateOnScaleOne)
+                transform.rotation *= Quaternion.Euler(Vector3.right * 90);
+        }
+
         if (target)
         {
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
@@ -215,6 +223,8 @@ public class RaquetteController : MonoBehaviour
     {
         if (target == null) return;
         str.ComputeSimulationStep();
+        infoCollision.ClearCollisions();
+        infoCollision.SetIsCollided();
 
         if (ic.UseVirtuose())
             ic.SetSpeedIdentity();

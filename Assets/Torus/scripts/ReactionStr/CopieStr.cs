@@ -19,10 +19,13 @@ public class CopieStr : IReactionStr
         Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - position, rc.MAX_DISPLACEMENT);
         solvedNextPosition = oldPosition + displacementClamped;
 
-        #region check threshold distance and rotation
-        if (CheckTreshold(oldPosition, solvedNextPosition, rotation, rotation))//TODO : CHECK LA ROTATION
-            ic.SetPower(false);
-        #endregion
+        if (Debug.isDebugBuild)
+        {
+            VRTools.Log($"[CopieStr][ComputeSimulationStep] translationDirVir(Unity): {(solvedNextPosition - position).normalized}"); //TODO remove Verbose
+            VRTools.Log($"[CopieStr][ComputeSimulationStep] translationDirRid(Unity): {(solvedNextPosition - oldPosition).normalized}"); //TODO remove Verbose
+            Debug.DrawLine(position, position + (solvedNextPosition - position).normalized, Color.black);
+        }
+
 
         if (rc.infoCollision.IsCollided)
         {

@@ -110,7 +110,7 @@ public class InputController : MonoBehaviour
 
         (float[] appliedInertie, float appliedMass) = GetMassAndInertie();
 
-        Debug.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}"); //TODO to remove verbose
+        if(Debug.isDebugBuild) Debug.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}"); //TODO to remove verbose
 
         if (UseVirtuose())
         {//init the virtuoseManager component
@@ -141,6 +141,11 @@ public class InputController : MonoBehaviour
             return virtuoseManager.Virtuose.Pose;
         else
             return (Vector3.zero, Quaternion.identity);
+    }
+
+    public bool IsScaleOne()
+    {
+        return armSelection == ArmSelection.ImmersiaLeftArm || armSelection == ArmSelection.ImmersiaRightArm;
     }
 
     public (Vector3 Position, Quaternion Rotation) GetVirtuosePoseRaw()

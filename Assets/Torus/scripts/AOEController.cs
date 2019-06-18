@@ -15,6 +15,7 @@ public class AOEController : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (VRTools.GetKeyDown(KeyCode.A) || VRTools.IsButtonToggled(0) // manage keyboard and wand
             || vm.IsButtonToggled(1)                                    // manage virtuose
             )
@@ -25,7 +26,7 @@ public class AOEController : MonoBehaviour
                 nextToggleTime = Time.time + toggleDisplayCD;
             }
         }
-
+        */
     }
 
     private void ToggleChildDisplay()

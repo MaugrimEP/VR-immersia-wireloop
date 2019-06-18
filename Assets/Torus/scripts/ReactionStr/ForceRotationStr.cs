@@ -45,13 +45,12 @@ public class ForceRotationStr : IReactionStr
 
         float interpenetrationDistance = Vector3.Distance(rc.target.transform.position, rc.targetRigidbody.position);
         Vector3 forces = normal * interpenetrationDistance * stiffnessForce;
-
-        VectorManager.Clear();//TODO to remove : mode verbose
-        VectorManager.DrawVectorS(handleTransform.position, forces, Color.red, "force"); //TODO to remove : verbose
-
         ic.virtAddForce(forces, Vector3.zero);
 
-        Debug.Log($"forces = {forces}");
+        if (Debug.isDebugBuild) VectorManager.Clear();//TODO to remove : mode verbose
+        if (Debug.isDebugBuild) VectorManager.DrawVectorS(handleTransform.position, forces, Color.red, "force"); //TODO to remove : verbose
+        if (Debug.isDebugBuild) Debug.Log($"forces = {forces}");
+
 
         return (ic.GetVirtuosePoseRaw().Position, rc.lastFrameRotation);
 

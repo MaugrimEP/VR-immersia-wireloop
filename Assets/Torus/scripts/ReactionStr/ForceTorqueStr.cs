@@ -54,8 +54,7 @@ public class ForceTorque : IReactionStr
         Vector3 totalForce = Vector3.zero;
         Vector3 totalTorque = Vector3.zero;
 
-        VectorManager.Clear();
-        float meanSeperation = 0f;//TODO to remove
+        if (Debug.isDebugBuild) VectorManager.Clear();
 
         foreach (ContactPoint contactPoint in currentCollision.contacts)
         {
@@ -71,14 +70,11 @@ public class ForceTorque : IReactionStr
 
             Debug.DrawLine(handleTransform.position, contactPoint.point, Utils.RandomColor());
             VectorManager.DrawSphereS(contactPoint.point, Vector3.one * 0.05f, Color.black);
-            meanSeperation += contactPoint.separation;
         }
-        meanSeperation /= currentCollision.contactCount;
-        Debug.Log($"totalForce = {totalForce}   ,totalTorque = {totalTorque} meanSepeartion = {meanSeperation}");//TODO to remove : verbose
-        Debug.Log($"meanSepeartion = {meanSeperation}");//TODO to remove : verbose
-        Debug.Log($"contactPointCount = {currentCollision.contactCount}");
-        Debug.DrawLine(handleTransform.position, handleTransform.position + totalForce, Color.red);
-        Debug.DrawLine(handleTransform.position, handleTransform.position + totalTorque, Color.green);
+        if (Debug.isDebugBuild) Debug.Log($"totalForce = {totalForce}   ,totalTorque = {totalTorque}");//TODO to remove : verbose
+        if (Debug.isDebugBuild) Debug.Log($"contactPointCount = {currentCollision.contactCount}");
+        if (Debug.isDebugBuild) Debug.DrawLine(handleTransform.position, handleTransform.position + totalForce, Color.red);
+        if (Debug.isDebugBuild) Debug.DrawLine(handleTransform.position, handleTransform.position + totalTorque, Color.green);
 
         return (totalForce, totalTorque);
     }

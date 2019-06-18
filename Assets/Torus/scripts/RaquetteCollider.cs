@@ -16,10 +16,15 @@ public class RaquetteCollider : MonoBehaviour
 
     private void Update()
     {
+        ClearCollisions();
+    }
+
+    public void ClearCollisions()
+    {
         collidingRaquetteElements.Clear();
     }
 
-    private void SetIsCollided()
+    public void SetIsCollided()
     {
         IsCollided = collidingRaquetteElements.Count != 0;
     }
