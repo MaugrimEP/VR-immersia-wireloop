@@ -8,10 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Torus/scene/TorusGame.unity
     guid: 5247b5ab5dd49fb4d97a4cb9d5d98aba
   - enabled: 0
     path: Assets/Torus/scene/TestScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Torus/scene/murBalle.unity
+    guid: 0282b5d8393c00f4da6588988a6557a5
   m_configObjects: {}
