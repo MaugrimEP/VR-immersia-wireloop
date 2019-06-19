@@ -21,8 +21,10 @@ public class CopieStr : IReactionStr
 
         if (Debug.isDebugBuild)
         {
-            VRTools.Log($"[CopieStr][ComputeSimulationStep] translationDirVir(Unity): {(solvedNextPosition - position).normalized}"); //TODO remove Verbose
-            VRTools.Log($"[CopieStr][ComputeSimulationStep] translationDirRid(Unity): {(solvedNextPosition - oldPosition).normalized}"); //TODO remove Verbose
+            VectorManager.Clear();
+            VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.03f, Color.black);
+            VectorManager.DrawSphereS(rc.target.transform.position, Vector3.one * 0.03f, Color.yellow);
+            VRTools.Log($"distence RB / target: {Vector3.Distance(rc.target.transform.position, rc.targetRigidbody.position)}"); //TODO remove Verbose
             Debug.DrawLine(position, position + (solvedNextPosition - position).normalized, Color.black);
         }
 
@@ -33,6 +35,12 @@ public class CopieStr : IReactionStr
         }
         else
         {
+            //rc.target.transform.position = rc.targetRigidbody.position;//TODO check the utility, or the one below
+            //rc.target.transform.rotation = rc.targetRigidbody.rotation;
+
+            //rc.targetRigidbody.MovePosition(rc.target.transform.position);
+            //rc.targetRigidbody.MoveRotation(rc.target.transform.rotation);
+
             ic.SetVirtuosePoseIdentity();
         }
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
