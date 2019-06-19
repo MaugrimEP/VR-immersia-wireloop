@@ -35,12 +35,6 @@ public class CopieStr : IReactionStr
         }
         else
         {
-            //rc.target.transform.position = rc.targetRigidbody.position;//TODO check the utility, or the one below
-            //rc.target.transform.rotation = rc.targetRigidbody.rotation;
-
-            //rc.targetRigidbody.MovePosition(rc.target.transform.position);
-            //rc.targetRigidbody.MoveRotation(rc.target.transform.rotation);
-
             ic.SetVirtuosePoseIdentity();
         }
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
