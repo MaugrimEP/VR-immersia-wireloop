@@ -24,7 +24,7 @@ TagManager:
   - Pipe
   - Ball
   - Floor
-  - 
+  - NoCollision
   - 
   - 
   - 

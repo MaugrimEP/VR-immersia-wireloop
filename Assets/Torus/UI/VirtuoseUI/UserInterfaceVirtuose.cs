@@ -2,12 +2,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UserInterface : MonoBehaviour
+public class UserInterfaceVirtuose : MonoBehaviour
 {
     [Header("GENERAL")]
-    public Camera UICamera;
+    public InputController ic;
+    public Transform Head;
     public GameObject BackgroundPanel;
     public GameObject CircleMenuElementPrefab;
+    public GameObject PlaneGO;
+    public float activationCooldown;
+
+    private float nextActivation;
+    private Plane plane;
+    private Vector3 activationVirtPos;
+
+    private Transform debugSphereTransform;//TODO A REMOVE
 
     [Header("BUTTONS")]
     public Color NormalButtonColor;
@@ -43,7 +52,28 @@ public class UserInterface : MonoBehaviour
 
     protected virtual void Start()
     {
+        if (VRTools.IsClient())
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         Initialize();
+
+        Mesh planeMesh = PlaneGO.GetComponent<MeshFilter>().mesh;
+        Vector3 p1 = planeMesh.vertices[0];
+        Vector3 p2 = planeMesh.vertices[1];
+        Vector3 p3 = planeMesh.vertices[2];
+
+        plane = new Plane(p1, p2, p3);
+
+        nextActivation = VRTools.GetTime();
+
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.GetComponent<Renderer>().material.color = Color.green;
+        debugSphereTransform = sphere.transform;
+        debugSphereTransform.localScale = Vector3.one * 0.05f;
+
     }
 
     public void Initialize()
@@ -52,7 +82,7 @@ public class UserInterface : MonoBehaviour
         float currentRotationValue = 0f;
         float fillPercentageValue = 1f / menuElements.Count;
 
-        for(int i = 0; i < menuElements.Count; ++i)
+        for (int i = 0; i < menuElements.Count; ++i)
         {
             GameObject menuElementGameObject = Instantiate(CircleMenuElementPrefab);
             menuElementGameObject.name = $"{i} : {currentRotationValue}";
@@ -61,9 +91,9 @@ public class UserInterface : MonoBehaviour
             MenuButton menuButton = menuElementGameObject.GetComponent<MenuButton>();
 
             menuButton.Recttransform.localScale = Vector3.one;
-            menuButton.Recttransform.localPosition = Vector3.one;
-            menuButton.Recttransform.rotation = UICamera.transform.rotation * Quaternion.Euler(0f, 0f, currentRotationValue);
-            menuButton.IconRecttransform.rotation = UICamera.transform.rotation;
+            menuButton.Recttransform.localPosition = Head.forward * 0.5f;
+            menuButton.Recttransform.rotation = Head.rotation * Quaternion.Euler(0f, 0f, currentRotationValue);
+            menuButton.IconRecttransform.rotation = Head.rotation;
             currentRotationValue += rotationalIncrementalValue;
 
             menuButton.BackgroundImage.fillAmount = fillPercentageValue + 0.001f;
@@ -81,32 +111,55 @@ public class UserInterface : MonoBehaviour
     {
         if ((!Active))
         {
-            if (Input.GetKeyDown(KeyCode.T))
+            if (ic.virtuoseManager.IsButtonPressed(1))
             {
-                Activate();
+                if (VRTools.GetTime() > nextActivation)
+                {
+                    nextActivation = VRTools.GetTime() + activationCooldown;
+                    activationVirtPos = ic.GetVirtuosePose().Position;
+                    Activate();
+                }
             }
             return;
         }
 
-
         GetCurreentMenuElement();
-        if (Input.GetMouseButton(0))
+        if (ic.virtuoseManager.IsButtonPressed(1))
         {
-            Select();
+            if (VRTools.GetTime() > nextActivation)
+            {
+                nextActivation = VRTools.GetTime() + activationCooldown;
+                Select();
+            }
         }
     }
 
     protected virtual void GetCurreentMenuElement()
     {
         float rotationalIncrementalValue = 360f / MenuElements.Count;
-        currentMousePosition = new Vector2(Input.mousePosition.x - Screen.width / 2f, Input.mousePosition.y - Screen.height / 2f);
+
+        (Vector3 virtPos, Quaternion virtRot) = ic.GetVirtuosePose();
+        Vector3 pointOfPlane = plane.ClosestPointOnPlane(virtPos);
+
+        Vector3 center = plane.ClosestPointOnPlane(activationVirtPos);
+        float distance = Vector3.Distance(center, pointOfPlane); // = sinus * magnitude
+        float sinus = distance / Vector3.Distance(center, virtPos);
+        float angle = Mathf.Asin(sinus) * Mathf.Rad2Deg;
+
+        currentMousePosition = new Vector2(pointOfPlane.x, pointOfPlane.y);
+
+        debugSphereTransform.transform.position = pointOfPlane;
+
+        //currentMousePosition = new Vector2(Input.mousePosition.x - Screen.width / 2f, Input.mousePosition.y - Screen.height / 2f);
 
         currentSelectionAngle = 90 + rotationalIncrementalValue + Mathf.Atan2(currentMousePosition.y, currentMousePosition.x) * Mathf.Rad2Deg;
         currentSelectionAngle = (currentSelectionAngle + 360f) % 360f;
 
+        //Debug.Log($"currentMousePosition {currentMousePosition}");
+
         currentMenuItemIndex = (int)(currentSelectionAngle / rotationalIncrementalValue);
 
-        if(currentMenuItemIndex != previousMenuItemIndex)
+        if (currentMenuItemIndex != previousMenuItemIndex)
         {
             menuElements[previousMenuItemIndex].ButtonBackground.color = NormalButtonColor;
 
@@ -122,7 +175,7 @@ public class UserInterface : MonoBehaviour
     {
         ItemName.text = menuElements[currentMenuItemIndex].Name;
         ItemDescription.text = menuElements[currentMenuItemIndex].Description;
-        ItemIcon.sprite = menuElements[currentMenuItemIndex].ButtonIcon ;
+        ItemIcon.sprite = menuElements[currentMenuItemIndex].ButtonIcon;
     }
 
     protected virtual void Select()
