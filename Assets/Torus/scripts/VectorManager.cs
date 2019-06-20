@@ -112,6 +112,27 @@ public class VectorManager : MonoBehaviour
 
     }
 
+    public static GameObject DrawLineS(Vector3 start, Vector3 end, Color color, float lineSize = 0.03f)
+    {
+        return VECTOR_MANAGER.DrawLine(start, end, color, lineSize);
+    }
+
+    public GameObject DrawLine(Vector3 start, Vector3 end, Color color, float lineSize = 0.03f)
+    {
+        GameObject lineGO = new GameObject("Line");
+        LineRenderer lineR = lineGO.AddComponent<LineRenderer>();
+        lineR.material = new Material(Shader.Find("Hidden/Internal-Colored"));
+        lineR.startColor = color;
+        lineR.endColor = color;
+        lineR.startWidth = lineSize;
+        lineR.endWidth = lineSize;
+        lineR.positionCount = 2;
+        lineR.SetPosition(0, start);
+        lineR.SetPosition(1, end);
+
+        return lineGO;
+    }
+
     public void ClearVector()
     {
         List<GameObject> vectors = new List<GameObject>();

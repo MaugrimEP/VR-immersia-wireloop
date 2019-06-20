@@ -22,12 +22,9 @@ public class CopieStr : IReactionStr
         if (Debug.isDebugBuild)
         {
             VectorManager.Clear();
-            VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.03f, Color.black);
-            VectorManager.DrawSphereS(rc.target.transform.position, Vector3.one * 0.03f, Color.yellow);
-            VRTools.Log($"distence RB / target: {Vector3.Distance(rc.target.transform.position, rc.targetRigidbody.position)}"); //TODO remove Verbose
-            Debug.DrawLine(position, position + (solvedNextPosition - position).normalized, Color.black);
+            VectorManager.DrawSphereS(rc.target.transform.position, Vector3.one * 0.015f, Color.yellow);
+            VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.015f, Color.black);
         }
-
 
         if (rc.infoCollision.IsCollided)
         {
@@ -39,8 +36,6 @@ public class CopieStr : IReactionStr
         }
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
     }
-
-
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
@@ -61,18 +56,6 @@ public class CopieStr : IReactionStr
         Vector3 eulerRotation = URotation.eulerAngles;
         return Quaternion.Euler(-eulerRotation.z, eulerRotation.x, eulerRotation.y);
 
-    }
-
-    public override void HandleCollisionEnter(Collision collision)
-    {
-    }
-
-    public override void HandleCollisionExit(Collision collision)
-    {
-    }
-
-    public override void HandleCollisionStay(Collision collision)
-    {
     }
 
     protected override (Vector3 forces, Vector3 torques) SolveForceAndTorque()
