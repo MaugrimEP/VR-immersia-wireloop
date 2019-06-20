@@ -44,7 +44,6 @@ public class CopieStr : IReactionStr
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);
 
-        //When there is a collision the rigidbody position is at the virtuose arm position but the transform.position is impacted by the scene 
         Vector3 newPosition = rc.target.transform.position;
         Quaternion newRotation = rc.target.transform.rotation;
 
