@@ -16,15 +16,20 @@ public class CopieStr : IReactionStr
         Vector3 oldPosition = rc.targetRigidbody.position;
         Quaternion oldRotation = rc.targetRigidbody.rotation;
 
-        ic.SetVirtuosePose(oldPosition, oldRotation);
+        if (rc.IsColliding())
+        {
+            ic.SetVirtuosePose(oldPosition, oldRotation);
+        }
+        else
+        {
+            ic.SetVirtuosePoseIdentity();
+        }
+        
 
         (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
-        //rc.targetRigidbody.position = position;
-        //rc.targetRigidbody.rotation = rotation;
-        
-        rc.targetRigidbody.MovePosition(position);
-        rc.targetRigidbody.MoveRotation(rotation);
+        rc.targetRigidbody.position = position;
+        rc.targetRigidbody.rotation = rotation;
 
         if (Debug.isDebugBuild)
         {

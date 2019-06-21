@@ -10,7 +10,7 @@ public class RaquetteController : MonoBehaviour
 
     public enum SolverStr
     {
-        Default, Block, PhysicSimulate, OpenGLSolver, CopieTransform, ForceTorque, ForceRotationStr
+        CopieTransform, ForceTorque
     }
     [Header("Solver str")]
     public SolverStr SolverStrategy;
@@ -113,22 +113,12 @@ public class RaquetteController : MonoBehaviour
     {
         switch (SolverStrategy)
         {
-            case SolverStr.Default:
-                return new DefaultStr(this);
-            case SolverStr.Block:
-                return new BlockStr(this);
-            case SolverStr.PhysicSimulate:
-                return new PhysicSimulate(this);
-            case SolverStr.OpenGLSolver:
-                return new OpenGLSolver(this);
             case SolverStr.CopieTransform:
                 return new CopieStr(this);
             case SolverStr.ForceTorque:
                 return new ForceTorque(this);
-            case SolverStr.ForceRotationStr:
-                return new ForceRotationStr(this);
             default:
-                return new DefaultStr(this);
+                return new CopieStr(this);
         }
     }
 
@@ -162,6 +152,18 @@ public class RaquetteController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (vm.CommandType == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE && vm.Arm.IsConnected)
+            SetForce();
+    }
+
+    private void SetForce()
+    {
+        vm.Virtuose.Force = forces;
+    }
+
+
     private void Init()
     {
         var pose = ic.GetVirtuosePose();
@@ -170,13 +172,6 @@ public class RaquetteController : MonoBehaviour
 
         lastFramePosition = pose.Position;
         lastFrameRotation = pose.Rotation;
-    }
-
-    private void Update()
-    {
-
-        /* if (vm.CommandType == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE && vm.Arm.IsConnected)
-             SetForce();*/
     }
 
     private void FixedUpdate()
@@ -188,21 +183,6 @@ public class RaquetteController : MonoBehaviour
             {
                 SetRigidbodyPositions();
             }
-        }
-    }
-
-    private void SetForce()
-    {
-        vm.Virtuose.Force = forces;
-    }
-
-    private void SetTargetPositions()
-    {
-        var pose = vm.Virtuose.Pose;
-
-        if (target != null)
-        {
-            target.transform.SetPose(pose);
         }
     }
 
@@ -221,12 +201,7 @@ public class RaquetteController : MonoBehaviour
     /// </summary>
     private void SetRigidbodyPositions()
     {
-        if (target == null) return;
-
         str.ComputeSimulationStep();
-        /* infoCollision.ClearCollisions();
-         infoCollision.SetIsCollided();*/
-
         ic.SetSpeedIdentity();
     }
 }
