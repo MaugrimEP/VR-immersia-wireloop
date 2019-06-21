@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffde70f6a302c44469fc1fe6fca9c357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vrToolsMode: 1
+  vrToolsMode: 0
 --- !u!1001 &168839395
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -972,6 +972,11 @@ PrefabInstance:
         type: 3}
       propertyPath: armSelection
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 590392660979648737, guid: ccd034fa89df2724ea8188f7520ac1e4,
+        type: 3}
+      propertyPath: SolverStrategy
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3314926634922855479, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
