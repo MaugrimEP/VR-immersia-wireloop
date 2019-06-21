@@ -8,16 +8,23 @@ public class CopieStr : IReactionStr
     {
     }
 
+    /// <summary>
+    /// called for each fixed update frame
+    /// </summary>
     public override void ComputeSimulationStep()
     {
+        Vector3 oldPosition = rc.targetRigidbody.position;
+        Quaternion oldRotation = rc.targetRigidbody.rotation;
+
+        ic.SetVirtuosePose(oldPosition, oldRotation);
+
         (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
-        Vector3 oldPosition = rc.GetPosition();
-        Quaternion oldRotation = rc.GetRotation();
 
-        (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = SolvePositiondAndRotation();
-
-        Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - position, rc.MAX_DISPLACEMENT);
-        solvedNextPosition = oldPosition + displacementClamped;
+        //rc.targetRigidbody.position = position;
+        //rc.targetRigidbody.rotation = rotation;
+        
+        rc.targetRigidbody.MovePosition(position);
+        rc.targetRigidbody.MoveRotation(rotation);
 
         if (Debug.isDebugBuild)
         {
@@ -25,29 +32,11 @@ public class CopieStr : IReactionStr
             VectorManager.DrawSphereS(rc.target.transform.position, Vector3.one * 0.015f, Color.yellow);
             VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.015f, Color.black);
         }
-
-        if (rc.infoCollision.IsCollided)
-        {
-            ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
-        }
-        else
-        {
-            ic.SetVirtuosePoseIdentity();
-        }
-        (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
     }
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
-        (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
-
-        rc.targetRigidbody.MovePosition(position);
-        rc.targetRigidbody.MoveRotation(rotation);
-
-        Vector3 newPosition = rc.target.transform.position;
-        Quaternion newRotation = rc.target.transform.rotation;
-
-        return (newPosition, newRotation);
+        throw new System.NotImplementedException();
     }
 
     private Quaternion U2VRotation(Quaternion URotation)

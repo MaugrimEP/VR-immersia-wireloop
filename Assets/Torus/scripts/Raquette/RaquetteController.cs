@@ -157,7 +157,7 @@ public class RaquetteController : MonoBehaviour
             infoCollision = target.GetComponentInChildren<RaquetteCollider>();
             infoCollision.LogErrorIfNull();
 
-            if(ic.UseVirtuose())
+            if (ic.UseVirtuose())
                 StartCoroutine(vm.WaitVirtuoseConnexion(Init));
         }
     }
@@ -175,8 +175,8 @@ public class RaquetteController : MonoBehaviour
     private void Update()
     {
 
-        if (vm.CommandType == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE && vm.Arm.IsConnected)
-            SetForce();
+        /* if (vm.CommandType == VirtuoseAPI.VirtCommandType.COMMAND_TYPE_IMPEDANCE && vm.Arm.IsConnected)
+             SetForce();*/
     }
 
     private void FixedUpdate()
@@ -222,11 +222,11 @@ public class RaquetteController : MonoBehaviour
     private void SetRigidbodyPositions()
     {
         if (target == null) return;
-        str.ComputeSimulationStep();
-        infoCollision.ClearCollisions();
-        infoCollision.SetIsCollided();
 
-        if (ic.UseVirtuose())
-            ic.SetSpeedIdentity();
+        str.ComputeSimulationStep();
+        /* infoCollision.ClearCollisions();
+         infoCollision.SetIsCollided();*/
+
+        ic.SetSpeedIdentity();
     }
 }

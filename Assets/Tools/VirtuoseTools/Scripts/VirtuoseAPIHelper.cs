@@ -357,7 +357,7 @@ public class VirtuoseAPIHelper
     /// </summary>
     public void InitDefault()
     {
-        IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_TRANS;
+        IndexingMode = VirtuoseAPI.VirtIndexingType.INDEXING_ALL_FORCE_FEEDBACK_INHIBITION;
         ForceFactor = 1;
         SpeedFactor = 1;
         Timestep = 0.010f;
