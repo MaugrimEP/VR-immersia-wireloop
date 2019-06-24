@@ -859,7 +859,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2b6ef539e543b604a967180a9e3cdf36, type: 2}
+  - {fileID: 2100000, guid: 6b5c24d7a55839944bc4415eb3395d10, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1247,7 +1247,9 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+    - {fileID: 2300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
 --- !u!1 &1233430155 stripped
 GameObject:

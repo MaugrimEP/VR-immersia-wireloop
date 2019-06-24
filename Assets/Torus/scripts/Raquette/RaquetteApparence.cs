@@ -36,7 +36,10 @@ public class RaquetteApparence : MonoBehaviour
     public void UpdateChildOnStay(List<Collision> collisions)
     {
         foreach (Renderer r in renderers)
-            r.material.color = Color.red;
+        {
+            r.material.SetColor("_EmissionColor", Color.red);
+            //r.material.color = Color.red;
+        }
 
         PlaySparks(collisions);
     }
@@ -45,7 +48,10 @@ public class RaquetteApparence : MonoBehaviour
     {
         if (!rc.infoCollision.IsCollided)
             foreach (Renderer r in renderers)
-                r.material.color = Color.green;
+            {
+                //r.material.color = Color.green;
+                r.material.SetColor("_EmissionColor", Color.green);
+            }
 
         StopSparks();
     }

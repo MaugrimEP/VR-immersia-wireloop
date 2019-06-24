@@ -98,12 +98,6 @@ public class RaquetteController : MonoBehaviour
         handleTransform = GameObject.Find("handlePosition").GetComponent<Transform>();
         str = GetStr();
 
-        if (ic.IsScaleOne())//for the scale one the raquette need to be rotated 90° on X
-        {
-            foreach (Transform transform in ListToRotateOnScaleOne)
-                transform.rotation *= Quaternion.Euler(Vector3.right * 90);
-        }
-
         if (target)
         {
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
