@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class RaquetteController : MonoBehaviour
 {
-    public List<Renderer> renderers;
     private Transform handleTransform;
-
+    public RaquetteApparence raquetteApparence;
     public List<Transform> ListToRotateOnScaleOne;
 
     public enum SolverStr
@@ -40,52 +39,22 @@ public class RaquetteController : MonoBehaviour
     public InputController ic;
 
     #region handle collision behaviour
-    public void HandleCollisionEnter(Collision collision)
+    public void HandleCollisionEnter(List<Collision> collisions)
     {
-        UpdateChildOnEnter(collision);
-        str.HandleCollisionEnter(collision);
+        raquetteApparence.UpdateChildOnEnter(collisions);
+        str.HandleCollisionEnter(collisions);
     }
 
-    public void HandleCollisionExit(Collision collision)
+    public void HandleCollisionExit(List<Collision> collisions)
     {
-        UpdateChildOnLeave(collision);
-        str.HandleCollisionExit(collision);
+        raquetteApparence.UpdateChildOnLeave(collisions);
+        str.HandleCollisionExit(collisions);
     }
 
-    public void HandleCollisionStay(Collision collision)
+    public void HandleCollisionStay(List<Collision> collisions)
     {
-        UpdateChildOnStay(collision);
-        str.HandleCollisionStay(collision);
-    }
-    #endregion
-
-    #region change the apparence of the raquette when interacting with the pipe
-    private void UpdateChildOnStay(Collision collision)
-    {
-        foreach (Renderer r in renderers)
-            r.material.color = Color.red;
-    }
-
-    private void UpdateChildOnEnter(Collision collision)
-    {
-        foreach (Renderer r in renderers)
-            r.material.color = Color.red;
-
-        foreach (ContactPoint cp in collision.contacts)
-        {
-            ElectricityManager.DrawElectricityS(handleTransform, cp.point);
-        }
-    }
-
-    private void UpdateChildOnLeave(Collision collision)
-    {
-        if (!infoCollision.IsCollided)
-        {
-            foreach (Renderer r in renderers)
-                r.material.color = Color.green;
-        }
-
-        ElectricityManager.ClearS();
+        raquetteApparence.UpdateChildOnStay(collisions);
+        str.HandleCollisionStay(collisions);
     }
     #endregion
 

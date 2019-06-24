@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class CopieStr : IReactionStr
 {
-
     public CopieStr(RaquetteController rc) : base(rc)
     {
     }

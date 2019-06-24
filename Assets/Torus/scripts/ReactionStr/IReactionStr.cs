@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class IReactionStr
 {
     protected RaquetteController rc;
     protected InputController ic;
-    protected Collision currentCollision;
+    protected List<Collision> currentCollisions;
 
     protected IReactionStr(RaquetteController rc)
     {
@@ -19,32 +20,7 @@ public abstract class IReactionStr
         Vector3 oldPosition = rc.GetPosition();
         Quaternion oldRotation = rc.GetRotation();
 
-        (Vector3 solvedNextPosition, Quaternion solvedNextRotation) = SolvePositiondAndRotation();
-
-        Vector3 displacementClamped = Utils.ClampDisplacement(solvedNextPosition - position, rc.MAX_DISPLACEMENT);
-        solvedNextPosition = oldPosition + displacementClamped;
-
-        #region check threshold distance and rotation
-        if (CheckTreshold(oldPosition, solvedNextPosition, rotation, solvedNextRotation))
-            ic.SetPower(false);
-        #endregion
-
-        if (rc.IsColliding())
-            ic.SetVirtuosePose(solvedNextPosition, solvedNextRotation);
-        else
-            ic.SetVirtuosePoseIdentity();
-
-        #region verbose mode
-        if (false)
-        {
-            Vector3 displacement = solvedNextPosition - position;
-            if (rc.infoCollision.IsCollided)
-            {
-                Debug.Log($"déplacement : {displacement}");
-                VectorManager.VECTOR_MANAGER.DrawVector(position, displacement, Color.magenta);
-            }
-        }
-        #endregion
+        ic.SetVirtuosePoseIdentity();
 
         (rc.lastFramePosition, rc.lastFrameRotation) = (position, rotation);
     }
@@ -67,16 +43,16 @@ public abstract class IReactionStr
     protected abstract (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation();
     protected abstract (Vector3 forces, Vector3 torques) SolveForceAndTorque();
 
-    public virtual void HandleCollisionEnter(Collision collision)
+    public virtual void HandleCollisionEnter(List<Collision> collisions)
     {
-        currentCollision = collision;
+        currentCollisions = collisions;
     }
-    public virtual void HandleCollisionStay(Collision collision)
+    public virtual void HandleCollisionStay(List<Collision> collisions)
     {
-        currentCollision = collision;
+        currentCollisions = collisions;
     }
-    public virtual void HandleCollisionExit(Collision collision)
+    public virtual void HandleCollisionExit(List<Collision> collisions)
     {
-        currentCollision = collision;
+        currentCollisions = collisions;
     }
 }

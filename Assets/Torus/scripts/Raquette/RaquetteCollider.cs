@@ -7,31 +7,31 @@ public class RaquetteCollider : MonoBehaviour
     public RaquetteController raquetteController;
     public bool IsCollided;
 
-    private void Start()
-    {
-        
-    }
-
-    private void Update()
-    {
-        
-    }
+    private Collision currentCollision;
 
     private void OnCollisionEnter(Collision collision)
     {
         IsCollided = true;
-        raquetteController.HandleCollisionEnter(collision);
+        currentCollision = collision;
+        raquetteController.HandleCollisionEnter(CollidingList());
     }
 
     private void OnCollisionStay(Collision collision)
     {
         IsCollided = true;
-        raquetteController.HandleCollisionStay(collision);
+        currentCollision = collision;
+        raquetteController.HandleCollisionStay(CollidingList());
     }
 
     private void OnCollisionExit(Collision collision)
     {
         IsCollided = false;
-        raquetteController.HandleCollisionExit(collision);
+        currentCollision = collision;
+        raquetteController.HandleCollisionExit(CollidingList());
+    }
+
+    public List<Collision> CollidingList()
+    {
+        return new List<Collision>() { currentCollision};
     }
 }

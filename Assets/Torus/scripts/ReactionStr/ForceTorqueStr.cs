@@ -55,24 +55,23 @@ public class ForceTorque : IReactionStr
         Vector3 totalTorque = Vector3.zero;
 
         if (Debug.isDebugBuild) VectorManager.Clear();
+        foreach (Collision currentCollision in currentCollisions)
+            foreach (ContactPoint contactPoint in currentCollision.contacts)
+            {
+                Vector3 vectorHandleContactPoint = contactPoint.point - handleTransform.position;
+                Vector3 normalToContact = contactPoint.normal;
+                float interpenetrationDistance = -contactPoint.separation;
 
-        foreach (ContactPoint contactPoint in currentCollision.contacts)
-        {
-            Vector3 vectorHandleContactPoint = contactPoint.point - handleTransform.position;
-            Vector3 normalToContact = contactPoint.normal;
-            float interpenetrationDistance = - contactPoint.separation;
+                Vector3 localForce = normalToContact * interpenetrationDistance * stiffnessForce;
+                Vector3 localTorque = Vector3.Cross(vectorHandleContactPoint, -localForce.normalized) * localForce.magnitude * stiffnessTorque;
 
-            Vector3 localForce = normalToContact * interpenetrationDistance * stiffnessForce;
-            Vector3 localTorque = Vector3.Cross(vectorHandleContactPoint, -localForce.normalized) * localForce.magnitude * stiffnessTorque;
+                totalForce += localForce;
+                totalTorque += localTorque;
 
-            totalForce += localForce;
-            totalTorque += localTorque;
-
-            Debug.DrawLine(handleTransform.position, contactPoint.point, Utils.RandomColor());
-            VectorManager.DrawSphereS(contactPoint.point, Vector3.one * 0.05f, Color.black);
-        }
+                Debug.DrawLine(handleTransform.position, contactPoint.point, Utils.RandomColor());
+                VectorManager.DrawSphereS(contactPoint.point, Vector3.one * 0.05f, Color.black);
+            }
         if (Debug.isDebugBuild) Debug.Log($"totalForce = {totalForce}   ,totalTorque = {totalTorque}");//TODO to remove : verbose
-        if (Debug.isDebugBuild) Debug.Log($"contactPointCount = {currentCollision.contactCount}");
         if (Debug.isDebugBuild) Debug.DrawLine(handleTransform.position, handleTransform.position + totalForce, Color.red);
         if (Debug.isDebugBuild) Debug.DrawLine(handleTransform.position, handleTransform.position + totalTorque, Color.green);
 
@@ -82,15 +81,5 @@ public class ForceTorque : IReactionStr
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
     {
         throw new System.NotImplementedException();
-    }
-
-    public override void HandleCollisionEnter(Collision collision)
-    {
-        base.HandleCollisionEnter(collision);
-    }
-
-    public override void HandleCollisionStay(Collision collision)
-    {
-        base.HandleCollisionStay(collision);
     }
 }

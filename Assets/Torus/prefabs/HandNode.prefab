@@ -15,7 +15,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!114 &956713082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -496,6 +496,7 @@ GameObject:
   - component: {fileID: 590392660979648737}
   - component: {fileID: 4258091706581415855}
   - component: {fileID: 986715983}
+  - component: {fileID: 2444826589858388985}
   m_Layer: 13
   m_Name: Raquette
   m_TagString: Untagged
@@ -558,8 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdc06856fbb776f4595ad1b727f0f634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderers:
-  - {fileID: 3727631034707105403}
+  raquetteApparence: {fileID: 2444826589858388985}
   ListToRotateOnScaleOne:
   - {fileID: 8441289906547867911}
   SolverStrategy: 0
@@ -601,7 +601,7 @@ MonoBehaviour:
   virtuose_Rotation: {x: 0, y: 0, z: 0, w: 0}
   virtuose_Force: {x: 0, y: 0, z: 0}
   virtuose_Torque: {x: 0, y: 0, z: 0}
-  mass: 0.2
+  mass: 1
   density: 1350
   modeInertie: 2
   rc: {fileID: 590392660979648737}
@@ -618,6 +618,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IncludeChildren: 0
+--- !u!114 &2444826589858388985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3698078955206980165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a365047c018b0d42828e8e74ed5cf71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 3727631034707105403}
+  SparksPrefab: {fileID: 1750336770989372043, guid: 904ea486d2c62cc4eb8197c198d7e37c,
+    type: 3}
+  rc: {fileID: 590392660979648737}
+  SparksLifeTime: 0.1
 --- !u!1 &4699204313913364937
 GameObject:
   m_ObjectHideFlags: 0
@@ -1229,19 +1247,17 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-    - {fileID: 2300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
---- !u!4 &1233337003 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 400000, guid: 73028e53764b93248ae8be246c9a6bbc,
-    type: 3}
-  m_PrefabInstance: {fileID: 1233461291}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1233430155 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1233461291}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1233337003 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400000, guid: 73028e53764b93248ae8be246c9a6bbc,
     type: 3}
   m_PrefabInstance: {fileID: 1233461291}
   m_PrefabAsset: {fileID: 0}
