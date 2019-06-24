@@ -138,6 +138,7 @@ public class RaquetteController : MonoBehaviour
         if (target)
         {
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
+
             if (!ic.UseVirtuose())
             {
                 targetRigidbody.constraints = RigidbodyConstraints.FreezeAll;

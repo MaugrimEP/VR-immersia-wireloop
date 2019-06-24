@@ -511,7 +511,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3698078955206980165}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.007, y: 0.0006, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1233337003}
@@ -885,7 +885,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6749885093466130197}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.279, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1757112165680761477}
@@ -1161,6 +1161,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 9141575761445799277}
     m_Modifications:
+    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+      propertyPath: m_Name
+      value: cerceau
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+      propertyPath: m_TagString
+      value: Raquette
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1217,19 +1229,9 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-      propertyPath: m_Name
-      value: cerceau
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-      propertyPath: m_TagString
-      value: Raquette
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+    - {fileID: 2300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
 --- !u!4 &1233337003 stripped
 Transform:

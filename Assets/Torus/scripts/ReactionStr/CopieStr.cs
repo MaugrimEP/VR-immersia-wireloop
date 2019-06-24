@@ -28,8 +28,8 @@ public class CopieStr : IReactionStr
 
         (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
-        rc.targetRigidbody.position = position;
-        rc.targetRigidbody.rotation = rotation;
+        rc.targetRigidbody.MovePosition(position);
+        rc.targetRigidbody.MoveRotation(rotation);
 
         if (Debug.isDebugBuild)
         {
