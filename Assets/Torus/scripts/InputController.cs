@@ -52,6 +52,9 @@ public class InputController : MonoBehaviour
 
     private string GetIP()
     {
+        string commandeLineIP = ArmSelectionArgumentLine.FromCommandeLine();
+        if (commandeLineIP != "") return commandeLineIP;
+
         switch (armSelection)
         {
             case ArmSelection.Unity:
@@ -110,7 +113,7 @@ public class InputController : MonoBehaviour
 
         (float[] appliedInertie, float appliedMass) = GetMassAndInertie();
 
-        if(Debug.isDebugBuild) Debug.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}"); //TODO to remove verbose
+        if (Debug.isDebugBuild) Debug.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}"); //TODO to remove verbose
 
         if (UseVirtuose())
         {//init the virtuoseManager component
@@ -124,14 +127,15 @@ public class InputController : MonoBehaviour
 
     private void Start()
     {
-        if (VRTools.IsClient()){
+        if (VRTools.IsClient())
+        {
             virtuoseManager.enabled = false;
         }
     }
 
     public void SetSpeedIdentity()
     {
-        if(UseVirtuose())
+        if (UseVirtuose())
             virtuoseManager.Virtuose.Speed = virtuoseManager.Virtuose.Speed;
     }
 
@@ -187,7 +191,7 @@ public class InputController : MonoBehaviour
         virtuoseManager.Virtuose.RawPose = virtuoseManager.Virtuose.RawPose;
     }
 
-     public void SetPower(bool powerState)
+    public void SetPower(bool powerState)
     {
         virtuoseManager.Virtuose.Power = powerState;
     }
