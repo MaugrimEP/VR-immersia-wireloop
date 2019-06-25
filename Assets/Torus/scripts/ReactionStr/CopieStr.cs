@@ -32,7 +32,7 @@ public class CopieStr : IReactionStr
 
         VectorManager.Clear();//TODO see if to clean
         VectorManager.DrawSphereS(rc.target.transform.position, Vector3.one * 0.015f, Color.yellow);
-        VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.015f, Color.black);
+        VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.015f, Color.red);
     }
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
