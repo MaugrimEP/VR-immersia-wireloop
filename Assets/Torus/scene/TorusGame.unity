@@ -5146,7 +5146,7 @@ PrefabInstance:
     - target: {fileID: 4258091706581415855, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
       propertyPath: armSelection
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 844807323750037919, guid: ccd034fa89df2724ea8188f7520ac1e4,
         type: 3}
@@ -5321,6 +5321,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 1534989924605611251, guid: 5c4531e3cabe7964ea322172d6d07e7f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c4531e3cabe7964ea322172d6d07e7f, type: 3}

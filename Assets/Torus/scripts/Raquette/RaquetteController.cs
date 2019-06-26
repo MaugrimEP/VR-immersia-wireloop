@@ -101,6 +101,7 @@ public class RaquetteController : MonoBehaviour
         if (target)
         {
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
+            targetRigidbody.centerOfMass = handleTransform.position - target.transform.position;
 
             if (!ic.UseVirtuose())
             {

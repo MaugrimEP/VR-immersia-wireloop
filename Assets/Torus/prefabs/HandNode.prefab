@@ -596,6 +596,7 @@ MonoBehaviour:
   virtuoseManager: {fileID: 844807323750037919}
   armSelection: 2
   HapticEnable: 1
+  UseWand: 0
   modeVirtuose: 5
   virtuose_Position: {x: 0, y: 0, z: 0}
   virtuose_Rotation: {x: 0, y: 0, z: 0, w: 0}
@@ -1179,18 +1180,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 9141575761445799277}
     m_Modifications:
-    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-      propertyPath: m_Name
-      value: cerceau
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
-      propertyPath: m_TagString
-      value: Raquette
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1246,6 +1235,18 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+      propertyPath: m_Name
+      value: cerceau
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}
+      propertyPath: m_TagString
+      value: Raquette
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3300000, guid: 73028e53764b93248ae8be246c9a6bbc, type: 3}

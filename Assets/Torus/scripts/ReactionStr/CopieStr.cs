@@ -23,16 +23,11 @@ public class CopieStr : IReactionStr
         {
             ic.SetVirtuosePoseIdentity();
         }
-        
 
         (Vector3 position, Quaternion rotation) = ic.GetVirtuosePose();
 
         rc.targetRigidbody.MovePosition(position);
         rc.targetRigidbody.MoveRotation(rotation);
-
-        VectorManager.Clear();//TODO see if to clean
-        VectorManager.DrawSphereS(rc.target.transform.position, Vector3.one * 0.015f, Color.yellow);
-        VectorManager.DrawSphereS(rc.targetRigidbody.position, Vector3.one * 0.015f, Color.red);
     }
 
     protected override (Vector3 Position, Quaternion Rotation) SolvePositiondAndRotation()
