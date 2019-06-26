@@ -23,6 +23,7 @@ public class InputController : MonoBehaviour
     /// If HapticEnable is True, then the output to the virtuose will use the class value, if it's False, the input will be the output
     /// </summary>
     public bool HapticEnable;
+    public bool UseWand;
     public VirtuoseAPI.VirtCommandType modeVirtuose;
 
     #region value read from the virtuose, they should be in unity coordinate system
@@ -123,6 +124,8 @@ public class InputController : MonoBehaviour
             virtuoseManager.CommandType = modeVirtuose;
             virtuoseManager.Arm.Ip = GetIP();
         }
+
+        transform.parent = UseWand ? GameObject.Find("HandNode").transform : null;
     }
 
     private void Start()
