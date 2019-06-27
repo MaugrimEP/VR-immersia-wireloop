@@ -46,7 +46,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.0053113853, y: 0.004996759, z: 0.001047784}
+  m_Size: {x: 0.4, y: 0.4, z: 0.1}
   m_Center: {x: 0.00014796204, y: 0.00010701959, z: -0.000083585444}
 --- !u!114 &7393396883201491314
 MonoBehaviour:
@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e75b0606698c84c4ca77c3f99d5a2d29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  succesColor: {r: 0, g: 0.5647059, b: 0, a: 0.32941177}
   particleSystems:
   - {fileID: 2431927722515302907}
   - {fileID: 2431927721124244532}
@@ -286,7 +287,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.3962264, g: 0.005606967, b: 0.30638394, a: 0.9843137}
+      maxColor: {r: 0.31646225, g: 0.21239765, b: 0.4056604, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4984,7 +4985,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.5471698, g: 0, b: 0.3972705, a: 0.4392157}
+      maxColor: {r: 0.5647059, g: 0.52156866, b: 0.61960787, a: 0.23921569}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -9682,7 +9683,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0.42378843, g: 0.25035602, b: 0.5471698, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -14138,7 +14139,7 @@ ParticleSystemRenderer:
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.5
+  m_MaxParticleSize: 9999
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2

@@ -52,7 +52,7 @@ public class InputController : MonoBehaviour
 
     private string GetIP()
     {
-        string commandeLineIP = ArmSelectionArgumentLine.FromCommandeLine();
+        string commandeLineIP = SelectionArgumentLine.FromCommandeLine();
         if (commandeLineIP != "") return commandeLineIP;
 
         switch (armSelection)
@@ -72,6 +72,12 @@ public class InputController : MonoBehaviour
             default:
                 return "";
         }
+    }
+
+    private bool GetUseWand()
+    {
+        (bool argHere, bool commandeLineUseWand) = SelectionArgumentLine.UseWand();
+        return argHere ? commandeLineUseWand : UseWand;
     }
 
     public bool UseVirtuose()
@@ -109,6 +115,8 @@ public class InputController : MonoBehaviour
 
     private void Awake()
     {
+        UseWand = GetUseWand();
+
         Application.targetFrameRate = 100;
 
         (float[] appliedInertie, float appliedMass) = GetMassAndInertie();

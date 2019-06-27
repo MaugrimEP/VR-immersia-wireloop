@@ -3,22 +3,31 @@ using System.Collections.Generic;
 using MiddleVR_Unity3D;
 using UnityEngine;
 
-public class ArmController : MonoBehaviour
+public class CheckpointController : MonoBehaviour
 {
     public InputController inputController;
     public GameObject ParticulesContrainer;
+    public GameObject CirclePrefab;
     private List<CollectableController> collectableControllers;
 
     private vrCommand VRResetCollectables;
     private static int id;
+
+    private void SpawnCircles()
+    {
+        foreach (Transform child in ParticulesContrainer.transform)
+        {
+            CollectableController particule = Instantiate(CirclePrefab, child.position, child.rotation).GetComponent<CollectableController>();
+            collectableControllers.Add(particule.GetComponent<CollectableController>());
+        }
+    }
 
     void Start()
     {
         ++id;
 
         collectableControllers = new List<CollectableController>();
-        foreach (Transform child in ParticulesContrainer.transform)
-            collectableControllers.Add(child.GetComponent<CollectableController>());
+        SpawnCircles();
 
         VRResetCollectables = new vrCommand($"ArmController_{name}_{id}", ResetCollectables);
     }
@@ -27,7 +36,7 @@ public class ArmController : MonoBehaviour
     private vrValue ResetCollectables(vrValue _)
     {
         foreach (CollectableController collectable in collectableControllers)
-            collectable.Start();
+            collectable.Play();
         return null;
     }
 

@@ -7,9 +7,10 @@ using UnityEngine.Networking;
 /// - HOST=:port
 /// - CLIENT=address:port
 /// </summary>
-public class ArmSelectionArgumentLine
+public class SelectionArgumentLine
 {
     private const string ARM_MODE = "ARM_MODE";
+    private const string USE_WAND = "WAND";
 
     /// <summary>
     /// use example:
@@ -30,5 +31,21 @@ public class ArmSelectionArgumentLine
             }
         }
         return "";
+    }
+
+    public static (bool arg,bool useWand) UseWand()
+    {
+        string[] arguments = System.Environment.GetCommandLineArgs();
+
+        foreach (string argument in arguments)
+        {
+            if (argument.Contains(USE_WAND))
+            {
+                string useWand = argument.Split('=')[1];
+                VRTools.Log($"[ArmSelectionArgumentLine] UseWand fetch from commande line parameters : {useWand}");
+                return (true,useWand.Equals("1"));
+            }
+        }
+        return (false, false);
     }
 }
