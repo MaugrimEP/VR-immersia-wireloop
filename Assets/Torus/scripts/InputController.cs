@@ -16,7 +16,6 @@ public class InputController : MonoBehaviour
     {
         Default, InertiesInventor, ComputedInertie
     }
-
     public VirtuoseManager virtuoseManager;
     public ArmSelection armSelection;
     /// <summary>
@@ -197,5 +196,10 @@ public class InputController : MonoBehaviour
     public void SetPower(bool powerState)
     {
         virtuoseManager.Virtuose.Power = powerState;
+    }
+
+    public bool Button(int button = 2)
+    {
+        return virtuoseManager.IsButtonPressed(button);
     }
 }
