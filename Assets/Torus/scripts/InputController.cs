@@ -121,7 +121,7 @@ public class InputController : MonoBehaviour
 
         (float[] appliedInertie, float appliedMass) = GetMassAndInertie();
 
-        if (Debug.isDebugBuild) Debug.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}"); //TODO to remove verbose
+        if (Debug.isDebugBuild) VRTools.Log($"appliedInertie : {Utils.ArrayToString(appliedInertie)}, appliedMass = {appliedMass}");
 
         if (UseVirtuose())
         {//init the virtuoseManager component

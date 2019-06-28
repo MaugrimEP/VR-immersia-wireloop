@@ -71,7 +71,6 @@ public class ForceTorque : IReactionStr
                 Debug.DrawLine(handleTransform.position, contactPoint.point, Utils.RandomColor());
                 VectorManager.DrawSphereS(contactPoint.point, Vector3.one * 0.05f, Color.black);
             }
-        if (Debug.isDebugBuild) Debug.Log($"totalForce = {totalForce}   ,totalTorque = {totalTorque}");//TODO to remove : verbose
         if (Debug.isDebugBuild) Debug.DrawLine(handleTransform.position, handleTransform.position + totalForce, Color.red);
         if (Debug.isDebugBuild) Debug.DrawLine(handleTransform.position, handleTransform.position + totalTorque, Color.green);
 
