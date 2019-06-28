@@ -12,7 +12,7 @@ public class WandController : MonoBehaviour
     }
 
     void Update()
-    {
+    {   
         if (VRTools.IsButtonToggled(0))
         {
             GameObject sphere = VectorManager.DrawSphereS(handPosition.position, Vector3.one * 0.1f, Color.red);
