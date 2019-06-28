@@ -1,0 +1,25 @@
+stages:
+    - build unity application
+    - build unity packages
+    - deploy
+
+variables:
+    #CI_DEBUG_TRACE: "true"
+
+# update any submodule we may have
+before_script:
+    - git submodule sync --recursive
+    - git submodule update --init --recursive --remote
+
+build application:
+    stage: build unity application
+    script:
+        - 'git reset --hard remotes/origin/%CI_COMMIT_REF_NAME%'
+        - 'Unity -quit -batchmode -projectPath %cd% -define Standalone: -logfile "log.txt"'
+        - 'Unity -quit -batchmode -projectPath %cd% -define Standalone: -build "test.exe" -scenes "Assets\Tools\VRTools\Scenes\VRToolsTest.unity" -logfile "logbuild.txt" -executeMethod CommandLineBuilder.Build'
+    artifacts:
+        name: "%CI_PROJECT_NAME%_BuildLog_%CI_PIPELINE_ID%"
+        when: always
+        paths:
+            - 'log.txt'
+            - 'logbuild.txt'
