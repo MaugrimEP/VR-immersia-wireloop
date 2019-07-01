@@ -644,10 +644,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtuoseManager: {fileID: 665012415186581545}
-  armSelection: 2
+  armSelection: 4
   HapticEnable: 1
   UseWand: 0
   ARM_IP: 
+  BaseFrame: {x: 4.369, y: -0.378, z: -0.032}
   modeVirtuose: 5
   virtuose_Position: {x: 0, y: 0, z: 0}
   virtuose_Rotation: {x: 0, y: 0, z: 0, w: 0}

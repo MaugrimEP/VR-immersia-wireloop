@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 public class Utils
 {
-    public static string ArrayToString(float [] array)
+    public static string ArrayToString(float[] array)
     {
         string str = "[";
-        foreach(float val in array)
+        foreach (float val in array)
         {
             str += $" {val},";
         }
@@ -61,15 +62,38 @@ public class Utils
     public static bool Equals(Collision c1, Collision c2)
     {
         if (c1.contactCount != c2.contactCount) return false;
-        for(int i = 0; i<c1.contactCount; ++i)
+        for (int i = 0; i < c1.contactCount; ++i)
         {
             ContactPoint c1Point = c1.GetContact(i);
             ContactPoint c2Point = c2.GetContact(i);
 
             if (c1Point.separation != c2Point.separation) return false;
-            if (c1Point.normal     != c2Point.normal)     return false;
+            if (c1Point.normal != c2Point.normal) return false;
         }
         return true;
+    }
+
+    public static Vector3 StringToVector3(string sVector)
+    {
+        sVector = sVector.Replace("−", "-");
+        var fmt = new NumberFormatInfo { NegativeSign = "-" };
+
+        // Remove the parentheses
+        if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+        {
+            sVector = sVector.Substring(1, sVector.Length - 2);
+        }
+
+        // split the items
+        string[] sArray = sVector.Split(',');
+
+        // store as a Vector3
+        Vector3 result = new Vector3(
+            float.Parse(sArray[0], fmt),
+            float.Parse(sArray[1], fmt),
+            float.Parse(sArray[2], fmt));
+
+        return result;
     }
 }
 
@@ -116,7 +140,7 @@ public class InertiaMatrix
         InertiaMatrix CerceauCentered = (PaveExterieur - PaveInterieur);
         // translation from the center to the handle
         Vector3 translation = new Vector3(0f, 0f, 0.2f + 0.1f);
-        InertiaMatrix Cerceau = Translated(im: CerceauCentered, t: translation, mass: massPaveExterieur - massPaveInterieur); 
+        InertiaMatrix Cerceau = Translated(im: CerceauCentered, t: translation, mass: massPaveExterieur - massPaveInterieur);
 
         (InertiaMatrix Handle, float massHandle) = GetCylinderDensity(density: density, radius: 0.05f / 2, heigh: 0.2f);
 

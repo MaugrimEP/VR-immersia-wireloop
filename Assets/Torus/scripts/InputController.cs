@@ -28,6 +28,7 @@ public class InputController : MonoBehaviour
     public bool UseWand;
     [HideInInspector]
     public string ARM_IP;
+    public Vector3 BaseFrame;
     public VirtuoseAPI.VirtCommandType modeVirtuose;
 
     #region value read from the virtuose, they should be in unity coordinate system
@@ -139,7 +140,12 @@ public class InputController : MonoBehaviour
 
     private void Awake()
     {
-        SetIP();
+        {//fetch arg data
+            SetIP();
+            (bool argBaseFrame, Vector3 BaseFrameRead) = SelectionArgumentLine.GetBaseFramePosition();
+            if (argBaseFrame) BaseFrame = BaseFrameRead;
+        }
+
         HandNode = GameObject.Find("HandNode").GetComponent<Transform>();
 
         Application.targetFrameRate = 100;
@@ -151,7 +157,7 @@ public class InputController : MonoBehaviour
         if (UseVirtuose())
         {//init the virtuoseManager component
             (virtuoseManager.inerties, virtuoseManager.mass) = (appliedInertie, appliedMass);
-            virtuoseManager.BaseFramePosition = Vector3.zero;
+            virtuoseManager.BaseFramePosition = BaseFrame;
             virtuoseManager.powerOnKey = KeyCode.P;
             virtuoseManager.CommandType = modeVirtuose;
             virtuoseManager.Arm.Ip = ARM_IP;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>
@@ -10,6 +11,7 @@ using UnityEngine.Networking;
 public class SelectionArgumentLine
 {
     public const string ARM_MODE = "ARM_MODE";
+    public const string BASE_FRAME_POSITION = "BASE_FRAME";
     public const string USE_WAND = "WAND";
 
     /// <summary>
@@ -35,5 +37,31 @@ public class SelectionArgumentLine
             }
         }
         return "";
+    }
+
+    public static (bool argHere, Vector3 BaseFrame) GetBaseFramePosition()
+    {
+        string[] arguments = System.Environment.GetCommandLineArgs();
+
+
+        foreach (string argument in arguments)
+        {
+            if (argument.Contains(BASE_FRAME_POSITION))
+            {
+                string BaseFrame = argument.Split('=')[1];
+                
+                VRTools.Log($"[ArmSelectionArgumentLine] Base Frame Position fetch from commande line parameters : {BaseFrame}");
+
+                Vector3 BaseFrameV3 = Vector3.zero;
+                try
+                {
+                    BaseFrameV3 = Utils.StringToVector3(BaseFrame);
+                }
+                catch{}
+
+                return (true, BaseFrameV3);
+            }
+        }
+        return (false, Vector3.zero);
     }
 }
