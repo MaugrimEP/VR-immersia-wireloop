@@ -9,8 +9,8 @@ using UnityEngine.Networking;
 /// </summary>
 public class SelectionArgumentLine
 {
-    private const string ARM_MODE = "ARM_MODE";
-    private const string USE_WAND = "WAND";
+    public const string ARM_MODE = "ARM_MODE";
+    public const string USE_WAND = "WAND";
 
     /// <summary>
     /// use example:
@@ -26,26 +26,14 @@ public class SelectionArgumentLine
             if (argument.Contains(ARM_MODE))
             {
                 string addr = argument.Split('=')[1];
+                if (addr.Contains(USE_WAND))
+                {
+                    return USE_WAND;
+                }
                 VRTools.Log($"[ArmSelectionArgumentLine] Arm addr fetch from commande line parameters : {addr}");
                 return addr;
             }
         }
         return "";
-    }
-
-    public static (bool arg,bool useWand) UseWand()
-    {
-        string[] arguments = System.Environment.GetCommandLineArgs();
-
-        foreach (string argument in arguments)
-        {
-            if (argument.Contains(USE_WAND))
-            {
-                string useWand = argument.Split('=')[1];
-                VRTools.Log($"[ArmSelectionArgumentLine] UseWand fetch from commande line parameters : {useWand}");
-                return (true,useWand.Equals("1"));
-            }
-        }
-        return (false, false);
     }
 }

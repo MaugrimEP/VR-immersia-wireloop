@@ -103,10 +103,6 @@ public class RaquetteController : MonoBehaviour
             targetRigidbody = target.GetComponentInChildren<Rigidbody>();
             targetRigidbody.centerOfMass = handleTransform.position - target.transform.position;
 
-            if (!ic.UseVirtuose())
-            {
-                targetRigidbody.constraints = RigidbodyConstraints.FreezeAll;
-            }
             targetRigidbody.LogErrorIfNull();
 
             infoCollision = target.GetComponentInChildren<RaquetteCollider>();
@@ -148,6 +144,10 @@ public class RaquetteController : MonoBehaviour
             {
                 SetRigidbodyPositions();
             }
+        }
+        if (ic.UseWand)
+        {
+            SetRigidbodyPositions();
         }
     }
 

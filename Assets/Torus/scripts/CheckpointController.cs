@@ -42,7 +42,8 @@ public class CheckpointController : MonoBehaviour
 
     void Update()
     {
-        if (inputController.Button(1) || inputController.Button(2))
+        if (inputController.Button(1) || inputController.Button(2)
+            || VRTools.IsButtonToggled(2))
         {
             VRResetCollectables.Do();
         }

@@ -22,7 +22,12 @@ public class InputController : MonoBehaviour
     /// If HapticEnable is True, then the output to the virtuose will use the class value, if it's False, the input will be the output
     /// </summary>
     public bool HapticEnable;
+    /// <summary>
+    /// Set in the Awake, so use it in the start or after
+    /// </summary>
     public bool UseWand;
+    [HideInInspector]
+    public string ARM_IP;
     public VirtuoseAPI.VirtCommandType modeVirtuose;
 
     #region value read from the virtuose, they should be in unity coordinate system
@@ -50,39 +55,58 @@ public class InputController : MonoBehaviour
     public MassInertiaMode modeInertie;
     public RaquetteController rc;
 
-    private string GetIP()
+    private Transform HandNode;
+
+    private void SetIP()
     {
         string commandeLineIP = SelectionArgumentLine.FromCommandeLine();
-        if (commandeLineIP != "") return commandeLineIP;
+        Debug.Log($"Commande line IP: {commandeLineIP}");
 
+        //if we use the wand
+        if (commandeLineIP.Equals(SelectionArgumentLine.USE_WAND))
+        {
+            UseWand = true;
+            ARM_IP = "";
+            return;
+        }
+
+        //if an IP was given
+        if (commandeLineIP != "")
+        {
+            ARM_IP = commandeLineIP;
+            return;
+        }
+
+        //if nothing was given, use the build parameter
         switch (armSelection)
         {
             case ArmSelection.Unity:
-                return "";
+                ARM_IP = "";
+                return;
             case ArmSelection.Simulator:
-                return "127.0.0.1";
+                ARM_IP = "127.0.0.1";
+                return;
             case ArmSelection.SingleArm125:
-                return "131.254.154.16#5125";
+                ARM_IP = "131.254.154.16#5125";
+                return;
             case ArmSelection.SingleArm126:
-                return "131.254.18.52#5126";
+                ARM_IP = "131.254.18.52#5126";
+                return;
             case ArmSelection.ImmersiaLeftArm:
-                return "131.254.154.172#6001";
+                ARM_IP = "131.254.154.172#6001";
+                return;
             case ArmSelection.ImmersiaRightArm:
-                return "131.254.154.172#6003";
+                ARM_IP = "131.254.154.172#6003";
+                return;
             default:
-                return "";
+                ARM_IP = "";
+                return;
         }
-    }
-
-    private bool GetUseWand()
-    {
-        (bool argHere, bool commandeLineUseWand) = SelectionArgumentLine.UseWand();
-        return argHere ? commandeLineUseWand : UseWand;
     }
 
     public bool UseVirtuose()
     {
-        return armSelection != ArmSelection.Unity;
+        return !ARM_IP.Equals("") && !UseWand;
     }
 
     public (float[] inertie, float mass) GetMassAndInertie()
@@ -115,7 +139,8 @@ public class InputController : MonoBehaviour
 
     private void Awake()
     {
-        UseWand = GetUseWand();
+        SetIP();
+        HandNode = GameObject.Find("HandNode").GetComponent<Transform>();
 
         Application.targetFrameRate = 100;
 
@@ -129,10 +154,8 @@ public class InputController : MonoBehaviour
             virtuoseManager.BaseFramePosition = Vector3.zero;
             virtuoseManager.powerOnKey = KeyCode.P;
             virtuoseManager.CommandType = modeVirtuose;
-            virtuoseManager.Arm.Ip = GetIP();
+            virtuoseManager.Arm.Ip = ARM_IP;
         }
-
-        transform.parent = UseWand ? GameObject.Find("HandNode").transform : null;
     }
 
     private void Start()
@@ -153,8 +176,9 @@ public class InputController : MonoBehaviour
     {
         if (UseVirtuose())
             return virtuoseManager.Virtuose.Pose;
-        else
-            return (Vector3.zero, Quaternion.identity);
+        if (UseWand)
+            return (HandNode.position, HandNode.rotation);
+        return (Vector3.zero, Quaternion.identity);
     }
 
     public bool IsScaleOne()
@@ -186,6 +210,7 @@ public class InputController : MonoBehaviour
 
     public void VirtAddForceIdentity()
     {
+        if (!UseVirtuose()) return;
         virtAddForce(Vector3.zero, Vector3.zero);
     }
 
@@ -198,11 +223,13 @@ public class InputController : MonoBehaviour
 
     public void SetVirtuosePoseIdentity()
     {
+        if (!UseVirtuose()) return;
         virtuoseManager.Virtuose.RawPose = virtuoseManager.Virtuose.RawPose;
     }
 
     public void SetPower(bool powerState)
     {
+        if (!UseVirtuose()) return;
         virtuoseManager.Virtuose.Power = powerState;
     }
 

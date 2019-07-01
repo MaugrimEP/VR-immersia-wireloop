@@ -6,11 +6,6 @@ public class WandController : MonoBehaviour
 {
     public Transform handPosition;
 
-    void Start()
-    {
-
-    }
-
     void Update()
     {   
         if (VRTools.IsButtonToggled(0))
