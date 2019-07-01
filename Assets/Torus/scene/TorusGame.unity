@@ -4153,7 +4153,7 @@ PrefabInstance:
     - target: {fileID: 99905751652214069, guid: d09cda2a62f2e4b499409e444293fd23,
         type: 3}
       propertyPath: armSelection
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d09cda2a62f2e4b499409e444293fd23, type: 3}
