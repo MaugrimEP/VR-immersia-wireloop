@@ -343,6 +343,64 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 68462671}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &75622222 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5657351922859250328, guid: d09cda2a62f2e4b499409e444293fd23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1695817665}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &75622223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75622222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf83b1d2ba3164940a04684b7a8e9222, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleUp: {fileID: 75622225}
+  scaleDown: {fileID: 75622224}
+  raquetteTransform: {fileID: 75622230}
+  sizeStep: 0.1
+--- !u!114 &75622224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75622222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dce86b325e019034db76a3320f30a417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: 276
+  KeysModifier: 
+  button: -1
+--- !u!114 &75622225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75622222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dce86b325e019034db76a3320f30a417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: 275
+  KeysModifier: 
+  button: -1
+--- !u!4 &75622230 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4512238218858309369, guid: d09cda2a62f2e4b499409e444293fd23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1695817665}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &79669971
 GameObject:
   m_ObjectHideFlags: 0
@@ -2615,7 +2673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1214667532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4140,11 +4198,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4512238218858309369, guid: d09cda2a62f2e4b499409e444293fd23,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4512238218858309369, guid: d09cda2a62f2e4b499409e444293fd23,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4512238218858309369, guid: d09cda2a62f2e4b499409e444293fd23,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5207628449581832475, guid: d09cda2a62f2e4b499409e444293fd23,
         type: 3}
       propertyPath: ParticulesContrainer
       value: 
       objectReference: {fileID: 107385658}
+    - target: {fileID: 99905751652214069, guid: d09cda2a62f2e4b499409e444293fd23,
+        type: 3}
+      propertyPath: armSelection
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d09cda2a62f2e4b499409e444293fd23, type: 3}
 --- !u!1 &1745143934
@@ -5586,6 +5664,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ElectricityCreator
+      objectReference: {fileID: 0}
+    - target: {fileID: 8020277132811275380, guid: a8b4ee99b10f2e24d8b1f68e5d3a4f56,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8020277132811275338, guid: a8b4ee99b10f2e24d8b1f68e5d3a4f56,
         type: 3}
