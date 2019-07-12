@@ -16,7 +16,7 @@ public class UserInterfaceVirtuose : MonoBehaviour
     private Plane plane;
     private Vector3 activationVirtPos;
 
-    private Transform debugSphereTransform;//TODO A REMOVE
+    private Transform debugSphereTransform;
 
     [Header("BUTTONS")]
     public Color NormalButtonColor;

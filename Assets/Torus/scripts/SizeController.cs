@@ -7,20 +7,20 @@ public class SizeController : MonoBehaviour
     public VRInput scaleUp;
     public VRInput scaleDown;
     public Transform raquetteTransform;
-    public float sizeStep;
+
+    public Vector2 MinMaxSize;
+    public float ChangeSizeSpeed;
 
     void Update()
     {
-        if (scaleUp.IsToggled() || VRTools.IsButtonToggled(4))
+        if (scaleUp.IsPressed() || VRTools.IsButtonPressed(4))
         {
-            raquetteTransform.transform.localScale += Vector3.one * sizeStep;
-            VRTools.Log($"Size = {raquetteTransform.transform.localScale}");
+            raquetteTransform.transform.localScale = (raquetteTransform.transform.localScale + Vector3.one * ChangeSizeSpeed * VRTools.GetDeltaTime()).ClampVector3(MinMaxSize.x, MinMaxSize.y);
         }
 
-        if (scaleDown.IsToggled() || VRTools.IsButtonToggled(3))
+        if (scaleDown.IsPressed() || VRTools.IsButtonPressed(3))
         {
-            raquetteTransform.transform.localScale -= Vector3.one * sizeStep;
-            VRTools.Log($"Size = {raquetteTransform.transform.localScale}");
+            raquetteTransform.transform.localScale = (raquetteTransform.transform.localScale - Vector3.one * ChangeSizeSpeed * VRTools.GetDeltaTime()).ClampVector3(MinMaxSize.x, MinMaxSize.y);
         }
     }
 }

@@ -364,7 +364,8 @@ MonoBehaviour:
   scaleUp: {fileID: 75622225}
   scaleDown: {fileID: 75622224}
   raquetteTransform: {fileID: 75622230}
-  sizeStep: 0.1
+  MinMaxSize: {x: 1, y: 2}
+  ChangeSizeSpeed: 0.1
 --- !u!114 &75622224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4138,11 +4139,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Raquette
       objectReference: {fileID: 0}
-    - target: {fileID: 1637672098361992009, guid: d09cda2a62f2e4b499409e444293fd23,
-        type: 3}
-      propertyPath: handPosition
-      value: 
-      objectReference: {fileID: 176610894}
     - target: {fileID: 4512238218858309369, guid: d09cda2a62f2e4b499409e444293fd23,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4213,6 +4209,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1637672098361992009, guid: d09cda2a62f2e4b499409e444293fd23,
+        type: 3}
+      propertyPath: handPosition
+      value: 
+      objectReference: {fileID: 176610894}
     - target: {fileID: 5207628449581832475, guid: d09cda2a62f2e4b499409e444293fd23,
         type: 3}
       propertyPath: ParticulesContrainer

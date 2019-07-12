@@ -2,7 +2,7 @@
 using System.Globalization;
 using UnityEngine;
 
-public class Utils
+public static class Utils
 {
     public static string ArrayToString(float[] array)
     {
@@ -43,9 +43,14 @@ public class Utils
         return oldPosition + ClampDisplacement(newPosition - oldPosition, clampDistance);
     }
 
-    public static Vector3 ClampVector3(Vector3 v, float max)
+    public static Vector3 ClampVector3(this Vector3 v, float max)
     {
         return new Vector3(Mathf.Clamp(v.x, -max, max), Mathf.Clamp(v.y, -max, max), Mathf.Clamp(v.z, -max, max));
+    }
+
+    public static Vector3 ClampVector3(this Vector3 v, float min, float max)
+    {
+        return new Vector3(Mathf.Clamp(v.x, min, max), Mathf.Clamp(v.y, min, max), Mathf.Clamp(v.z, min, max));
     }
 
     public static Color RandomColor()
