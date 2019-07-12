@@ -47,12 +47,13 @@ public class RaquetteApparence : MonoBehaviour
     public void UpdateChildOnLeave(List<Collision> collisions)
     {
         if (!rc.infoCollision.IsCollided)
+        {
             foreach (Renderer r in renderers)
             {
                 //r.material.color = Color.green;
                 r.material.SetColor("_EmissionColor", Color.green);
             }
-
+        }
         StopSparks();
     }
 
