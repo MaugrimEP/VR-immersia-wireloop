@@ -109,7 +109,7 @@ public class VirtuoseAPIHelper
     {
         if (pose.Length >= (axe + 1) * POSE_COMPONENTS_NUMBER)
         {
-            Quaternion read = new Quaternion(pose[axe * POSE_COMPONENTS_NUMBER + 3],pose[axe * POSE_COMPONENTS_NUMBER + 4],pose[axe * POSE_COMPONENTS_NUMBER + 5],pose[axe * POSE_COMPONENTS_NUMBER + 6]);
+            Quaternion read = new Quaternion(pose[axe * POSE_COMPONENTS_NUMBER + 3], pose[axe * POSE_COMPONENTS_NUMBER + 4], pose[axe * POSE_COMPONENTS_NUMBER + 5], pose[axe * POSE_COMPONENTS_NUMBER + 6]);
             Quaternion rotation = new Quaternion(-read.y, -read.z, read.x, read.w);
             return rotation;
         }
@@ -607,7 +607,7 @@ public class VirtuoseAPIHelper
     {
         get
         {
-            float[] speed = new float[6] { 0,0,0 ,0,0,0};
+            float[] speed = new float[6] { 0, 0, 0, 0, 0, 0 };
             ExecLogOnError(
                 VirtuoseAPI.virtGetSpeed, speed);
             return speed;
@@ -877,27 +877,132 @@ public class VirtuoseAPIHelper
         {
             ExecLogOnError(
                 VirtuoseAPI.virtGetPhysicalPosition, pose);
-            return VirtuoseToUnityPose(pose);
+            return (VirtuosePhysicalToUnityPosition(pose), VirtuoseToUnityRotation(pose));
         }
     }
 
     /// <summary>
     /// Return articular value for each axe.
+    /// For scale1 first three value are the position of the carrier : 0 -> Z, 1 -> -X, 2 -> Fixed Y value in meter.
+    /// Then : For each axes the current angles in degree.
     /// </summary>
     public float[] Articulars
     {
         get
         {
-            int axesNumber = AxesNumber;
-            //Crash if 0 size array is given as input.
-            int posesBufferSize = axesNumber <= 0 ? POSE_COMPONENTS_NUMBER : axesNumber;
-            float[] articularValues = new float[posesBufferSize];
+            float[] articularValues = new float[SafeAxeNumber];
             ExecLogOnError(
                 VirtuoseAPI.virtGetArticularPosition, articularValues);
 
+            //Scale1 has translation on first 3 axes.
+            int startRotationIndex = IsScaleOne ? 3 : 0;
             for (int a = 3; a < articularValues.Length; a++)
                 articularValues[a] = Mathf.Rad2Deg * articularValues[a];
             return articularValues;
+        }
+        set
+        {
+            Assert.AreEqual(AxesNumber, value.Length, "Array length must have the same size as axes number.");
+
+            for (int a = 3; a < value.Length; a++)
+                value[a] = Mathf.Deg2Rad * value[a];
+
+            ExecLogOnError(
+                VirtuoseAPI.virtSetArticularPosition, value);
+        }
+    }
+    public Vector3 ArticularsPosition
+    {
+        get
+        {
+            return VirtuosePhysicalToUnityPosition(Articulars);
+        }
+    }
+
+    /// <summary>
+    /// Corresponds to the articular speed. It is an array of float, with length the number of axes of the Virtuose.
+    /// </summary>
+    public float[] ArticularsSpeed
+    {
+        get
+        {
+            float[] articularsSpeed = new float[SafeAxeNumber];
+            ExecLogOnError(
+                VirtuoseAPI.virtGetArticularSpeed, articularsSpeed);
+
+            return articularsSpeed;
+        }
+        set
+        {
+            Assert.AreEqual(AxesNumber, value.Length, "Array length must have the same size as axes number.");
+            ExecLogOnError(
+                VirtuoseAPI.virtSetArticularSpeed, value);
+        }
+    }
+
+    public static Vector3 VirtuosePhysicalToUnityPosition(float[] position)
+    {
+        //Need to check the size of the array.
+        if (position.Length >= 3)
+            return new Vector3
+                (
+                  -position[1],
+                    position[2],
+                    position[0]
+                );
+
+        VRTools.LogError("[Error][VirtuoseManager] Wrong array length for the articulars values: " + position.Length + ".");
+        return Vector3.zero;
+    }
+
+    /// <summary>
+    /// Get base position which match power button.
+    /// </summary>
+    /// <param name="offset">Offset to match absolute tracking position.</param>
+    /// <returns></returns>
+    public (Vector3 position, Quaternion rotation) PhysicalBasePose
+    {
+        get
+        {
+            Vector3 position = ArticularsPosition;
+            Quaternion rotation = Quaternion.AngleAxis(-Articulars[(int)ArticularScaleOne.Base], Vector3.up);
+            return (position, rotation);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="offset">Offset to match absolute tracking position.</param>
+    /// <param name="distance">Distance from the base. This distance should be read from the virtuose configuration file.</param>
+    /// <returns></returns>
+    public Vector3 BubblePosition(float distance = 0.60f)
+    {
+        (Vector3 position, Quaternion rotation) = PhysicalBasePose;
+        return position + rotation * Vector3.forward * distance;
+    }
+
+    /// <summary>
+    /// Check if device is a Scale1.
+    /// </summary>
+    public bool IsScaleOne
+    {
+        get
+        {
+            return DeviceID == VirtuoseAPIHelper.DeviceType.DEVICE_SCALE1;
+        }
+    }
+
+    /// <summary>
+    /// Use this if you don't want to check if the AxeNumber is 0 because there is no connexion or other fancy fantasy.
+    /// </summary>
+    public int SafeAxeNumber
+    {
+        get
+        {
+            int axesNumber = AxesNumber;
+            //Some haption function may crash if 0 size array is given as input.
+            return axesNumber <= 0 ? POSE_COMPONENTS_NUMBER : axesNumber;
         }
     }
 
@@ -1048,6 +1153,30 @@ public class VirtuoseAPIHelper
     {
         ExecLogOnError(
             VirtuoseAPI.virtDetachVO);
+    }
+
+    public Vector2 Scale1CarrierPosition
+    {
+        get
+        {
+            float[] articulars = Articulars;
+            return new Vector2(-articulars[1], articulars[0]);
+        }
+        set
+        {
+            if (Power)
+            {
+                float[] articulars = Articulars;
+                articulars[0] = value[1];
+                articulars[1] = -value[0];
+                Articulars = articulars;
+            }
+            else
+            {
+                //Refresh position if no power.
+                Articulars = Articulars;
+            }
+        }
     }
 
     public void UpdateArm()

@@ -16,6 +16,7 @@ public class InputController : MonoBehaviour
     {
         Default, InertiesInventor, ComputedInertie
     }
+    public GameObject bubbleScript;
     public VirtuoseManager virtuoseManager;
     public ArmSelection armSelection;
     /// <summary>
@@ -57,6 +58,8 @@ public class InputController : MonoBehaviour
     public RaquetteController rc;
 
     private Transform HandNode;
+
+    public float computedInertiaMatrixFactor;
 
     private void SetIP()
     {
@@ -110,6 +113,11 @@ public class InputController : MonoBehaviour
         return !ARM_IP.Equals("") && !UseWand;
     }
 
+    public bool ImmersiaRoom()
+    {
+        return armSelection == ArmSelection.ImmersiaLeftArm || armSelection == ArmSelection.ImmersiaRightArm;
+    }
+
     public (float[] inertie, float mass) GetMassAndInertie()
     {
         float[] appliedInertie = new float[] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
@@ -125,6 +133,7 @@ public class InputController : MonoBehaviour
             {
                 case MassInertiaMode.ComputedInertie:
                     (InertiaMatrix inertiaMatrix, float massFromInertia) = InertiaMatrix.GetRaquette(density: density);
+                    inertiaMatrix = computedInertiaMatrixFactor * inertiaMatrix;
                     (appliedInertie, appliedMass) = (inertiaMatrix.GetMatrix1D(), massFromInertia);
                     break;
                 case MassInertiaMode.InertiesInventor:
@@ -145,6 +154,8 @@ public class InputController : MonoBehaviour
             (bool argBaseFrame, Vector3 BaseFrameRead) = SelectionArgumentLine.GetBaseFramePosition();
             if (argBaseFrame) BaseFrame = BaseFrameRead;
         }
+
+        bubbleScript.SetActive(ImmersiaRoom());
 
         HandNode = GameObject.Find("HandNode").GetComponent<Transform>();
 

@@ -180,6 +180,24 @@ public partial class VirtuoseAPI
     [DllImport(DLLNAME, EntryPoint = "virtGetForce")]
     public static extern int virtGetForce(System.IntPtr VC, float[] force);
 
+    /// Return Type: int
+    ///VC: VirtContext->VirtContextS*
+    ///pos: float[]
+    [DllImport(DLLNAME, EntryPoint = "virtGetArticularSpeed")]
+    public static extern int virtGetArticularSpeed(System.IntPtr VC, float[] speeds);
+
+    /// Return Type: int
+    ///VC: VirtContext->VirtContextS*
+    ///pos: float[]
+    [DllImport(DLLNAME, EntryPoint = "virtSetArticularSpeed")]
+    public static extern int virtSetArticularSpeed(System.IntPtr VC, float[] speeds);
+
+    /// Return Type: int
+    ///VC: VirtContext->VirtContextS*
+    ///pos: float[]
+    [DllImport(DLLNAME, EntryPoint = "virtSetArticularPosition")]
+    public static extern int virtSetArticularPosition(System.IntPtr VC, float[] pos);
+
 
     /// Return Type: int
     ///VC: VirtContext->VirtContextS*
